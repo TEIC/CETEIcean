@@ -1,0 +1,25 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+    <fileDesc>
+      <titleStmt>
+        <title>Review: an electronic transcription</title>
+      </titleStmt>
+      <publicationStmt>
+        <p>Published as an example for the Introduction module of TBE.</p>
+      </publicationStmt>
+      <sourceDesc>
+        <p>No source: born digital.</p>
+      </sourceDesc>
+    </fileDesc>
+  </teiHeader>
+  <text>
+    <body>
+      <head>Review</head>
+      <p>
+        <title>Die Leiden des jungen Werther</title>
+        <note place="foot">by <name>Goethe</name></note>
+        is an <emph>exceptionally</emph>
+        good example of a book full of <term>Weltschmerz</term>.</p>
+    </body>
+  </text>
+</TEI>

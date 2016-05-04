@@ -133,9 +133,8 @@ class CETEI {
     // "private" method
     _fromTEI(TEI_dom) {
         let root_el = TEI_dom.documentElement;
-        this.els = Array.from(root_el.getElementsByTagName("*"));
-        els.unshift(root_el); // Add the root element to the array
-
+        this.els = new Set( Array.from(root_el.getElementsByTagName("*"), x => x.tagName) );
+        this.els.add(root_el.tagName); // Add the root element to the array
     }
 
 }

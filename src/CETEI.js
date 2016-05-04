@@ -28,9 +28,6 @@ class CETEI {
         .then((TEI) => {
             let TEI_dom = ( new window.DOMParser() ).parseFromString(TEI, "text/xml");
             this._fromTEI(TEI_dom);
-            if (document.registerElement) {
-              this.registerAll(this.els);
-            } // TODO: add fallback methods for terrible browsers
 
             let newTree;
             let convertEl = (el) => {
@@ -52,6 +49,10 @@ class CETEI {
             }
 
             newTree = convertEl(TEI_dom.documentElement);
+
+            if (document.registerElement) {
+              this.registerAll(this.els);
+            } // TODO: add fallback methods for terrible browsers
 
             if (callback) {
                 callback(newTree);
@@ -84,7 +85,7 @@ class CETEI {
       proto.createdCallback = function() {
         var shadow = this.createShadowRoot();
         var link = document.createElement('a');
-        link.innerHTML = this.getAttribute("target").replace(/https?:\/\/([^/]+)\/.*/, "$1");
+        link.innerHTML = this.getAttribute("target");
         link.href = this.getAttribute("target");
         shadow.appendChild(link);
       }
@@ -92,9 +93,11 @@ class CETEI {
 
     ref(proto) {
       proto.createdCallback = function() {
-        this.onclick = function(evt) {
-          window.location = evt.target.getAttribute("target");
-        }
+        var shadow = this.createShadowRoot();
+        var link = document.createElement('a');
+        link.innerHTML = this.innerHTML;
+        link.href = this.getAttribute("target");
+        shadow.appendChild(link);
       }
     }
 

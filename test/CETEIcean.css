@@ -1218,13 +1218,6 @@ tei-pron {
 tei-provenance {
   /* inline */
 }
-tei-ptr::shadow a {
-  color: #5f0000;
-  text-decoration: none;
-}
-tei-ptr::shadow a::after {
-  content: " ";
-}
 tei-pubPlace {
   /* Empty Rule Set */
 }

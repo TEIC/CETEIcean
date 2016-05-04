@@ -20,6 +20,8 @@
         <note place="foot">by <name>Goethe</name></note>
         is an <emph>exceptionally</emph>
         good example of a book full of <term>Weltschmerz</term>.</p>
+      <p>Here is a pointer: <ptr target="https://github.com/TEIC/CETEIcean"/>.
+    And here is a <ref target="https://github.com/TEIC">ref</ref>.</p>
     </body>
   </text>
 </TEI>

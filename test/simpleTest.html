@@ -4,14 +4,14 @@
   </head>
   <body>
     <div id="TEI"></div>
-    <script src="../dist/TEIditto.js"></script>
+    <script src="../dist/CETEI.js"></script>
     <script>   
-      (new TEIditto).getHTML5('testTEI.xml', function(data) {
+      (new CETEI).getHTML5('testTEI.xml', function(data) {
         document.getElementById("TEI").appendChild(data);
       });
 
       // Alterantively, use then()
-      // (new TEIditto).getHTML5('testTEI.xml').then(function(data){
+      // (new CETEI).getHTML5('testTEI.xml').then(function(data){
       //   document.getElementById("TEI").appendChild(data);
       // });
 

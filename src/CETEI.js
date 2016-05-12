@@ -52,11 +52,12 @@ class CETEI {
 
             if (document.registerElement) {
               this.registerAll(this.els);
+            } else {
+              this.fallback(newTree, this.els);
             }
 
             if (callback) {
                 callback(newTree);
-                this.fallback(this.els);
             }
             else {
                 return newTree;
@@ -93,11 +94,11 @@ class CETEI {
       }
     }
 
-    fallback(names) {
+    fallback(dom, names) {
       for (let name of names) {
         let fn = this.getBehavior("_h_fb_" + name);
         if (fn) {
-          fn.call(fn);
+          fn.call(fn, dom);
         }
       }
     }
@@ -135,8 +136,8 @@ class CETEI {
     }
 
     // Fallback handler methods
-    _h_fb_ptr() {
-      let elts = document.getElementsByTagName("tei-ptr");
+    _h_fb_ptr(dom) {
+      let elts = dom.getElementsByTagName("tei-ptr");
       for (let i = 0; i < elts.length; i++) {
         let content = document.createElement("a");
         let elt = elts[i];
@@ -149,8 +150,8 @@ class CETEI {
       }
     }
 
-    _h_fb_ref() {
-      let elts = document.getElementsByTagName("tei-ref");
+    _h_fb_ref(dom) {
+      let elts = dom.getElementsByTagName("tei-ref");
       for (let i = 0; i < elts.length; i++) {
         elts[i].addEventListener("click", function(event) {
           window.location = this.getAttribute("target");
@@ -158,8 +159,8 @@ class CETEI {
       }
     }
 
-    _h_fb_graphic() {
-      let elts = document.getElementsByTagName("tei-graphic");
+    _h_fb_graphic(dom) {
+      let elts = dom.getElementsByTagName("tei-graphic");
       for (let i = 0; i < elts.length; i++) {
         let content = new Image();
         let elt = elts[i];

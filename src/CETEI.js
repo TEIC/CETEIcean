@@ -71,45 +71,93 @@ class CETEI {
 
     }
 
+    getBehavior(fn) {
+      let result = this[fn];
+      for (let b of this.behaviors.reverse()) {
+        if (b[fn]) {
+          return b[fn];
+        }
+      }
+      return result;
+    }
+
     registerAll(names) {
       for (let name of names) {
-        let proto = Object.create(HTMLElement.prototype);
-        if (this[name]) {
-          this[name].call(this[name], proto);
+        if (document.registerElement) {
+          let proto = Object.create(HTMLElement.prototype);
+          let fn = this.getBehavior("_h_" + name);
+          if (fn) {
+            fn.call(fn, proto);
+          }
+          document.registerElement("tei-" + name, {prototype: proto});
+        } else {
+          let fn = this.getBehavior("_h_fb_" + name);
         }
-        document.registerElement("tei-" + name, {prototype: proto});
       }
     }
 
-    ptr(proto) {
+    // Handler methods
+    _h_ptr(proto) {
       proto.createdCallback = function() {
-        var shadow = this.createShadowRoot();
-        var link = document.createElement('a');
+        let shadow = this.createShadowRoot();
+        let link = document.createElement("a");
         link.innerHTML = this.getAttribute("target");
         link.href = this.getAttribute("target");
         shadow.appendChild(link);
       }
     }
 
-    ref(proto) {
+    _h_ref(proto) {
       proto.createdCallback = function() {
-        var shadow = this.createShadowRoot();
-        var link = document.createElement('a');
+        let shadow = this.createShadowRoot();
+        let link = document.createElement("a");
         link.innerHTML = this.innerHTML;
         link.href = this.getAttribute("target");
         shadow.appendChild(link);
       }
     }
 
-    img(proto) {
+    _h_graphic(proto) {
       proto.createdCallback = function() {
-        var shadow = this.createShadowRoot();
-        var img = document.createElement('img');
+        let shadow = this.createShadowRoot();
+        let img = new Image();
         img.src = this.getAttribute("url");
         img.width = this.getAttribute("width");
         img.height = this.getAttribute("height");
         shadow.apprendChild(img);
       }
+    }
+
+    // Fallback handler methods
+    _h_fb_ptr() {
+      let elts = document.getElementsByTagName("ptr");
+      elts.forEach(function (elt, i) {
+        let content = document.createElement("span");
+        content.innerHTML = elt.getAttribute("target");
+        elt.appendChild(content);
+        elt.addEventListener("click", function(event) {
+          window.location = this.getAttribute("target");
+        });
+      })
+    }
+
+    _h_fb_ref() {
+      let elts = document.getElementsByTagName("ptr");
+      elts.forEach(function (elt, i) {
+        elt.addEventListener("click", function(event) {
+          window.location = this.getAttribute("target");
+        });
+      })
+    }
+
+    _h_fb_graphic() {
+      let elts = document.getElementsByTagName("ptr");
+      elts.forEach(function (elt, i) {
+        let content = new Image();
+        content.src = elt.getAttribute("url"));
+        content.width = elt.getAttribute("width");
+        elt.appendChild(content);
+      })
     }
 
     // public method
@@ -124,11 +172,7 @@ class CETEI {
 
     // public method
     addBehaviors(bhvs){
-        for (let [el, bhv] of bhvs.entries()){
-            if (["div", "span", "a"].indexOf(bhv)){
-                this.behaviors[el] = bhv;
-            }
-        }
+        this.behaviors.push(bhvs);
     }
 
 

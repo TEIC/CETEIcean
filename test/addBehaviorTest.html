@@ -1,0 +1,77 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="CETEIcean.css" media="screen" charset="utf-8">
+  </head>
+  <body>
+    <div id="TEI"></div>
+    <script src="../dist/CETEI.js"></script>
+    <script>
+      var c = new CETEI();
+      /***********************************
+       * Behaviors, i.e. ways you want specific elements to be handled that
+       * you can't do with CSS, can be injected by calling the addBehaviors
+       * method, passing it an object containing a set of handler functions
+       * and fallback functions (for browsers that don't support Web
+       * Components). Handler functions must take a single parameter which
+       * is an HTML element prototype, and fallback functions take a single
+       * parameter which is a copy of the DOM containing the elements to be
+       * handled. The function names must match the name of the element they
+       * will be applied to.
+       ***********************************/
+      c.addBehaviors({"handlers":{
+        // Overrides the default ptr behavior, displaying a short link
+        "ptr": function(proto) {
+          proto.createdCallback = function() {
+            var shadow = this.createShadowRoot();
+            var link = document.createElement("a");
+            link.innerHTML = this.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
+            link.href = this.getAttribute("target");
+            shadow.appendChild(link);
+          }
+        },
+        // Adds a new handler for <term>, wrapping it in an HTML <b>
+        "term": function(proto) {
+          proto.createdCallback = function() {
+            var shadow = this.createShadowRoot();
+            var b = document.createElement("b");
+            b.innerHTML = this.innerHTML;
+            shadow.appendChild(b);
+          }
+        }
+      },
+      "fallbacks": {
+        "ptr": function(dom) {
+          var elts = dom.getElementsByTagName("tei-ptr");
+          for (var i = 0; i < elts.length; i++) {
+            var content = document.createElement("a");
+            var elt = elts[i];
+            content.setAttribute("href", elt.getAttribute("target"));
+            content.innerHTML = elt.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
+            elt.appendChild(content);
+            elt.addEventListener("click", function(event) {
+              window.location = this.getAttribute("target");
+            });
+          }
+        },
+        // Note that this would be better done with CSS. Included for completeness.
+        "term": function(dom) {
+          var elts = dom.getElementsByTagName("tei-term");
+          for (var i = 0; i < elts.length; i++) {
+            elts[i].setAttribute("style", "font-weight: bold");
+          }
+        }
+
+      }});
+      c.getHTML5('testTEI.xml', function(data) {
+        document.getElementById("TEI").appendChild(data);
+      });
+
+      // Alternatively, use then()
+      // (new CETEI).getHTML5('testTEI.xml').then(function(data){
+      //   document.getElementById("TEI").appendChild(data);
+      // });
+
+    </script>
+  </body>
+</html>

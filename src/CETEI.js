@@ -2,7 +2,16 @@ class CETEI {
 
     constructor(){
         this.els = [];
-        this.behaviors = [];
+        this.behaviors = [{"handlers":{}, "fallbacks":{}}];
+        let methods = Object.getOwnPropertyNames(CETEI.prototype);
+        for (let i = 0; i < methods.length; i++) {
+          if (methods[i].startsWith("_h_")) {
+            this.behaviors[0]["handlers"][methods[i].replace("_h_", "")] = this[methods[i]];
+          }
+          if (methods[i].startsWith("_fb_")) {
+            this.behaviors[0]["fallbacks"][methods[i].replace("_fb_", "")] = this[methods[i]];
+          }
+        }
     }
 
     // public method
@@ -73,20 +82,35 @@ class CETEI {
 
     }
 
-    getBehavior(fn) {
-      let result = this[fn];
+    // public method
+    addBehaviors(bhvs){
+      if (bhvs["handlers"] || bhvs ["fallbacks"]) {
+        this.behaviors.push(bhvs);
+      } else {
+        console.log("No handlers or fallback methods found.");
+      }
+    }
+
+    getHandler(fn) {
       for (let b of this.behaviors.reverse()) {
-        if (b[fn]) {
-          return b[fn];
+        if (b["handlers"][fn]) {
+          return b["handlers"][fn];
         }
       }
-      return result;
+    }
+
+    getFallback(fn) {
+      for (let b of this.behaviors.reverse()) {
+        if (b["fallbacks"][fn]) {
+          return b["fallbacks"][fn];
+        }
+      }
     }
 
     registerAll(names) {
       for (let name of names) {
         let proto = Object.create(HTMLElement.prototype);
-        let fn = this.getBehavior("_h_" + name);
+        let fn = this.getHandler(name);
         if (fn) {
           fn.call(fn, proto);
         }
@@ -96,7 +120,7 @@ class CETEI {
 
     fallback(dom, names) {
       for (let name of names) {
-        let fn = this.getBehavior("_h_fb_" + name);
+        let fn = this.getFallback(name);
         if (fn) {
           fn.call(fn, dom);
         }
@@ -136,7 +160,7 @@ class CETEI {
     }
 
     // Fallback handler methods
-    _h_fb_ptr(dom) {
+    _fb_ptr(dom) {
       let elts = dom.getElementsByTagName("tei-ptr");
       for (let i = 0; i < elts.length; i++) {
         let content = document.createElement("a");
@@ -150,7 +174,7 @@ class CETEI {
       }
     }
 
-    _h_fb_ref(dom) {
+    _fb_ref(dom) {
       let elts = dom.getElementsByTagName("tei-ref");
       for (let i = 0; i < elts.length; i++) {
         elts[i].addEventListener("click", function(event) {
@@ -159,7 +183,7 @@ class CETEI {
       }
     }
 
-    _h_fb_graphic(dom) {
+    _fb_graphic(dom) {
       let elts = dom.getElementsByTagName("tei-graphic");
       for (let i = 0; i < elts.length; i++) {
         let content = new Image();
@@ -180,13 +204,6 @@ class CETEI {
         //    ** phrase level elements behave like span (can I tell this from ODD classes?)
         //    * optional custom behaviour mapping
     }
-
-    // public method
-    addBehaviors(bhvs){
-        this.behaviors.push(bhvs);
-    }
-
-
 
     // "private" method
     _fromTEI(TEI_dom) {

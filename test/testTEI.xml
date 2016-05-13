@@ -16,7 +16,7 @@
     <body>
       <head>Review</head>
       <p>
-        <title>Die Leiden des jungen Werther</title>
+        <title xml:id="foo" xml:lang="de">Die Leiden des jungen Werther</title>
         <note place="foot">by <name>Goethe</name></note>
         is an <emph>exceptionally</emph>
         good example of a book full of <term>Weltschmerz</term>.</p>

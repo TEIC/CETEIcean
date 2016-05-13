@@ -44,7 +44,15 @@ class CETEI {
                 let newElement = document.createElement('tei-' + el.tagName);
                 // Copy attributes
                 for (let att of Array.from(el.attributes)) {
-                    newElement.setAttribute(att.name, att.value);
+                    if (att.name != "xmlns") {
+                      newElement.setAttribute(att.name, att.value);
+                    }
+                    if (att.name == "xml:id") {
+                      newElement.setAttribute("id", att.value);
+                    }
+                    if (att.name == "xml:lang") {
+                      newElement.setAttribute("lang", att.value);
+                    }
                 }
                 for (let node of Array.from(el.childNodes)){
                     if (node.nodeType == 1) {

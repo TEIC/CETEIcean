@@ -49,15 +49,15 @@ runs a local web server on port 8888. Browse to the examples in the `test/`
 folder. Make changes and they'll show up when you reload.
 
 ### Use
-Run the build process and then include it in an HTML file like the
-simpleTest.html file in the `test/` folder. Or, use the server-side language
-and framework of your choice to generate such files on demand.
+Run the build process and then include the generated `CETEI.js` file in an HTML 
+document like the simpleTest.html file in the `test/` folder. Or, use the 
+server-side language and framework of your choice to generate such files on demand.
 
 ### Customize
 The are three ways you might customize CETEIcean documents: by using CSS,
 by passing in behaviors at load time, or by adding behaviors after the document
 is loaded. A sample CSS file, based on the one developed by the TEI Boilerplate
-project is included in the `test/` folder, and may be customized as needed. An 
+project, is included in the `test/` folder, and may be customized as needed. An 
 example of how load-time behaviors may be added can be seen in the
 `test/addBehaviorTest.html` example. Further modifications and behaviors may be
 added after the document is loaded, using JavaScript.

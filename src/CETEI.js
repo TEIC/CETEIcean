@@ -46,6 +46,8 @@ class CETEI {
                 for (let att of Array.from(el.attributes)) {
                     if (att.name != "xmlns") {
                       newElement.setAttribute(att.name, att.value);
+                    } else {
+                      newElement.setAttribute("data-xmlns", att.value); //Strip default namespaces, but hang on to the values
                     }
                     if (att.name == "xml:id") {
                       newElement.setAttribute("id", att.value);

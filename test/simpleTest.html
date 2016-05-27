@@ -7,8 +7,10 @@
     <div id="TEI"></div>
     <script src="../dist/CETEI.js"></script>
     <script>
-      (new CETEI).getHTML5('testTEI.xml', function(data) {
+      var CETEIcean = new CETEI();
+      CETEIcean.getHTML5('testTEI.xml', function(data) {
         document.getElementById("TEI").appendChild(data);
+        CETEIcean.addStyle(document, data);
       });
 
       // Alternatively, use then()

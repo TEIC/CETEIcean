@@ -3,6 +3,7 @@ class CETEI {
     constructor(){
         this.els = [];
         this.behaviors = [{"handlers":{}, "fallbacks":{}}];
+        this.hasStyle = false;
         let methods = Object.getOwnPropertyNames(CETEI.prototype);
         for (let i = 0; i < methods.length; i++) {
           if (methods[i].startsWith("_h_")) {
@@ -42,7 +43,8 @@ class CETEI {
             let convertEl = (el) => {
                 // Create new element
                 let newElement = document.createElement('tei-' + el.tagName);
-                // Copy attributes
+                // Copy attributes; @xmlns, @xml:id, @xml:lang, and
+                // @rendition get special handling.
                 for (let att of Array.from(el.attributes)) {
                     if (att.name != "xmlns") {
                       newElement.setAttribute(att.name, att.value);
@@ -55,14 +57,40 @@ class CETEI {
                     if (att.name == "xml:lang") {
                       newElement.setAttribute("lang", att.value);
                     }
+                    if (att.name == "rendition") {
+                      newElement.setAttribute("class", att.value.replace(/#/g, ""));
+                    }
                 }
                 for (let node of Array.from(el.childNodes)){
-                    if (node.nodeType == 1) {
+                    if (node.nodeType == Node.ELEMENT_NODE) {
                         newElement.appendChild(  convertEl(node)  );
                     }
                     else {
                         newElement.appendChild(node.cloneNode());
                     }
+                }
+                // Turn <rendition scheme="css"> elements into HTML styles
+                if (el.localName == "tagsDecl") {
+                  let style = document.createElement("style");
+                  for (let node of Array.from(el.childNodes)){
+                    if (node.nodeType == Node.ELEMENT_NODE && node.localName == "rendition" && node.getAttribute("scheme") == "css") {
+                      let rule = "";
+                      if (node.hasAttribute("selector")) {
+                        //rewrite element names in selectors
+                        rule += node.getAttribute("selector").replace(/([^#, >]+\w*)/g, "tei-$1").replace(/#tei-/g, "#") + "{\n";
+                        rule += node.textContent;
+                      } else {
+                        rule += "." + node.getAttribute("xml:id") + "{\n";
+                        rule += node.textContent;
+                      }
+                      rule += "\n}\n";
+                      style.appendChild(document.createTextNode(rule));
+                    }
+                  }
+                  if (style.childNodes.length > 0) {
+                    newElement.appendChild(style);
+                    this.hasStyle = true;
+                  }
                 }
                 return newElement;
             }
@@ -90,6 +118,12 @@ class CETEI {
 
         return promise;
 
+    }
+
+    addStyle(doc, data) {
+      if (this.hasStyle) {
+        doc.getElementsByTagName("head").item(0).appendChild(data.getElementsByTagName("style").item(0).cloneNode(true));
+      }
     }
 
     // public method

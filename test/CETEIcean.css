@@ -1303,7 +1303,7 @@ tei-recordingStmt {
 }
 tei-ref {
   color: #5f0000;
-  text-decoration: none;
+  text-decoration: underline;
 }
 tei-region {
   /* Empty Rule Set */

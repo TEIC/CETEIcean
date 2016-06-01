@@ -197,8 +197,12 @@ class CETEI {
         let shadow = this.createShadowRoot();
         let img = new Image();
         img.src = this.getAttribute("url");
-        img.width = this.getAttribute("width").replace(/[^.0-9]/g, "");
-        img.height = this.getAttribute("height").replace(/[^.0-9]/g, "");
+        if (this.hasAttribute("width")) {
+          img.width = this.getAttribute("width").replace(/[^.0-9]/g, "");
+        }
+        if (this.hasAttribute("height")) {
+          img.height = this.getAttribute("height").replace(/[^.0-9]/g, "");
+        }
         shadow.appendChild(img);
       }
     }
@@ -233,8 +237,12 @@ class CETEI {
         let content = new Image();
         let elt = elts[i];
         content.src = elt.getAttribute("url");
-        content.width = elt.getAttribute("width").replace(/[^.0-9]/g, "");
-        content.height = elt.getAttribute("height").replace(/[^.0-9]/g, "");
+        if (elt.hasAttribute("width")) {
+          content.width = elt.getAttribute("width").replace(/[^.0-9]/g, "");
+        }
+        if (elt.hasAttribute("height")) {
+          content.height = elt.getAttribute("height").replace(/[^.0-9]/g, "");
+        }
         elt.appendChild(content);
       }
     }

@@ -1,9 +1,14 @@
 class CETEI {
 
-    constructor(){
+    constructor(base){
         this.els = [];
         this.behaviors = [{"handlers":{}, "fallbacks":{}}];
         this.hasStyle = false;
+        if (base) {
+          this.base = base;
+        } else {
+          this.base = window.location.href.replace(/\/[^\/]*$/, "/");
+        }
         let methods = Object.getOwnPropertyNames(CETEI.prototype);
         for (let i = 0; i < methods.length; i++) {
           if (methods[i].startsWith("_h_")) {
@@ -156,7 +161,7 @@ class CETEI {
         let proto = Object.create(HTMLElement.prototype);
         let fn = this.getHandler(name);
         if (fn) {
-          fn.call(fn, proto);
+          fn.call(this, proto);
         }
         document.registerElement("tei-" + name, {prototype: proto});
       }
@@ -166,37 +171,52 @@ class CETEI {
       for (let name of names) {
         let fn = this.getFallback(name);
         if (fn) {
-          fn.call(fn, dom);
+          fn.call(this, dom);
         }
+      }
+    }
+
+    setBaseUrl(base) {
+      this.base = base;
+    }
+
+    rewriteRelativeUrl(url) {
+      if (!url.match(/^(?:http|mailto|file|\/).*$/)) {
+        return this.base + url;
+      } else {
+        return url;
       }
     }
 
     // Handler methods
     _h_ptr(proto) {
+      let self = this;
       proto.createdCallback = function() {
         let shadow = this.createShadowRoot();
         let link = document.createElement("a");
         link.innerHTML = this.getAttribute("target");
-        link.href = this.getAttribute("target");
+        link.href = self.rewriteRelativeUrl(this.getAttribute("target"));
         shadow.appendChild(link);
       }
     }
 
     _h_ref(proto) {
+      let self = this;
       proto.createdCallback = function() {
         let shadow = this.createShadowRoot();
         let link = document.createElement("a");
         link.innerHTML = this.innerHTML;
-        link.href = this.getAttribute("target");
+        link.href = self.rewriteRelativeUrl(this.getAttribute("target"));
         shadow.appendChild(link);
       }
     }
 
     _h_graphic(proto) {
+      let self = this;
       proto.createdCallback = function() {
         let shadow = this.createShadowRoot();
         let img = new Image();
-        img.src = this.getAttribute("url");
+        img.src = self.rewriteRelativeUrl(this.getAttribute("url"));
         if (this.hasAttribute("width")) {
           img.width = this.getAttribute("width").replace(/[^.0-9]/g, "");
         }
@@ -209,6 +229,7 @@ class CETEI {
 
     // Fallback handler methods
     _fb_ptr(dom) {
+      let self = this;
       let elts = dom.getElementsByTagName("tei-ptr");
       for (let i = 0; i < elts.length; i++) {
         let content = document.createElement("a");
@@ -217,26 +238,28 @@ class CETEI {
         content.innerHTML = elt.getAttribute("target");
         elt.appendChild(content);
         elt.addEventListener("click", function(event) {
-          window.location = this.getAttribute("target");
+          window.location = self.rewriteRelativeUrl(this.getAttribute("target"));
         });
       }
     }
 
     _fb_ref(dom) {
+      let self = this;
       let elts = dom.getElementsByTagName("tei-ref");
       for (let i = 0; i < elts.length; i++) {
         elts[i].addEventListener("click", function(event) {
-          window.location = this.getAttribute("target");
+          window.location = self.rewriteRelativeUrl(this.getAttribute("target"));
         });
       }
     }
 
     _fb_graphic(dom) {
+      let self = this;
       let elts = dom.getElementsByTagName("tei-graphic");
       for (let i = 0; i < elts.length; i++) {
         let content = new Image();
         let elt = elts[i];
-        content.src = elt.getAttribute("url");
+        content.src = self.rewriteRelativeUrl(this.getAttribute("url"));
         if (elt.hasAttribute("width")) {
           content.width = elt.getAttribute("width").replace(/[^.0-9]/g, "");
         }

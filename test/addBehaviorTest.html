@@ -38,11 +38,12 @@
             b.innerHTML = this.innerHTML;
             shadow.appendChild(b);
           }
-        }
+        },
+        "add": ["`","´"]
       },
       "fallbacks": {
-        "ptr": function(dom) {
-          var elts = dom.getElementsByTagName("tei-ptr");
+        "ptr": function() {
+          var elts = this.dom.getElementsByTagName("tei-ptr");
           for (var i = 0; i < elts.length; i++) {
             var content = document.createElement("a");
             var elt = elts[i];
@@ -55,8 +56,8 @@
           }
         },
         // Note that this would be better done with CSS. Included for completeness.
-        "term": function(dom) {
-          var elts = dom.getElementsByTagName("tei-term");
+        "term": function() {
+          var elts = this.dom.getElementsByTagName("tei-term");
           for (var i = 0; i < elts.length; i++) {
             elts[i].setAttribute("style", "font-weight: bold");
           }

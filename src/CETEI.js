@@ -1,8 +1,9 @@
+import behaviors from './behaviors'
 class CETEI {
 
     constructor(base){
         this.els = [];
-        this.behaviors = [{"handlers":{}, "fallbacks":{}}];
+        this.behaviors = [];
         this.hasStyle = false;
         if (base) {
           this.base = base;
@@ -10,14 +11,7 @@ class CETEI {
           this.base = window.location.href.replace(/\/[^\/]*$/, "/");
         }
         let methods = Object.getOwnPropertyNames(CETEI.prototype);
-        for (let i = 0; i < methods.length; i++) {
-          if (methods[i].startsWith("_h_")) {
-            this.behaviors[0]["handlers"][methods[i].replace("_h_", "")] = this[methods[i]];
-          }
-          if (methods[i].startsWith("_fb_")) {
-            this.behaviors[0]["fallbacks"][methods[i].replace("_fb_", "")] = this[methods[i]];
-          }
-        }
+        this.behaviors.push(behaviors);
     }
 
     // public method
@@ -44,7 +38,6 @@ class CETEI {
             let TEI_dom = ( new window.DOMParser() ).parseFromString(TEI, "text/xml");
             this._fromTEI(TEI_dom);
 
-            let newTree;
             let convertEl = (el) => {
                 // Create new element
                 let newElement = document.createElement('tei-' + el.tagName);
@@ -100,19 +93,19 @@ class CETEI {
                 return newElement;
             }
 
-            newTree = convertEl(TEI_dom.documentElement);
+            this.dom = convertEl(TEI_dom.documentElement);
 
             if (document.registerElement) {
               this.registerAll(this.els);
             } else {
-              this.fallback(newTree, this.els);
+              this.fallback(this.els);
             }
 
             if (callback) {
-                callback(newTree);
+                callback(this.dom);
             }
             else {
-                return newTree;
+                return this.dom;
             }
 
         })
@@ -140,10 +133,31 @@ class CETEI {
       }
     }
 
+    decorator(fn, strings) {
+      return function() {
+        let elts = this.dom.getElementsByTagName("tei-" + fn);
+        for (let i = 0; i < elts.length; i++) {
+          let elt = elts[i];
+          let span = document.createElement("span");
+          span.innerHTML = strings[0];
+          elt.insertAdjacentElement("afterbegin",span);
+          if (strings.length > 1) {
+            span = document.createElement("span"),
+            span.innerHTML = strings[1];
+            elt.insertAdjacentElement("beforeend",span);
+          }
+        }
+      }
+    }
+
     getHandler(fn) {
       for (let b of this.behaviors.reverse()) {
         if (b["handlers"][fn]) {
-          return b["handlers"][fn];
+          if (Array.isArray(b["handlers"][fn])) {
+            return this.decorator(fn, b["handlers"][fn]);
+          } else {
+            return b["handlers"][fn];
+          }
         }
       }
     }
@@ -151,7 +165,13 @@ class CETEI {
     getFallback(fn) {
       for (let b of this.behaviors.reverse()) {
         if (b["fallbacks"][fn]) {
-          return b["fallbacks"][fn];
+          if (Array.isArray(b["fallbacks"][fn])) {
+            return this.decorator(fn, b["fallbacks"][fn]);
+          } else {
+            return b["fallbacks"][fn];
+          }
+        } else if (b["handlers"][fn] && Array.isArray(b["handlers"][fn])) {
+          return this.decorator(fn, b["handlers"][fn]);
         }
       }
     }
@@ -167,11 +187,11 @@ class CETEI {
       }
     }
 
-    fallback(dom, names) {
+    fallback(names) {
       for (let name of names) {
         let fn = this.getFallback(name);
         if (fn) {
-          fn.call(this, dom);
+          fn.call(this);
         }
       }
     }
@@ -185,88 +205,6 @@ class CETEI {
         return this.base + url;
       } else {
         return url;
-      }
-    }
-
-    // Handler methods
-    _h_ptr(proto) {
-      let self = this;
-      proto.createdCallback = function() {
-        let shadow = this.createShadowRoot();
-        let link = document.createElement("a");
-        link.innerHTML = this.getAttribute("target");
-        link.href = self.rewriteRelativeUrl(this.getAttribute("target"));
-        shadow.appendChild(link);
-      }
-    }
-
-    _h_ref(proto) {
-      let self = this;
-      proto.createdCallback = function() {
-        let shadow = this.createShadowRoot();
-        let link = document.createElement("a");
-        link.innerHTML = this.innerHTML;
-        link.href = self.rewriteRelativeUrl(this.getAttribute("target"));
-        shadow.appendChild(link);
-      }
-    }
-
-    _h_graphic(proto) {
-      let self = this;
-      proto.createdCallback = function() {
-        let shadow = this.createShadowRoot();
-        let img = new Image();
-        img.src = self.rewriteRelativeUrl(this.getAttribute("url"));
-        if (this.hasAttribute("width")) {
-          img.width = this.getAttribute("width").replace(/[^.0-9]/g, "");
-        }
-        if (this.hasAttribute("height")) {
-          img.height = this.getAttribute("height").replace(/[^.0-9]/g, "");
-        }
-        shadow.appendChild(img);
-      }
-    }
-
-    // Fallback handler methods
-    _fb_ptr(dom) {
-      let self = this;
-      let elts = dom.getElementsByTagName("tei-ptr");
-      for (let i = 0; i < elts.length; i++) {
-        let content = document.createElement("a");
-        let elt = elts[i];
-        content.setAttribute("href", elt.getAttribute("target"));
-        content.innerHTML = elt.getAttribute("target");
-        elt.appendChild(content);
-        elt.addEventListener("click", function(event) {
-          window.location = self.rewriteRelativeUrl(this.getAttribute("target"));
-        });
-      }
-    }
-
-    _fb_ref(dom) {
-      let self = this;
-      let elts = dom.getElementsByTagName("tei-ref");
-      for (let i = 0; i < elts.length; i++) {
-        elts[i].addEventListener("click", function(event) {
-          window.location = self.rewriteRelativeUrl(this.getAttribute("target"));
-        });
-      }
-    }
-
-    _fb_graphic(dom) {
-      let self = this;
-      let elts = dom.getElementsByTagName("tei-graphic");
-      for (let i = 0; i < elts.length; i++) {
-        let content = new Image();
-        let elt = elts[i];
-        content.src = self.rewriteRelativeUrl(this.getAttribute("url"));
-        if (elt.hasAttribute("width")) {
-          content.width = elt.getAttribute("width").replace(/[^.0-9]/g, "");
-        }
-        if (elt.hasAttribute("height")) {
-          content.height = elt.getAttribute("height").replace(/[^.0-9]/g, "");
-        }
-        elt.appendChild(content);
       }
     }
 

@@ -25,7 +25,8 @@
         <title xml:id="foo" xml:lang="de">Die Leiden des jungen Werther</title>
         <note place="foot">by <name>Goethe</name></note>
         is an <emph>exceptionally</emph>
-        good example of a book full of <term rendition="#italic">Weltschmerz</term>.</p>
+        good example of a book full of <term rendition="#italic">Weltschmerz</term>.
+        Here is some <add>added</add> text.</p>
       <p>Here is a pointer: <ptr target="https://github.com/TEIC/CETEIcean"/>.
     And here is a <ref target="https://github.com/TEIC">ref</ref>. But
     <ref target="addBehaviorTest.html">here</ref> is a relative link.</p>

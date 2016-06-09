@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "ODD-driven JavaScript library to load a TEI XML document and register it as HTML5 custom elements.",
   "main": "dist/CETEI.js",
+  "jsnext:main": "src/CETEI.js",
   "keywords": [
     "TEI",
     "XML",

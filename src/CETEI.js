@@ -35,79 +35,7 @@ class CETEI {
             };
         })
         .then((TEI) => {
-            let TEI_dom = ( new window.DOMParser() ).parseFromString(TEI, "text/xml");
-            this._fromTEI(TEI_dom);
-
-            let convertEl = (el) => {
-                // Create new element
-                let newElement = document.createElement('tei-' + el.tagName);
-                // Copy attributes; @xmlns, @xml:id, @xml:lang, and
-                // @rendition get special handling.
-                for (let att of Array.from(el.attributes)) {
-                    if (att.name != "xmlns") {
-                      newElement.setAttribute(att.name, att.value);
-                    } else {
-                      newElement.setAttribute("data-xmlns", att.value); //Strip default namespaces, but hang on to the values
-                    }
-                    if (att.name == "xml:id") {
-                      newElement.setAttribute("id", att.value);
-                    }
-                    if (att.name == "xml:lang") {
-                      newElement.setAttribute("lang", att.value);
-                    }
-                    if (att.name == "rendition") {
-                      newElement.setAttribute("class", att.value.replace(/#/g, ""));
-                    }
-                }
-                for (let node of Array.from(el.childNodes)){
-                    if (node.nodeType == Node.ELEMENT_NODE) {
-                        newElement.appendChild(  convertEl(node)  );
-                    }
-                    else {
-                        newElement.appendChild(node.cloneNode());
-                    }
-                }
-                // Turn <rendition scheme="css"> elements into HTML styles
-                if (el.localName == "tagsDecl") {
-                  let style = document.createElement("style");
-                  for (let node of Array.from(el.childNodes)){
-                    if (node.nodeType == Node.ELEMENT_NODE && node.localName == "rendition" && node.getAttribute("scheme") == "css") {
-                      let rule = "";
-                      if (node.hasAttribute("selector")) {
-                        //rewrite element names in selectors
-                        rule += node.getAttribute("selector").replace(/([^#, >]+\w*)/g, "tei-$1").replace(/#tei-/g, "#") + "{\n";
-                        rule += node.textContent;
-                      } else {
-                        rule += "." + node.getAttribute("xml:id") + "{\n";
-                        rule += node.textContent;
-                      }
-                      rule += "\n}\n";
-                      style.appendChild(document.createTextNode(rule));
-                    }
-                  }
-                  if (style.childNodes.length > 0) {
-                    newElement.appendChild(style);
-                    this.hasStyle = true;
-                  }
-                }
-                return newElement;
-            }
-
-            this.dom = convertEl(TEI_dom.documentElement);
-
-            if (document.registerElement) {
-              this.registerAll(this.els);
-            } else {
-              this.fallback(this.els);
-            }
-
-            if (callback) {
-                callback(this.dom);
-            }
-            else {
-                return this.dom;
-            }
-
+            this.makeHTML5(TEI, callback);
         })
         .catch( function(reason) {
             // TODO: better error handling?
@@ -116,6 +44,83 @@ class CETEI {
 
         return promise;
 
+    }
+
+    makeHTML5(TEI, callback){
+      // TEI is assumed to be a string
+      let TEI_dom = ( new window.DOMParser() ).parseFromString(TEI, "text/xml");
+
+      this._fromTEI(TEI_dom);
+
+      let convertEl = (el) => {
+          // Create new element
+          let newElement = document.createElement('tei-' + el.tagName);
+          // Copy attributes; @xmlns, @xml:id, @xml:lang, and
+          // @rendition get special handling.
+          for (let att of Array.from(el.attributes)) {
+              if (att.name != "xmlns") {
+                newElement.setAttribute(att.name, att.value);
+              } else {
+                newElement.setAttribute("data-xmlns", att.value); //Strip default namespaces, but hang on to the values
+              }
+              if (att.name == "xml:id") {
+                newElement.setAttribute("id", att.value);
+              }
+              if (att.name == "xml:lang") {
+                newElement.setAttribute("lang", att.value);
+              }
+              if (att.name == "rendition") {
+                newElement.setAttribute("class", att.value.replace(/#/g, ""));
+              }
+          }
+          for (let node of Array.from(el.childNodes)){
+              if (node.nodeType == Node.ELEMENT_NODE) {
+                  newElement.appendChild(  convertEl(node)  );
+              }
+              else {
+                  newElement.appendChild(node.cloneNode());
+              }
+          }
+          // Turn <rendition scheme="css"> elements into HTML styles
+          if (el.localName == "tagsDecl") {
+            let style = document.createElement("style");
+            for (let node of Array.from(el.childNodes)){
+              if (node.nodeType == Node.ELEMENT_NODE && node.localName == "rendition" && node.getAttribute("scheme") == "css") {
+                let rule = "";
+                if (node.hasAttribute("selector")) {
+                  //rewrite element names in selectors
+                  rule += node.getAttribute("selector").replace(/([^#, >]+\w*)/g, "tei-$1").replace(/#tei-/g, "#") + "{\n";
+                  rule += node.textContent;
+                } else {
+                  rule += "." + node.getAttribute("xml:id") + "{\n";
+                  rule += node.textContent;
+                }
+                rule += "\n}\n";
+                style.appendChild(document.createTextNode(rule));
+              }
+            }
+            if (style.childNodes.length > 0) {
+              newElement.appendChild(style);
+              this.hasStyle = true;
+            }
+          }
+          return newElement;
+      }
+
+      this.dom = convertEl(TEI_dom.documentElement);
+
+      if (document.registerElement) {
+        this.registerAll(this.els);
+      } else {
+        this.fallback(this.els);
+      }
+
+      if (callback) {
+          callback(this.dom);
+      }
+      else {
+          return this.dom;
+      }
     }
 
     addStyle(doc, data) {

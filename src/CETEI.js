@@ -188,7 +188,11 @@ class CETEI {
         if (fn) {
           fn.call(this, proto);
         }
-        document.registerElement("tei-" + name, {prototype: proto});
+        // Make sure element isn't already registered
+        let prefixedName = "tei-" + name;
+        if (document.createElement(prefixedName).constructor !== HTMLElement) {
+          document.registerElement(prefixedName, {prototype: proto});
+        }
       }
     }
 

@@ -203,7 +203,13 @@ class CETEI {
           fn.call(this, proto);
         }
         let prefixedName = "tei-" + name;
-        document.registerElement(prefixedName, {prototype: proto});
+        try {
+          document.registerElement(prefixedName, {prototype: proto});
+        } catch (error) {
+          console.log(prefixedName + " already registered.");
+          console.log(error);
+        }
+
       }
     }
 

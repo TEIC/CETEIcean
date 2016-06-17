@@ -53,20 +53,34 @@ class CETEI {
       this._fromTEI(TEI_dom);
 
       let convertEl = (el) => {
-          // Create new element
-          let newElement = document.createElement('tei-' + el.tagName);
+          // Create new element. TEI elements get prefixed with 'tei-',
+          // TEI example elements with 'teieg-'. All others keep
+          // their namespaces and are copied as-is.
+          let newElement;
+          let copy = false;
+          switch (el.namespaceURI) {
+            case "http://www.tei-c.org/ns/1.0":
+              newElement = document.createElement("tei-" + el.tagName);
+              break;
+            case "http://www.tei-c.org/ns/Examples":
+              newElement = document.createElement("teieg-" + el.tagName);
+              break;
+            default:
+              newElement = document.importNode(el, false);
+              copy = true;
+          }
           // Copy attributes; @xmlns, @xml:id, @xml:lang, and
           // @rendition get special handling.
           for (let att of Array.from(el.attributes)) {
-              if (att.name != "xmlns") {
+              if (att.name != "xmlns" || copy) {
                 newElement.setAttribute(att.name, att.value);
               } else {
                 newElement.setAttribute("data-xmlns", att.value); //Strip default namespaces, but hang on to the values
               }
-              if (att.name == "xml:id") {
+              if (att.name == "xml:id" && !copy) {
                 newElement.setAttribute("id", att.value);
               }
-              if (att.name == "xml:lang") {
+              if (att.name == "xml:lang" && !copy) {
                 newElement.setAttribute("lang", att.value);
               }
               if (att.name == "rendition") {
@@ -188,11 +202,8 @@ class CETEI {
         if (fn) {
           fn.call(this, proto);
         }
-        // Make sure element isn't already registered
         let prefixedName = "tei-" + name;
-        if (document.createElement(prefixedName).constructor !== HTMLElement) {
-          document.registerElement(prefixedName, {prototype: proto});
-        }
+        document.registerElement(prefixedName, {prototype: proto});
       }
     }
 

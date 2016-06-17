@@ -39,7 +39,7 @@ export default {
   "fallbacks": {
     "ptr": function() {
       let self = this;
-      let elts = dom.getElementsByTagName("tei-ptr");
+      let elts = this.dom.getElementsByTagName("tei-ptr");
       for (let i = 0; i < elts.length; i++) {
         let content = document.createElement("a");
         let elt = elts[i];
@@ -50,10 +50,10 @@ export default {
           window.location = self.rewriteRelativeUrl(this.getAttribute("target"));
         });
       }
-    }, 
+    },
     "ref": function() {
       let self = this;
-      let elts = dom.getElementsByTagName("tei-ref");
+      let elts = this.dom.getElementsByTagName("tei-ref");
       for (let i = 0; i < elts.length; i++) {
         elts[i].addEventListener("click", function(event) {
           window.location = self.rewriteRelativeUrl(this.getAttribute("target"));
@@ -62,7 +62,7 @@ export default {
     },
     "graphic": function() {
       let self = this;
-      let elts = dom.getElementsByTagName("tei-graphic");
+      let elts = this.dom.getElementsByTagName("tei-graphic");
       for (let i = 0; i < elts.length; i++) {
         let content = new Image();
         let elt = elts[i];

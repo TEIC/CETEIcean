@@ -1305,6 +1305,9 @@ tei-ref {
   color: #5f0000;
   text-decoration: underline;
 }
+tei-ref:hover {
+  cursor: pointer;
+}
 tei-region {
   /* Empty Rule Set */
 }

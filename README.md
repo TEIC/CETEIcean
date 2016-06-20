@@ -2,6 +2,7 @@
 /sɪˈti:ʃn/
 ## What is this?
 **tl;dr**: CETEIcean lets you display unmodified TEI documents in a web browser!
+Examplesmay be found  [here](http://teic.github.io/CETEIcean/).
 
 CETEIcean is a Javascript (ES6) library that allows [TEI](http://tei-c.org)
 documents to be displayed in a web browser without converting them to

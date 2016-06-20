@@ -5,6 +5,7 @@ class CETEI {
         this.els = [];
         this.behaviors = [];
         this.hasStyle = false;
+        this.prefixes = [];
         if (base) {
           this.base = base;
         } else {
@@ -118,6 +119,13 @@ class CETEI {
               this.hasStyle = true;
             }
           }
+          // Get prefix definitions
+          if (el.localName == "prefixDef") {
+            this.prefixes.push(el.getAttribute("ident"));
+            this.prefixes[el.getAttribute("ident")] =
+              {"matchPattern": el.getAttribute("matchPattern"),
+              "replacementPattern": el.getAttribute("replacementPattern")};
+          }
           return newElement;
       }
 
@@ -159,11 +167,20 @@ class CETEI {
           let elt = elts[i];
           let span = document.createElement("span");
           span.innerHTML = strings[0];
-          elt.insertAdjacentElement("afterbegin",span);
+          if (elt.insertAdjacentElement) {
+            elt.insertAdjacentElement("afterbegin",span);
+          } else {
+            if (elt.firstChild) {
+              elt.insertBefore(span, elt.firstChild);
+            } else {
+              elt.appendChild(span);
+            }
+          }
+
           if (strings.length > 1) {
             span = document.createElement("span"),
             span.innerHTML = strings[1];
-            elt.insertAdjacentElement("beforeend",span);
+            elt.appendChild(span);
           }
         }
       }
@@ -191,6 +208,8 @@ class CETEI {
           }
         } else if (b["handlers"][fn] && Array.isArray(b["handlers"][fn])) {
           return this.decorator(fn, b["handlers"][fn]);
+        } else if (b["handlers"][fn] && b["handlers"][fn].length == 0) { //handler doesn't use element registration callback
+          return b["handlers"][fn];
         }
       }
     }

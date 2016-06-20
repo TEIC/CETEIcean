@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>CETEIcean</title>
+    <style media="screen">
+      body {
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+      }
+      .whale {
+        font-size: 300%;
+        float:right;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Introducing CETEIcean <span class="whale">🐳</span></h1>
+    <div class="main">
+      <p>CETEIcean is a Javascript library that lets you display Text Encoding
+        Initiative (<a href="http://www.tei-c.org">TEI</a>) XML files directly
+        in your browser. You can style them using ordinary CSS or add
+        <a href="https://github.com/TEIC/CETEIcean/wiki/Anatomy-of-a-behaviors-object">behaviors</a>
+        to them.</p>
+      <h2>Getting Started</h2>
+      <p>Check out the examples. Most of these are based on the
+        <a href="testTEI.xml">testTEI.xml</a> file.</p>
+      <ul>
+        <li><a href="simpleTest.html">A simple test</a>.</li>
+        <li><a href="addBehaviorTest.html">addBehaviorTest</a> shows how to add your own behaviors.</li>
+        <li><a href="EEBOTest.html">EEBOTest</a> imports a remote TEI File and styles it.</li>
+      </ul>
+      <p>Note that if you want to display remote XML documents, the server where they are located must
+        support <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">CORS</a>. Otherwise,
+        you're stuck with documents on the same server. Fortunately and usefully, GitHub does enable CORS,
+        so you can use CETEIcean with any TEI file in a GitHub repo!
+      </p>
+      <p>The GitHub repo lives at <a href="https://github.com/TEIC/CETEIcean">TEIC/CETEIcean</a>. Please
+        let us know if you find bugs or think of new features you'd like to see!</p>
+    </div>
+  </body>
+</html>

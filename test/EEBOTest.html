@@ -7,6 +7,10 @@
         display: inline-block;
         width: 0px;
       }
+      tei-g.cmbAbbr {
+        display:inline;
+        margin-left: -.5em;
+      }
       tei-hi {
         font-style: italic;
       }
@@ -16,6 +20,9 @@
       tei-seg[rend="decorInit"] {
         font-family: cursive;
         font-size: 300%;
+        float:left;
+        line-height: 1em;
+        padding-right: 10px;
       }
       tei-trailer {
         display: block;
@@ -103,6 +110,15 @@
       CETEIcean.getHTML5('https://raw.githubusercontent.com/textcreationpartnership/A00689/master/A00689.xml', function(data) {
         document.getElementById("TEI").appendChild(data);
         CETEIcean.addStyle(document, data);
+        // Fix combining abbreviation marker in Chrome
+        if (!!window.chrome) {
+          var gs = document.getElementsByTagName("tei-g");
+          for (var i = 0; i < gs.length; i++) {
+            if (gs[i].getAttribute("ref") == "char:cmbAbbrStroke") {
+              gs[i].setAttribute("class", "cmbAbbr");
+            }
+          }
+        }
         // If not logged in to EEBO, use a local image instead of the preview
         var testimg = new Image();
         testimg.onerror = function() {

@@ -15,16 +15,18 @@ that support Web Components will use them to add the appropriate display and
 behaviors to the TEI elements; other browsers will use fallback methods to
 achieve the same result.
 
+Because it preserves the full structure and information from your TEI data model,
+CETEIcean allows you to build rich web applications from your source documents
+using standard tools like CSS and Javascript.
+
 CETEIcean was inspired by
 [TEI Boilerplate](https://github.com/GrantLS/TEI-Boilerplate),
 which also displays TEI in the browser, but differs from it in a couple of
-important ways. It does not rely on an in-browser XSLT transformation, triggered
-by an XSLT directive in the source, meaning no modification to the source XML is
+important ways. CETEIcean does not rely on an in-browser XSLT transformation, 
+triggered by an XSLT directive in the source, so no modification to the source XML is
 necessary for it to work. Because it follows the Custom Elements standard, the
 HTML it produces is valid and there are no possibilities of element name
-collisions (like HTML `<p>` vs. TEI `<p>` for example). As with Boilerplate, the
-HTML5 document displayed in the browser is isomorphic to the TEI source, meaning
-behaviors can be added that leverage the richness of the TEI model.
+collisions (like HTML `<p>` vs. TEI `<p>` for example). 
 
 ## Usage
 

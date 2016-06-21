@@ -4,7 +4,9 @@
     <link rel="stylesheet" href="CETEIcean.css" media="screen" charset="utf-8">
   </head>
   <body>
-    <div id="TEI"></div>
+    <div id="TEI">
+      Sadly, this page will not work in Internet Explorer, due to its outdated Javascript support. We suggest you use Chrome or Firefox.
+    </div>
     <script src="../dist/CETEI.js"></script>
     <script>
       var c = new CETEI();
@@ -39,6 +41,7 @@
             shadow.appendChild(b);
           }
         },
+        // Inserts the first array element before tei:add, and the second, after.
         "add": ["`","´"]
       },
       "fallbacks": {

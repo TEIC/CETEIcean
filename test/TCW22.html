@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="http://teic.github.io/css/tei.css" media="screen" title="no title" charset="utf-8">
+    <script src="https://cdn.polyfill.io/v1/polyfill.js?features=modernizr:promises&unknown=polyfill" charset="utf-8"></script>
+    <script src="js/CETEI.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      (new CETEI).getHTML5('https://raw.githubusercontent.com/TEIC/TEI/dev/Documents/TCW/tcw22.xml?new=' + Date.now(), function(data) {
+        document.getElementsByTagName("body")[0].appendChild(data);
+      });
+    </script>
+    <title>TCW 22: Building a TEI Release</title>
+  </head>
+  <body>
+  </body>
+</html>

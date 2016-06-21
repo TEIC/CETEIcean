@@ -11,7 +11,6 @@ class CETEI {
         } else {
           this.base = window.location.href.replace(/\/[^\/]*$/, "/");
         }
-        let methods = Object.getOwnPropertyNames(CETEI.prototype);
         this.behaviors.push(behaviors);
     }
 

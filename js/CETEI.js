@@ -218,43 +218,22 @@ var CETEI = (function () {
           // Turn <rendition scheme="css"> elements into HTML styles
           if (el.localName == "tagsDecl") {
             var style = document.createElement("style");
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-              for (var _iterator = Array.from(el.childNodes)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                var _node = _step.value;
-
-                if (_node.nodeType == Node.ELEMENT_NODE && _node.localName == "rendition" && _node.getAttribute("scheme") == "css") {
-                  var rule = "";
-                  if (_node.hasAttribute("selector")) {
-                    //rewrite element names in selectors
-                    rule += _node.getAttribute("selector").replace(/([^#, >]+\w*)/g, "tei-$1").replace(/#tei-/g, "#") + "{\n";
-                    rule += _node.textContent;
-                  } else {
-                    rule += "." + _node.getAttribute("xml:id") + "{\n";
-                    rule += _node.textContent;
-                  }
-                  rule += "\n}\n";
-                  style.appendChild(document.createTextNode(rule));
+            for (var _i2 = 0, _arr2 = Array.from(el.childNodes); _i2 < _arr2.length; _i2++) {
+              var _node = _arr2[_i2];
+              if (_node.nodeType == Node.ELEMENT_NODE && _node.localName == "rendition" && _node.getAttribute("scheme") == "css") {
+                var rule = "";
+                if (_node.hasAttribute("selector")) {
+                  //rewrite element names in selectors
+                  rule += _node.getAttribute("selector").replace(/([^#, >]+\w*)/g, "tei-$1").replace(/#tei-/g, "#") + "{\n";
+                  rule += _node.textContent;
+                } else {
+                  rule += "." + _node.getAttribute("xml:id") + "{\n";
+                  rule += _node.textContent;
                 }
-              }
-            } catch (err) {
-              _didIteratorError = true;
-              _iteratorError = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion && _iterator.return) {
-                  _iterator.return();
-                }
-              } finally {
-                if (_didIteratorError) {
-                  throw _iteratorError;
-                }
+                rule += "\n}\n";
+                style.appendChild(document.createTextNode(rule));
               }
             }
-
             if (style.childNodes.length > 0) {
               newElement.appendChild(style);
               _this2.hasStyle = true;
@@ -331,6 +310,40 @@ var CETEI = (function () {
     }, {
       key: 'getHandler',
       value: function getHandler(fn) {
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = this.behaviors.reverse()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var b = _step.value;
+
+            if (b["handlers"][fn]) {
+              if (Array.isArray(b["handlers"][fn])) {
+                return this.decorator(fn, b["handlers"][fn]);
+              } else {
+                return b["handlers"][fn];
+              }
+            }
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
+    }, {
+      key: 'getFallback',
+      value: function getFallback(fn) {
         var _iteratorNormalCompletion2 = true;
         var _didIteratorError2 = false;
         var _iteratorError2 = undefined;
@@ -339,12 +352,17 @@ var CETEI = (function () {
           for (var _iterator2 = this.behaviors.reverse()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
             var b = _step2.value;
 
-            if (b["handlers"][fn]) {
-              if (Array.isArray(b["handlers"][fn])) {
-                return this.decorator(fn, b["handlers"][fn]);
+            if (b["fallbacks"][fn]) {
+              if (Array.isArray(b["fallbacks"][fn])) {
+                return this.decorator(fn, b["fallbacks"][fn]);
               } else {
-                return b["handlers"][fn];
+                return b["fallbacks"][fn];
               }
+            } else if (b["handlers"][fn] && Array.isArray(b["handlers"][fn])) {
+              return this.decorator(fn, b["handlers"][fn]);
+            } else if (b["handlers"][fn] && b["handlers"][fn].length == 0) {
+              //handler doesn't use element registration callback
+              return b["handlers"][fn];
             }
           }
         } catch (err) {
@@ -363,27 +381,27 @@ var CETEI = (function () {
         }
       }
     }, {
-      key: 'getFallback',
-      value: function getFallback(fn) {
+      key: 'registerAll',
+      value: function registerAll(names) {
         var _iteratorNormalCompletion3 = true;
         var _didIteratorError3 = false;
         var _iteratorError3 = undefined;
 
         try {
-          for (var _iterator3 = this.behaviors.reverse()[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-            var b = _step3.value;
+          for (var _iterator3 = names[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var name = _step3.value;
 
-            if (b["fallbacks"][fn]) {
-              if (Array.isArray(b["fallbacks"][fn])) {
-                return this.decorator(fn, b["fallbacks"][fn]);
-              } else {
-                return b["fallbacks"][fn];
-              }
-            } else if (b["handlers"][fn] && Array.isArray(b["handlers"][fn])) {
-              return this.decorator(fn, b["handlers"][fn]);
-            } else if (b["handlers"][fn] && b["handlers"][fn].length == 0) {
-              //handler doesn't use element registration callback
-              return b["handlers"][fn];
+            var proto = Object.create(HTMLElement.prototype);
+            var fn = this.getHandler(name);
+            if (fn) {
+              fn.call(this, proto);
+            }
+            var prefixedName = "tei-" + name;
+            try {
+              document.registerElement(prefixedName, { prototype: proto });
+            } catch (error) {
+              console.log(prefixedName + " already registered.");
+              console.log(error);
             }
           }
         } catch (err) {
@@ -402,8 +420,8 @@ var CETEI = (function () {
         }
       }
     }, {
-      key: 'registerAll',
-      value: function registerAll(names) {
+      key: 'fallback',
+      value: function fallback(names) {
         var _iteratorNormalCompletion4 = true;
         var _didIteratorError4 = false;
         var _iteratorError4 = undefined;
@@ -412,17 +430,9 @@ var CETEI = (function () {
           for (var _iterator4 = names[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
             var name = _step4.value;
 
-            var proto = Object.create(HTMLElement.prototype);
-            var fn = this.getHandler(name);
+            var fn = this.getFallback(name);
             if (fn) {
-              fn.call(this, proto);
-            }
-            var prefixedName = "tei-" + name;
-            try {
-              document.registerElement(prefixedName, { prototype: proto });
-            } catch (error) {
-              console.log(prefixedName + " already registered.");
-              console.log(error);
+              fn.call(this);
             }
           }
         } catch (err) {
@@ -436,37 +446,6 @@ var CETEI = (function () {
           } finally {
             if (_didIteratorError4) {
               throw _iteratorError4;
-            }
-          }
-        }
-      }
-    }, {
-      key: 'fallback',
-      value: function fallback(names) {
-        var _iteratorNormalCompletion5 = true;
-        var _didIteratorError5 = false;
-        var _iteratorError5 = undefined;
-
-        try {
-          for (var _iterator5 = names[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-            var name = _step5.value;
-
-            var fn = this.getFallback(name);
-            if (fn) {
-              fn.call(this);
-            }
-          }
-        } catch (err) {
-          _didIteratorError5 = true;
-          _iteratorError5 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion5 && _iterator5.return) {
-              _iterator5.return();
-            }
-          } finally {
-            if (_didIteratorError5) {
-              throw _iteratorError5;
             }
           }
         }

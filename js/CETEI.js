@@ -190,109 +190,67 @@ var CETEI = (function () {
           }
           // Copy attributes; @xmlns, @xml:id, @xml:lang, and
           // @rendition get special handling.
-          var _iteratorNormalCompletion = true;
-          var _didIteratorError = false;
-          var _iteratorError = undefined;
-
-          try {
-            for (var _iterator = Array.from(el.attributes)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var att = _step.value;
-
-              if (att.name != "xmlns" || copy) {
-                newElement.setAttribute(att.name, att.value);
-              } else {
-                newElement.setAttribute("data-xmlns", att.value); //Strip default namespaces, but hang on to the values
-              }
-              if (att.name == "xml:id" && !copy) {
-                newElement.setAttribute("id", att.value);
-              }
-              if (att.name == "xml:lang" && !copy) {
-                newElement.setAttribute("lang", att.value);
-              }
-              if (att.name == "rendition") {
-                newElement.setAttribute("class", att.value.replace(/#/g, ""));
-              }
+          for (var i = 0, arr = Array.from(el.attributes); i < arr.length; i++) {
+            var att = arr[i];
+            if (att.name != "xmlns" || copy) {
+              newElement.setAttribute(att.name, att.value);
+            } else {
+              newElement.setAttribute("data-xmlns", att.value); //Strip default namespaces, but hang on to the values
             }
-          } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
-              }
-            } finally {
-              if (_didIteratorError) {
-                throw _iteratorError;
-              }
+            if (att.name == "xml:id" && !copy) {
+              newElement.setAttribute("id", att.value);
+            }
+            if (att.name == "xml:lang" && !copy) {
+              newElement.setAttribute("lang", att.value);
+            }
+            if (att.name == "rendition") {
+              newElement.setAttribute("class", att.value.replace(/#/g, ""));
             }
           }
-
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
-
-          try {
-            for (var _iterator2 = Array.from(el.childNodes)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var _node = _step2.value;
-
-              if (_node.nodeType == Node.ELEMENT_NODE) {
-                newElement.appendChild(convertEl(_node));
-              } else {
-                newElement.appendChild(_node.cloneNode());
-              }
-            }
-            // Turn <rendition scheme="css"> elements into HTML styles
-          } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                _iterator2.return();
-              }
-            } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
-              }
+          for (var _i = 0, _arr = Array.from(el.childNodes); _i < _arr.length; _i++) {
+            var node = _arr[_i];
+            if (node.nodeType == Node.ELEMENT_NODE) {
+              newElement.appendChild(convertEl(node));
+            } else {
+              newElement.appendChild(node.cloneNode());
             }
           }
-
+          // Turn <rendition scheme="css"> elements into HTML styles
           if (el.localName == "tagsDecl") {
             var style = document.createElement("style");
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
 
             try {
-              for (var _iterator3 = Array.from(el.childNodes)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                var node = _step3.value;
+              for (var _iterator = Array.from(el.childNodes)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var _node = _step.value;
 
-                if (node.nodeType == Node.ELEMENT_NODE && node.localName == "rendition" && node.getAttribute("scheme") == "css") {
+                if (_node.nodeType == Node.ELEMENT_NODE && _node.localName == "rendition" && _node.getAttribute("scheme") == "css") {
                   var rule = "";
-                  if (node.hasAttribute("selector")) {
+                  if (_node.hasAttribute("selector")) {
                     //rewrite element names in selectors
-                    rule += node.getAttribute("selector").replace(/([^#, >]+\w*)/g, "tei-$1").replace(/#tei-/g, "#") + "{\n";
-                    rule += node.textContent;
+                    rule += _node.getAttribute("selector").replace(/([^#, >]+\w*)/g, "tei-$1").replace(/#tei-/g, "#") + "{\n";
+                    rule += _node.textContent;
                   } else {
-                    rule += "." + node.getAttribute("xml:id") + "{\n";
-                    rule += node.textContent;
+                    rule += "." + _node.getAttribute("xml:id") + "{\n";
+                    rule += _node.textContent;
                   }
                   rule += "\n}\n";
                   style.appendChild(document.createTextNode(rule));
                 }
               }
             } catch (err) {
-              _didIteratorError3 = true;
-              _iteratorError3 = err;
+              _didIteratorError = true;
+              _iteratorError = err;
             } finally {
               try {
-                if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                  _iterator3.return();
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                  _iterator.return();
                 }
               } finally {
-                if (_didIteratorError3) {
-                  throw _iteratorError3;
+                if (_didIteratorError) {
+                  throw _iteratorError;
                 }
               }
             }
@@ -373,13 +331,13 @@ var CETEI = (function () {
     }, {
       key: 'getHandler',
       value: function getHandler(fn) {
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
 
         try {
-          for (var _iterator4 = this.behaviors.reverse()[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-            var b = _step4.value;
+          for (var _iterator2 = this.behaviors.reverse()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var b = _step2.value;
 
             if (b["handlers"][fn]) {
               if (Array.isArray(b["handlers"][fn])) {
@@ -387,6 +345,84 @@ var CETEI = (function () {
               } else {
                 return b["handlers"][fn];
               }
+            }
+          }
+        } catch (err) {
+          _didIteratorError2 = true;
+          _iteratorError2 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+              _iterator2.return();
+            }
+          } finally {
+            if (_didIteratorError2) {
+              throw _iteratorError2;
+            }
+          }
+        }
+      }
+    }, {
+      key: 'getFallback',
+      value: function getFallback(fn) {
+        var _iteratorNormalCompletion3 = true;
+        var _didIteratorError3 = false;
+        var _iteratorError3 = undefined;
+
+        try {
+          for (var _iterator3 = this.behaviors.reverse()[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var b = _step3.value;
+
+            if (b["fallbacks"][fn]) {
+              if (Array.isArray(b["fallbacks"][fn])) {
+                return this.decorator(fn, b["fallbacks"][fn]);
+              } else {
+                return b["fallbacks"][fn];
+              }
+            } else if (b["handlers"][fn] && Array.isArray(b["handlers"][fn])) {
+              return this.decorator(fn, b["handlers"][fn]);
+            } else if (b["handlers"][fn] && b["handlers"][fn].length == 0) {
+              //handler doesn't use element registration callback
+              return b["handlers"][fn];
+            }
+          }
+        } catch (err) {
+          _didIteratorError3 = true;
+          _iteratorError3 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+              _iterator3.return();
+            }
+          } finally {
+            if (_didIteratorError3) {
+              throw _iteratorError3;
+            }
+          }
+        }
+      }
+    }, {
+      key: 'registerAll',
+      value: function registerAll(names) {
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
+
+        try {
+          for (var _iterator4 = names[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var name = _step4.value;
+
+            var proto = Object.create(HTMLElement.prototype);
+            var fn = this.getHandler(name);
+            if (fn) {
+              fn.call(this, proto);
+            }
+            var prefixedName = "tei-" + name;
+            try {
+              document.registerElement(prefixedName, { prototype: proto });
+            } catch (error) {
+              console.log(prefixedName + " already registered.");
+              console.log(error);
             }
           }
         } catch (err) {
@@ -405,27 +441,19 @@ var CETEI = (function () {
         }
       }
     }, {
-      key: 'getFallback',
-      value: function getFallback(fn) {
+      key: 'fallback',
+      value: function fallback(names) {
         var _iteratorNormalCompletion5 = true;
         var _didIteratorError5 = false;
         var _iteratorError5 = undefined;
 
         try {
-          for (var _iterator5 = this.behaviors.reverse()[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-            var b = _step5.value;
+          for (var _iterator5 = names[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var name = _step5.value;
 
-            if (b["fallbacks"][fn]) {
-              if (Array.isArray(b["fallbacks"][fn])) {
-                return this.decorator(fn, b["fallbacks"][fn]);
-              } else {
-                return b["fallbacks"][fn];
-              }
-            } else if (b["handlers"][fn] && Array.isArray(b["handlers"][fn])) {
-              return this.decorator(fn, b["handlers"][fn]);
-            } else if (b["handlers"][fn] && b["handlers"][fn].length == 0) {
-              //handler doesn't use element registration callback
-              return b["handlers"][fn];
+            var fn = this.getFallback(name);
+            if (fn) {
+              fn.call(this);
             }
           }
         } catch (err) {
@@ -439,76 +467,6 @@ var CETEI = (function () {
           } finally {
             if (_didIteratorError5) {
               throw _iteratorError5;
-            }
-          }
-        }
-      }
-    }, {
-      key: 'registerAll',
-      value: function registerAll(names) {
-        var _iteratorNormalCompletion6 = true;
-        var _didIteratorError6 = false;
-        var _iteratorError6 = undefined;
-
-        try {
-          for (var _iterator6 = names[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-            var name = _step6.value;
-
-            var proto = Object.create(HTMLElement.prototype);
-            var fn = this.getHandler(name);
-            if (fn) {
-              fn.call(this, proto);
-            }
-            var prefixedName = "tei-" + name;
-            try {
-              document.registerElement(prefixedName, { prototype: proto });
-            } catch (error) {
-              console.log(prefixedName + " already registered.");
-              console.log(error);
-            }
-          }
-        } catch (err) {
-          _didIteratorError6 = true;
-          _iteratorError6 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion6 && _iterator6.return) {
-              _iterator6.return();
-            }
-          } finally {
-            if (_didIteratorError6) {
-              throw _iteratorError6;
-            }
-          }
-        }
-      }
-    }, {
-      key: 'fallback',
-      value: function fallback(names) {
-        var _iteratorNormalCompletion7 = true;
-        var _didIteratorError7 = false;
-        var _iteratorError7 = undefined;
-
-        try {
-          for (var _iterator7 = names[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-            var name = _step7.value;
-
-            var fn = this.getFallback(name);
-            if (fn) {
-              fn.call(this);
-            }
-          }
-        } catch (err) {
-          _didIteratorError7 = true;
-          _iteratorError7 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion7 && _iterator7.return) {
-              _iterator7.return();
-            }
-          } finally {
-            if (_didIteratorError7) {
-              throw _iteratorError7;
             }
           }
         }

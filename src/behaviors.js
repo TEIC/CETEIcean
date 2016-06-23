@@ -1,15 +1,6 @@
 export default {
   "handlers": {
-    "ptr": function(proto) {
-      let self = this;
-      proto.createdCallback = function() {
-        let shadow = this.createShadowRoot();
-        let link = document.createElement("a");
-        link.innerHTML = this.getAttribute("target");
-        link.href = self.rewriteRelativeUrl(this.getAttribute("target"));
-        shadow.appendChild(link);
-      }
-    },
+    "ptr": ["<a href=\"@target\">@target</a>","</a>"],
     "ref": function(proto) {
       let self = this;
       proto.createdCallback = function() {
@@ -37,20 +28,6 @@ export default {
     }
   },
   "fallbacks": {
-    "ptr": function() {
-      let self = this;
-      let elts = this.dom.getElementsByTagName("tei-ptr");
-      for (let i = 0; i < elts.length; i++) {
-        let content = document.createElement("a");
-        let elt = elts[i];
-        content.setAttribute("href", elt.getAttribute("target"));
-        content.innerHTML = elt.getAttribute("target");
-        elt.appendChild(content);
-        elt.addEventListener("click", function(event) {
-          window.location = self.rewriteRelativeUrl(this.getAttribute("target"));
-        });
-      }
-    },
     "ref": function() {
       let self = this;
       let elts = this.dom.getElementsByTagName("tei-ref");

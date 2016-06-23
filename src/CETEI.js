@@ -159,29 +159,63 @@ class CETEI {
       }
     }
 
+    _insert(elt, strings) {
+      if (elt.createShadowRoot) {
+        let shadow = elt.createShadowRoot();
+        if (strings.length > 1) {
+          shadow.innerHTML = strings[0] + shadow.innerHTML + strings[1];
+        } else {
+          shadow.innerHTML = strings[0] + shadow.innerHTML;
+        }
+      } else {
+        let span = document.createElement("span");
+        span.innerHTML = strings[0];
+        if (elt.insertAdjacentElement) {
+          elt.insertAdjacentElement("afterbegin",span);
+        } else {
+          if (elt.firstChild) {
+            elt.insertBefore(span, elt.firstChild);
+          } else {
+            elt.appendChild(span);
+          }
+        }
+        if (strings.length > 1) {
+          span = document.createElement("span"),
+          span.innerHTML = strings[1];
+          elt.appendChild(span);
+        }
+      }
+    }
+
     decorator(fn, strings) {
       return function() {
         let elts = this.dom.getElementsByTagName("tei-" + fn);
         for (let i = 0; i < elts.length; i++) {
           let elt = elts[i];
-          let span = document.createElement("span");
-          span.innerHTML = strings[0];
-          if (elt.insertAdjacentElement) {
-            elt.insertAdjacentElement("afterbegin",span);
-          } else {
-            if (elt.firstChild) {
-              elt.insertBefore(span, elt.firstChild);
-            } else {
-              elt.appendChild(span);
+          for (let i = 0; i < strings.length; i++) {
+            if (strings[i].includes("@")) {
+              let replacements = strings[i].match(/(@\w+)/);
+              for (let r of replacements) {
+                if (elt.hasAttribute(r.substring(1))) {
+                  strings[i] = strings[i].replace(/@\w+/, elt.getAttribute(r.substring(1)));
+                }
+              }
             }
           }
-
-          if (strings.length > 1) {
-            span = document.createElement("span"),
-            span.innerHTML = strings[1];
-            elt.appendChild(span);
-          }
+          this._insert(elt, strings);
         }
+      }
+    }
+
+    createdCallback(proto, fn) {
+      proto.createdCallback = fn.call(this);
+    }
+
+    shadow(self, fn) {
+      return function() {
+        let shadow = this.createShadowRoot();
+        let child = fn.call(this);
+        shadow.appendChild(child);
       }
     }
 

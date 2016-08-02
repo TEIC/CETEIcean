@@ -1,11 +1,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="css/CETEIcean.css" media="screen" charset="utf-8">
+    <link rel="stylesheet" href="CETEIcean.css" media="screen" charset="utf-8">
   </head>
   <body>
     <div id="TEI">
-      Sadly, this page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.
+      Sadly, this page will not work in Internet Explorer, due to its outdated Javascript support. We suggest you use Chrome or Firefox.
     </div>
     <script src="js/CETEI.js"></script>
     <script>
@@ -23,8 +23,8 @@
        ***********************************/
       c.addBehaviors({"handlers":{
         // Overrides the default ptr behavior, displaying a short link
-        "ptr": function(proto) {
-          proto.createdCallback = function() {
+        "ptr": function() {
+          return function() {
             var shadow = this.createShadowRoot();
             var link = document.createElement("a");
             link.innerHTML = this.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
@@ -33,8 +33,8 @@
           }
         },
         // Adds a new handler for <term>, wrapping it in an HTML <b>
-        "term": function(proto) {
-          proto.createdCallback = function() {
+        "term": function() {
+          return function() {
             var shadow = this.createShadowRoot();
             var b = document.createElement("b");
             b.innerHTML = this.innerHTML;
@@ -45,30 +45,22 @@
         "add": ["`","´"]
       },
       "fallbacks": {
-        "ptr": function() {
-          var elts = this.dom.getElementsByTagName("tei-ptr");
-          for (var i = 0; i < elts.length; i++) {
-            var content = document.createElement("a");
-            var elt = elts[i];
-            content.setAttribute("href", elt.getAttribute("target"));
-            content.innerHTML = elt.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
-            elt.appendChild(content);
-            elt.addEventListener("click", function(event) {
-              window.location = this.getAttribute("target");
-            });
-          }
+        "ptr": function(elt) {
+          var content = document.createElement("a");
+          content.setAttribute("href", elt.getAttribute("target"));
+          content.innerHTML = elt.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
+          elt.appendChild(content);
+          elt.addEventListener("click", function(event) {
+            window.location = this.getAttribute("target");
+          });
         },
         // Note that this would be better done with CSS. Included for completeness.
-        "term": function() {
-          var elts = this.dom.getElementsByTagName("tei-term");
-          for (var i = 0; i < elts.length; i++) {
-            elts[i].setAttribute("style", "font-weight: bold");
-          }
+        "term": function(elt) {
+            elt.setAttribute("style", "font-weight: bold");
         }
 
       }});
       c.getHTML5('testTEI.xml', function(data) {
-        document.getElementById("TEI").innerHTML = "";
         document.getElementById("TEI").appendChild(data);
       });
 

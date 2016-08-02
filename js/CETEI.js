@@ -31,32 +31,17 @@ var CETEI = (function () {
 
   var behaviors = {
     "handlers": {
-      "ptr": function ptr(proto) {
-        var self = this;
-        proto.createdCallback = function () {
-          var shadow = this.createShadowRoot();
-          var link = document.createElement("a");
-          link.innerHTML = this.getAttribute("target");
-          link.href = self.rewriteRelativeUrl(this.getAttribute("target"));
-          shadow.appendChild(link);
-        };
-      },
-      "ref": function ref(proto) {
-        var self = this;
-        proto.createdCallback = function () {
-          var shadow = this.createShadowRoot();
-          var link = document.createElement("a");
-          link.innerHTML = this.innerHTML;
-          link.href = self.rewriteRelativeUrl(this.getAttribute("target"));
-          shadow.appendChild(link);
-        };
-      },
-      "graphic": function graphic(proto) {
-        var self = this;
-        proto.createdCallback = function () {
+      // inserts a link inside <ptr> using the @target; the link in the
+      // @href is piped through the rw (rewrite) function before insertion
+      "ptr": ["<a href=\"$rw@target\">$@target</a>"],
+      // wraps the content of the <ref> in an HTML link
+      "ref": ["<a href=\"$rw@target\">", "</a>"],
+      "graphic": function graphic() {
+        var ceteicean = this;
+        return function () {
           var shadow = this.createShadowRoot();
           var img = new Image();
-          img.src = self.rewriteRelativeUrl(this.getAttribute("url"));
+          img.src = ceteicean.rw(this.getAttribute("url"));
           if (this.hasAttribute("width")) {
             img.width = this.getAttribute("width").replace(/[^.0-9]/g, "");
           }
@@ -68,44 +53,23 @@ var CETEI = (function () {
       }
     },
     "fallbacks": {
-      "ptr": function ptr() {
-        var self = this;
-        var elts = this.dom.getElementsByTagName("tei-ptr");
-        for (var i = 0; i < elts.length; i++) {
-          var content = document.createElement("a");
-          var elt = elts[i];
-          content.setAttribute("href", elt.getAttribute("target"));
-          content.innerHTML = elt.getAttribute("target");
-          elt.appendChild(content);
-          elt.addEventListener("click", function (event) {
-            window.location = self.rewriteRelativeUrl(this.getAttribute("target"));
-          });
-        }
+      "ref": function ref(elt) {
+        var ceteicean = this;
+        elt.addEventListener("click", function (event) {
+          window.location = ceteicean.rw(elt.getAttribute("target"));
+        });
       },
-      "ref": function ref() {
-        var self = this;
-        var elts = this.dom.getElementsByTagName("tei-ref");
-        for (var i = 0; i < elts.length; i++) {
-          elts[i].addEventListener("click", function (event) {
-            window.location = self.rewriteRelativeUrl(this.getAttribute("target"));
-          });
+      "graphic": function graphic(elt) {
+        var ceteicean = this;
+        var content = new Image();
+        content.src = ceteicean.rw(this.getAttribute("url"));
+        if (elt.hasAttribute("width")) {
+          content.width = elt.getAttribute("width").replace(/[^.0-9]/g, "");
         }
-      },
-      "graphic": function graphic() {
-        var self = this;
-        var elts = this.dom.getElementsByTagName("tei-graphic");
-        for (var i = 0; i < elts.length; i++) {
-          var content = new Image();
-          var elt = elts[i];
-          content.src = self.rewriteRelativeUrl(this.getAttribute("url"));
-          if (elt.hasAttribute("width")) {
-            content.width = elt.getAttribute("width").replace(/[^.0-9]/g, "");
-          }
-          if (elt.hasAttribute("height")) {
-            content.height = elt.getAttribute("height").replace(/[^.0-9]/g, "");
-          }
-          elt.appendChild(content);
+        if (elt.hasAttribute("height")) {
+          content.height = elt.getAttribute("height").replace(/[^.0-9]/g, "");
         }
+        elt.appendChild(content);
       }
     }
   };
@@ -123,7 +87,6 @@ var CETEI = (function () {
       } else {
         this.base = window.location.href.replace(/\/[^\/]*$/, "/");
       }
-      var methods = Object.getOwnPropertyNames(CETEI.prototype);
       this.behaviors.push(behaviors);
     }
 
@@ -190,50 +153,113 @@ var CETEI = (function () {
           }
           // Copy attributes; @xmlns, @xml:id, @xml:lang, and
           // @rendition get special handling.
-          for (var i = 0, arr = Array.from(el.attributes); i < arr.length; i++) {
-            var att = arr[i];
-            if (att.name != "xmlns" || copy) {
-              newElement.setAttribute(att.name, att.value);
-            } else {
-              newElement.setAttribute("data-xmlns", att.value); //Strip default namespaces, but hang on to the values
-            }
-            if (att.name == "xml:id" && !copy) {
-              newElement.setAttribute("id", att.value);
-            }
-            if (att.name == "xml:lang" && !copy) {
-              newElement.setAttribute("lang", att.value);
-            }
-            if (att.name == "rendition") {
-              newElement.setAttribute("class", att.value.replace(/#/g, ""));
-            }
-          }
-          for (var _i = 0, _arr = Array.from(el.childNodes); _i < _arr.length; _i++) {
-            var node = _arr[_i];
-            if (node.nodeType == Node.ELEMENT_NODE) {
-              newElement.appendChild(convertEl(node));
-            } else {
-              newElement.appendChild(node.cloneNode());
-            }
-          }
-          // Turn <rendition scheme="css"> elements into HTML styles
-          if (el.localName == "tagsDecl") {
-            var style = document.createElement("style");
-            for (var _i2 = 0, _arr2 = Array.from(el.childNodes); _i2 < _arr2.length; _i2++) {
-              var _node = _arr2[_i2];
-              if (_node.nodeType == Node.ELEMENT_NODE && _node.localName == "rendition" && _node.getAttribute("scheme") == "css") {
-                var rule = "";
-                if (_node.hasAttribute("selector")) {
-                  //rewrite element names in selectors
-                  rule += _node.getAttribute("selector").replace(/([^#, >]+\w*)/g, "tei-$1").replace(/#tei-/g, "#") + "{\n";
-                  rule += _node.textContent;
-                } else {
-                  rule += "." + _node.getAttribute("xml:id") + "{\n";
-                  rule += _node.textContent;
-                }
-                rule += "\n}\n";
-                style.appendChild(document.createTextNode(rule));
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+            for (var _iterator = Array.from(el.attributes)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var att = _step.value;
+
+              if (att.name != "xmlns" || copy) {
+                newElement.setAttribute(att.name, att.value);
+              } else {
+                newElement.setAttribute("data-xmlns", att.value); //Strip default namespaces, but hang on to the values
+              }
+              if (att.name == "xml:id" && !copy) {
+                newElement.setAttribute("id", att.value);
+              }
+              if (att.name == "xml:lang" && !copy) {
+                newElement.setAttribute("lang", att.value);
+              }
+              if (att.name == "rendition") {
+                newElement.setAttribute("class", att.value.replace(/#/g, ""));
               }
             }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
+            }
+          }
+
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
+
+          try {
+            for (var _iterator2 = Array.from(el.childNodes)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var _node = _step2.value;
+
+              if (_node.nodeType == Node.ELEMENT_NODE) {
+                newElement.appendChild(convertEl(_node));
+              } else {
+                newElement.appendChild(_node.cloneNode());
+              }
+            }
+            // Turn <rendition scheme="css"> elements into HTML styles
+          } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
+              }
+            } finally {
+              if (_didIteratorError2) {
+                throw _iteratorError2;
+              }
+            }
+          }
+
+          if (el.localName == "tagsDecl") {
+            var style = document.createElement("style");
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+              for (var _iterator3 = Array.from(el.childNodes)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                var node = _step3.value;
+
+                if (node.nodeType == Node.ELEMENT_NODE && node.localName == "rendition" && node.getAttribute("scheme") == "css") {
+                  var rule = "";
+                  if (node.hasAttribute("selector")) {
+                    //rewrite element names in selectors
+                    rule += node.getAttribute("selector").replace(/([^#, >]+\w*)/g, "tei-$1").replace(/#tei-/g, "#") + "{\n";
+                    rule += node.textContent;
+                  } else {
+                    rule += "." + node.getAttribute("xml:id") + "{\n";
+                    rule += node.textContent;
+                  }
+                  rule += "\n}\n";
+                  style.appendChild(document.createTextNode(rule));
+                }
+              }
+            } catch (err) {
+              _didIteratorError3 = true;
+              _iteratorError3 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                  _iterator3.return();
+                }
+              } finally {
+                if (_didIteratorError3) {
+                  throw _iteratorError3;
+                }
+              }
+            }
+
             if (style.childNodes.length > 0) {
               newElement.appendChild(style);
               _this2.hasStyle = true;
@@ -257,7 +283,7 @@ var CETEI = (function () {
         }
 
         if (callback) {
-          callback(this.dom);
+          callback(this.dom, this);
         } else {
           return this.dom;
         }
@@ -282,41 +308,79 @@ var CETEI = (function () {
         }
       }
     }, {
-      key: 'decorator',
-      value: function decorator(fn, strings) {
-        return function () {
-          var elts = this.dom.getElementsByTagName("tei-" + fn);
-          for (var i = 0; i < elts.length; i++) {
-            var elt = elts[i];
-            var span = document.createElement("span");
-            span.innerHTML = strings[0];
-            if (elt.insertAdjacentElement) {
-              elt.insertAdjacentElement("afterbegin", span);
+      key: '_insert',
+      value: function _insert(elt, strings) {
+        if (elt.createShadowRoot) {
+          var shadow = elt.createShadowRoot();
+          shadow.innerHTML = strings[0] + elt.innerHTML + (strings[1] ? strings[1] : "");
+        } else {
+          var span = void 0;
+          if (strings.length > 1) {
+            if (strings[0].includes("<") && strings[1].includes("</")) {
+              elt.innerHTML = strings[0] + elt.innerHTML + strings[1];
             } else {
-              if (elt.firstChild) {
-                elt.insertBefore(span, elt.firstChild);
-              } else {
-                elt.appendChild(span);
-              }
+              elt.innerHTML = "<span>" + strings[0] + "</span>" + elt.innerHTML + "<span>" + strings[1] + "</span>";
             }
-
-            if (strings.length > 1) {
-              span = document.createElement("span"), span.innerHTML = strings[1];
-              elt.appendChild(span);
+          } else {
+            if (strings[0].includes("<")) {
+              elt.innerHTML = strings[0] + elt.innerHTML;
+            } else {
+              elt.innerHTML = "<span>" + strings[0] + "</span>" + elt.innerHTML;
             }
           }
+        }
+      }
+    }, {
+      key: '_template',
+      value: function _template(str, elt) {
+        var result = str;
+        if (str.search(/$(\w*)@(\w+)/)) {
+          var re = /\$(\w*)@(\w+)/g;
+          var replacements = void 0;
+          while (replacements = re.exec(str)) {
+            if (elt.hasAttribute(replacements[2])) {
+              if (replacements[1] && this[replacements[1]]) {
+                result = result.replace(replacements[0], this[replacements[1]].call(this, elt.getAttribute(replacements[2])));
+              } else {
+                result = result.replace(replacements[0], elt.getAttribute(replacements[2]));
+              }
+            }
+          }
+        }
+        return result;
+      }
+
+      /* Takes a template in the form of an array of 1 or 2 strings and
+         returns a closure around a function that can be called as
+         a createdCallback or applied to an individual element.
+      */
+
+    }, {
+      key: 'decorator',
+      value: function decorator(strings) {
+        return function () {
+          var ceteicean = this;
+          return function (elt) {
+            var copy = [];
+            if (this != ceteicean) {
+              elt = this;
+            }
+            for (var i = 0; i < strings.length; i++) {
+              copy.push(ceteicean._template(strings[i], elt));
+            }
+            ceteicean._insert(elt, copy);
+          };
         };
       }
     }, {
       key: 'getHandler',
       value: function getHandler(fn) {
-        for (var i = 0, bhs = this.behaviors.reverse(); i < bhs.length; i++) {
-          var b = bhs[i];
-          if (b["handlers"][fn]) {
-            if (Array.isArray(b["handlers"][fn])) {
-              return this.decorator(fn, b["handlers"][fn]);
+        for (var i = this.behaviors.length - 1; i >= 0; i--) {
+          if (this.behaviors[i]["handlers"][fn]) {
+            if (Array.isArray(this.behaviors[i]["handlers"][fn])) {
+              return this.decorator(this.behaviors[i]["handlers"][fn]);
             } else {
-              return b["handlers"][fn];
+              return this.behaviors[i]["handlers"][fn];
             }
           }
         }
@@ -324,57 +388,56 @@ var CETEI = (function () {
     }, {
       key: 'getFallback',
       value: function getFallback(fn) {
-        for (var i = 0, bhs = this.behaviors.reverse(); i < bhs.length; i++) {
-          var b = bhs[i];
-          if (b["fallbacks"][fn]) {
-            if (Array.isArray(b["fallbacks"][fn])) {
-              return this.decorator(fn, b["fallbacks"][fn]);
+        for (var i = this.behaviors.length - 1; i >= 0; i--) {
+          if (this.behaviors[i]["fallbacks"][fn]) {
+            if (Array.isArray(this.behaviors[i]["fallbacks"][fn])) {
+              return this.decorator(this.behaviors[i]["fallbacks"][fn]).call(this);
             } else {
-              return b["fallbacks"][fn];
+              return this.behaviors[i]["fallbacks"][fn];
             }
-          } else if (b["handlers"][fn] && Array.isArray(b["handlers"][fn])) {
-            return this.decorator(fn, b["handlers"][fn]);
-          } else if (b["handlers"][fn] && b["handlers"][fn].length == 0) {
-            //handler doesn't use element registration callback
-            return b["handlers"][fn];
+          } else if (this.behaviors[i]["handlers"][fn] && Array.isArray(this.behaviors[i]["handlers"][fn])) {
+            // if there's a handler template, we can construct a fallback function
+            return this.decorator(this.behaviors[i]["handlers"][fn]).call(this);
+          } else if (this.behaviors[i]["handlers"][fn] && this.behaviors[i]["handlers"][fn].call(this).length == 1) {
+            return this.behaviors[i]["handlers"][fn].call(this);
           }
         }
       }
     }, {
       key: 'registerAll',
       value: function registerAll(names) {
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
 
         try {
-          for (var _iterator = names[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var name = _step.value;
+          for (var _iterator4 = names[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var name = _step4.value;
 
             var proto = Object.create(HTMLElement.prototype);
             var fn = this.getHandler(name);
             if (fn) {
-              fn.call(this, proto);
+              proto.createdCallback = fn.call(this);
             }
             var prefixedName = "tei-" + name;
             try {
               document.registerElement(prefixedName, { prototype: proto });
             } catch (error) {
-              console.log(prefixedName + " already registered.");
+              console.log(prefixedName + " couldn't be registered or is already registered.");
               console.log(error);
             }
           }
         } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
+          _didIteratorError4 = true;
+          _iteratorError4 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
+            if (!_iteratorNormalCompletion4 && _iterator4.return) {
+              _iterator4.return();
             }
           } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
+            if (_didIteratorError4) {
+              throw _iteratorError4;
             }
           }
         }
@@ -382,30 +445,53 @@ var CETEI = (function () {
     }, {
       key: 'fallback',
       value: function fallback(names) {
-        var _iteratorNormalCompletion2 = true;
-        var _didIteratorError2 = false;
-        var _iteratorError2 = undefined;
+        var _iteratorNormalCompletion5 = true;
+        var _didIteratorError5 = false;
+        var _iteratorError5 = undefined;
 
         try {
-          for (var _iterator2 = names[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var name = _step2.value;
+          for (var _iterator5 = names[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var name = _step5.value;
 
             var fn = this.getFallback(name);
             if (fn) {
-              fn.call(this);
+              var _iteratorNormalCompletion6 = true;
+              var _didIteratorError6 = false;
+              var _iteratorError6 = undefined;
+
+              try {
+                for (var _iterator6 = Array.from(this.dom.getElementsByTagName("tei-" + name))[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                  var elt = _step6.value;
+
+                  fn.call(this, elt);
+                }
+              } catch (err) {
+                _didIteratorError6 = true;
+                _iteratorError6 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                    _iterator6.return();
+                  }
+                } finally {
+                  if (_didIteratorError6) {
+                    throw _iteratorError6;
+                  }
+                }
+              }
             }
           }
         } catch (err) {
-          _didIteratorError2 = true;
-          _iteratorError2 = err;
+          _didIteratorError5 = true;
+          _iteratorError5 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-              _iterator2.return();
+            if (!_iteratorNormalCompletion5 && _iterator5.return) {
+              _iterator5.return();
             }
           } finally {
-            if (_didIteratorError2) {
-              throw _iteratorError2;
+            if (_didIteratorError5) {
+              throw _iteratorError5;
             }
           }
         }
@@ -415,9 +501,13 @@ var CETEI = (function () {
       value: function setBaseUrl(base) {
         this.base = base;
       }
+
+      /* Takes a relative URL and rewrites it based on the base URL of the
+         HTML document */
+
     }, {
-      key: 'rewriteRelativeUrl',
-      value: function rewriteRelativeUrl(url) {
+      key: 'rw',
+      value: function rw(url) {
         if (!url.match(/^(?:http|mailto|file|\/).*$/)) {
           return this.base + url;
         } else {

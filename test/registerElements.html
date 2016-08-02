@@ -15,10 +15,9 @@
 
       var CETEIcean = new CETEI();
 
-      CETEIcean.registerAll(els);
-
       if (document.registerElement) {
-        if (document.createElement("tei-TEI").constructor == HTMLElement) {
+        CETEIcean.registerAll(els);
+        if (document.createElement("tei-TEI") instanceof HTMLElement) {
           console.log("tei-TEI correctly registered without conflict");
         }
       }

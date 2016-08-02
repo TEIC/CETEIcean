@@ -332,7 +332,7 @@ var copyEvents = function(elt1, elt2) {
 
 var loadSection = function(id, ceteicean) {
 	var stamp = Date.now();
-	$("tei-div[type=textpart],tei-sourceDesc,tei-front").css("display", "none");
+	$("tei-div1[type=volume]").css("display", "none");
 	if (id) {
 		section = $(id);
 	} else {
@@ -485,20 +485,4 @@ var loadData = function(data, ceteicean) {
 	// If a section is specified, then show that one and load it up;
 	// otherwise load the first one.
 	loadSection(section, ceteicean);
-	//Add navigation header
-	var nav = $("<div/>", {id:"navigation"});
-	nav.html("<h2>Contents:</h2><ul></ul>");
-	nav.appendTo("body");
-	nav.find("ul").append("<li><a href=\"#front\">Front Matter</a></li>");
-	$("tei-div[type=textpart]").each(function(i, elt) {
-		nav.find("ul").append("<li><a href=\"#" + $(elt).attr("id") + "\">" + $(elt).find("tei-head").html() + "</a></li>");
-	});
-	// Add event listeners to ToC
-	$("div#navigation a").click(function(evt) {
-		$("div#navigation a.clicked").removeClass("clicked");
-		var elt = $(evt.target).addClass("clicked");
-		$("span.apps").remove();
-		loadSection($(evt.target).attr("href"));
-		return false;
-	});
 }

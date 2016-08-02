@@ -11,11 +11,7 @@
     <script src="js/appcrit.js" charset="utf-8"></script>
     <script>
       var CETEIcean = new CETEI();
-      CETEIcean.getHTML5('https://raw.githubusercontent.com/srophe/draft-data/master/data/works/BYU%20Syriac%20Electronic%20Corpus/32excerpt.xml', function(data) {
-        document.getElementById("TEI").innerHTML = "";
-        document.getElementById("TEI").appendChild(data);
-        CETEIcean.addStyle(document, data);
-      });
+      CETEIcean.getHTML5('https://raw.githubusercontent.com/srophe/draft-data/master/data/works/BYU%20Syriac%20Electronic%20Corpus/32excerpt.xml', loadData);
 
       // Alternatively, use then()
       // (new CETEI).getHTML5('testTEI.xml').then(function(data){

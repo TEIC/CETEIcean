@@ -1,22 +1,16 @@
 export default {
   "handlers": {
-    "ptr": ["<a href=\"@target\">@target</a>","</a>"],
-    "ref": function(proto) {
-      let self = this;
-      proto.createdCallback = function() {
-        let shadow = this.createShadowRoot();
-        let link = document.createElement("a");
-        link.innerHTML = this.innerHTML;
-        link.href = self.rewriteRelativeUrl(this.getAttribute("target"));
-        shadow.appendChild(link);
-      }
-    },
-    "graphic": function(proto) {
-      let self = this;
-      proto.createdCallback = function() {
+    // inserts a link inside <ptr> using the @target; the link in the
+    // @href is piped through the rw (rewrite) function before insertion
+    "ptr": ["<a href=\"$rw@target\">$@target</a>"],
+    // wraps the content of the <ref> in an HTML link
+    "ref": ["<a href=\"$rw@target\">","</a>"],
+    "graphic": function() {
+      let ceteicean = this;
+      return function() {
         let shadow = this.createShadowRoot();
         let img = new Image();
-        img.src = self.rewriteRelativeUrl(this.getAttribute("url"));
+        img.src = ceteicean.rw(this.getAttribute("url"));
         if (this.hasAttribute("width")) {
           img.width = this.getAttribute("width").replace(/[^.0-9]/g, "");
         }
@@ -28,30 +22,23 @@ export default {
     }
   },
   "fallbacks": {
-    "ref": function() {
-      let self = this;
-      let elts = this.dom.getElementsByTagName("tei-ref");
-      for (let i = 0; i < elts.length; i++) {
-        elts[i].addEventListener("click", function(event) {
-          window.location = self.rewriteRelativeUrl(this.getAttribute("target"));
-        });
-      }
+    "ref": function(elt) {
+      let ceteicean = this;
+      elt.addEventListener("click", function(event) {
+        window.location = ceteicean.rw(ceteicean.getAttribute("target"));
+      });
     },
-    "graphic": function() {
-      let self = this;
-      let elts = this.dom.getElementsByTagName("tei-graphic");
-      for (let i = 0; i < elts.length; i++) {
-        let content = new Image();
-        let elt = elts[i];
-        content.src = self.rewriteRelativeUrl(this.getAttribute("url"));
-        if (elt.hasAttribute("width")) {
-          content.width = elt.getAttribute("width").replace(/[^.0-9]/g, "");
-        }
-        if (elt.hasAttribute("height")) {
-          content.height = elt.getAttribute("height").replace(/[^.0-9]/g, "");
-        }
-        elt.appendChild(content);
+    "graphic": function(elt) {
+      let ceteicean = this;
+      let content = new Image();
+      content.src = ceteicean.rw(this.getAttribute("url"));
+      if (elt.hasAttribute("width")) {
+        content.width = elt.getAttribute("width").replace(/[^.0-9]/g, "");
       }
+      if (elt.hasAttribute("height")) {
+        content.height = elt.getAttribute("height").replace(/[^.0-9]/g, "");
+      }
+      elt.appendChild(content);
     }
   }
 }

@@ -137,7 +137,7 @@ class CETEI {
       }
 
       if (callback) {
-          callback(this.dom);
+          callback(this.dom, this);
       }
       else {
           return this.dom;
@@ -162,87 +162,85 @@ class CETEI {
     _insert(elt, strings) {
       if (elt.createShadowRoot) {
         let shadow = elt.createShadowRoot();
-        if (strings.length > 1) {
-          shadow.innerHTML = strings[0] + shadow.innerHTML + strings[1];
-        } else {
-          shadow.innerHTML = strings[0] + shadow.innerHTML;
-        }
+        shadow.innerHTML = strings[0] + shadow.innerHTML + strings[1]?strings[1]:"";
       } else {
-        let span = document.createElement("span");
-        span.innerHTML = strings[0];
-        if (elt.insertAdjacentElement) {
-          elt.insertAdjacentElement("afterbegin",span);
-        } else {
-          if (elt.firstChild) {
-            elt.insertBefore(span, elt.firstChild);
-          } else {
-            elt.appendChild(span);
-          }
-        }
+        let span;
         if (strings.length > 1) {
-          span = document.createElement("span"),
-          span.innerHTML = strings[1];
-          elt.appendChild(span);
+          if (strings[0].includes("<") && strings[1].includes("</")) {
+            elt.innerHTML = strings[0] + elt.innerHTML + strings[1];
+          } else {
+            elt.innerHTML = "<span>" + strings[0] + "</span>" + elt.innerHTML + "<span>" + strings[1] + "</span>";
+          }
+        } else {
+          if (strings[0].includes("<")) {
+            elt.innerHTML = strings[0] + elt.innerHTML;
+          } else {
+            elt.innerHTML = "<span>" + strings[0] + "</span>" + elt.innerHTML;
+          }
         }
       }
     }
 
-    decorator(fn, strings) {
-      return function() {
-        let elts = this.dom.getElementsByTagName("tei-" + fn);
-        for (let i = 0; i < elts.length; i++) {
-          let elt = elts[i];
-          for (let i = 0; i < strings.length; i++) {
-            if (strings[i].includes("@")) {
-              let replacements = strings[i].match(/(@\w+)/);
-              for (let r of replacements) {
-                if (elt.hasAttribute(r.substring(1))) {
-                  strings[i] = strings[i].replace(/@\w+/, elt.getAttribute(r.substring(1)));
-                }
-              }
+    _template(str, elt) {
+      let result = str;
+      if (str.search(/$(\w*)@(\w+)/)) {
+        let re = /\$(\w*)@(\w+)/g;
+        let replacements;
+        while (replacements = re.exec(str)) {
+          if (elt.hasAttribute(replacements[2])) {
+            if (replacements[1] && this[replacements[1]]) {
+              result = result.replace(replacements[0], this[replacements[1]].call(this, elt.getAttribute(replacements[2])));
+            } else {
+              result = result.replace(replacements[0], elt.getAttribute(replacements[2]));
             }
           }
-          this._insert(elt, strings);
         }
       }
+      return result;
     }
 
-    createdCallback(proto, fn) {
-      proto.createdCallback = fn.call(this);
-    }
-
-    shadow(self, fn) {
+    /* Takes a template in the form of an array of 1 or 2 strings and
+       returns a closure around a function that can be called as
+       a createdCallback or applied to an individual element.
+    */
+    decorator(strings) {
       return function() {
-        let shadow = this.createShadowRoot();
-        let child = fn.call(this);
-        shadow.appendChild(child);
+        let ceteicean = this;
+        return function (elt) {
+          if (this != ceteicean) {
+            elt = this;
+          }
+          for (let i = 0; i < strings.length; i++) {
+            strings[i] = ceteicean._template(strings[i], elt);
+          }
+          ceteicean._insert(elt, strings);
+        }
       }
     }
 
     getHandler(fn) {
-      for (let b of this.behaviors.reverse()) {
-        if (b["handlers"][fn]) {
-          if (Array.isArray(b["handlers"][fn])) {
-            return this.decorator(fn, b["handlers"][fn]);
+      for (let i = this.behaviors.length - 1; i >= 0; i--) {
+        if (this.behaviors[i]["handlers"][fn]) {
+          if (Array.isArray(this.behaviors[i]["handlers"][fn])) {
+            return this.decorator(this.behaviors[i]["handlers"][fn]);
           } else {
-            return b["handlers"][fn];
+            return this.behaviors[i]["handlers"][fn];
           }
         }
       }
     }
 
     getFallback(fn) {
-      for (let b of this.behaviors.reverse()) {
-        if (b["fallbacks"][fn]) {
-          if (Array.isArray(b["fallbacks"][fn])) {
-            return this.decorator(fn, b["fallbacks"][fn]);
+      for (let i = this.behaviors.length - 1; i >= 0; i--) {
+        if (this.behaviors[i]["fallbacks"][fn]) {
+          if (Array.isArray(this.behaviors[i]["fallbacks"][fn])) {
+            return this.decorator(this.behaviors[i]["fallbacks"][fn]);
           } else {
-            return b["fallbacks"][fn];
+            return this.behaviors[i]["fallbacks"][fn];
           }
-        } else if (b["handlers"][fn] && Array.isArray(b["handlers"][fn])) {
-          return this.decorator(fn, b["handlers"][fn]);
-        } else if (b["handlers"][fn] && b["handlers"][fn].length == 0) { //handler doesn't use element registration callback
-          return b["handlers"][fn];
+        } else if (this.behaviors[i]["handlers"][fn] && Array.isArray(this.behaviors[i]["handlers"][fn])) {
+          // if there's a handler template, we can construct a fallback function
+          return this.decorator(this.behaviors[i]["handlers"][fn]);
         }
       }
     }
@@ -252,7 +250,7 @@ class CETEI {
         let proto = Object.create(HTMLElement.prototype);
         let fn = this.getHandler(name);
         if (fn) {
-          fn.call(this, proto);
+          proto.createdCallback = fn.call(this);
         }
         let prefixedName = "tei-" + name;
         try {
@@ -269,7 +267,9 @@ class CETEI {
       for (let name of names) {
         let fn = this.getFallback(name);
         if (fn) {
-          fn.call(this);
+          for (let elt of Array.from(this.dom.getElementsByTagName("tei-" + name))) {
+            fn.call(this, elt);
+          }
         }
       }
     }
@@ -278,7 +278,9 @@ class CETEI {
       this.base = base;
     }
 
-    rewriteRelativeUrl(url) {
+    /* Takes a relative URL and rewrites it based on the base URL of the
+       HTML document */
+    rw(url) {
       if (!url.match(/^(?:http|mailto|file|\/).*$/)) {
         return this.base + url;
       } else {

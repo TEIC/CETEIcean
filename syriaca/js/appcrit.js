@@ -336,7 +336,7 @@ var loadSection = function(id, ceteicean) {
 	if (id) {
 		section = $(id);
 	} else {
-		section = $($("tei-div[type=textpart]")[0]);
+		section = $($("tei-div1[type=volume]")[0]);
 	}
 	section.css("display", "block");
 

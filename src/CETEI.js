@@ -162,7 +162,7 @@ class CETEI {
     _insert(elt, strings) {
       if (elt.createShadowRoot) {
         let shadow = elt.createShadowRoot();
-        shadow.innerHTML = strings[0] + shadow.innerHTML + strings[1]?strings[1]:"";
+        shadow.innerHTML = strings[0] + elt.innerHTML + (strings[1]?strings[1]:"");
       } else {
         let span;
         if (strings.length > 1) {
@@ -207,13 +207,14 @@ class CETEI {
       return function() {
         let ceteicean = this;
         return function (elt) {
+          let copy = [];
           if (this != ceteicean) {
             elt = this;
           }
           for (let i = 0; i < strings.length; i++) {
-            strings[i] = ceteicean._template(strings[i], elt);
+            copy.push(ceteicean._template(strings[i], elt));
           }
-          ceteicean._insert(elt, strings);
+          ceteicean._insert(elt, copy);
         }
       }
     }
@@ -234,13 +235,15 @@ class CETEI {
       for (let i = this.behaviors.length - 1; i >= 0; i--) {
         if (this.behaviors[i]["fallbacks"][fn]) {
           if (Array.isArray(this.behaviors[i]["fallbacks"][fn])) {
-            return this.decorator(this.behaviors[i]["fallbacks"][fn]);
+            return this.decorator(this.behaviors[i]["fallbacks"][fn]).call(this);
           } else {
             return this.behaviors[i]["fallbacks"][fn];
           }
         } else if (this.behaviors[i]["handlers"][fn] && Array.isArray(this.behaviors[i]["handlers"][fn])) {
           // if there's a handler template, we can construct a fallback function
-          return this.decorator(this.behaviors[i]["handlers"][fn]);
+          return this.decorator(this.behaviors[i]["handlers"][fn]).call(this);
+        } else if (this.behaviors[i]["handlers"][fn] && this.behaviors[i]["handlers"][fn].call(this).length == 1) {
+          return this.behaviors[i]["handlers"][fn].call(this);
         }
       }
     }
@@ -256,7 +259,7 @@ class CETEI {
         try {
           document.registerElement(prefixedName, {prototype: proto});
         } catch (error) {
-          console.log(prefixedName + " already registered.");
+          console.log(prefixedName + " couldn't be registered or is already registered.");
           console.log(error);
         }
 

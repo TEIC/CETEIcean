@@ -25,7 +25,7 @@ export default {
     "ref": function(elt) {
       let ceteicean = this;
       elt.addEventListener("click", function(event) {
-        window.location = ceteicean.rw(ceteicean.getAttribute("target"));
+        window.location = ceteicean.rw(elt.getAttribute("target"));
       });
     },
     "graphic": function(elt) {

@@ -15,6 +15,10 @@ class CETEI {
     }
 
     // public method
+    /* Returns a Promise that fetches a TEI source document from the URL
+       provided in the first parameter and then calls the makeHTML5 method
+       on the returned document.
+     */
     getHTML5(TEI_url, callback){
         // Get TEI from TEI_url and create a promise
         let promise = new Promise( function (resolve, reject) {
@@ -46,6 +50,9 @@ class CETEI {
 
     }
 
+    /* Converts the supplied TEI string into HTML5 Custom Elements. If a callback
+       function is supplied, calls it on the result.
+     */
     makeHTML5(TEI, callback){
       // TEI is assumed to be a string
       let TEI_dom = ( new window.DOMParser() ).parseFromString(TEI, "text/xml");
@@ -63,8 +70,10 @@ class CETEI {
               newElement = document.createElement("tei-" + el.tagName);
               break;
             case "http://www.tei-c.org/ns/Examples":
-              newElement = document.createElement("teieg-" + el.tagName);
-              break;
+              if (el.tagName == "egXML") {
+                newElement = document.createElement("teieg-" + el.tagName);
+                break;
+              }
             default:
               newElement = document.importNode(el, false);
               copy = true;
@@ -144,13 +153,19 @@ class CETEI {
       }
     }
 
+    /* If the TEI document defines CSS styles in its tagsDecl, this method
+       copies them into the wrapper HTML document's head.
+     */
     addStyle(doc, data) {
       if (this.hasStyle) {
         doc.getElementsByTagName("head").item(0).appendChild(data.getElementsByTagName("style").item(0).cloneNode(true));
       }
     }
 
-    // public method
+    /* Add a user-defined set of behaviors to CETEIcean's processing
+       workflow. Added behaviors will override predefined behaviors with the
+       same name.
+    */
     addBehaviors(bhvs){
       if (bhvs["handlers"] || bhvs ["fallbacks"]) {
         this.behaviors.push(bhvs);
@@ -159,6 +174,22 @@ class CETEI {
       }
     }
 
+    /* Sets the base URL for the document. Used to rewrite relative links in the
+       XML source (which may be in a completely different location from the HTML
+       wrapper).
+     */
+    setBaseUrl(base) {
+      this.base = base;
+    }
+
+    // "private" method
+    _fromTEI(TEI_dom) {
+        let root_el = TEI_dom.documentElement;
+        this.els = new Set( Array.from(root_el.getElementsByTagName("*"), x => x.tagName) );
+        this.els.add(root_el.tagName); // Add the root element to the array
+    }
+
+    // private method
     _insert(elt, strings) {
       if (elt.createShadowRoot) {
         let shadow = elt.createShadowRoot();
@@ -181,6 +212,7 @@ class CETEI {
       }
     }
 
+    // private method
     _template(str, elt) {
       let result = str;
       if (str.search(/$(\w*)@(\w+)/)) {
@@ -199,9 +231,19 @@ class CETEI {
       return result;
     }
 
+    tagName(name) {
+      if (name == "egXML") {
+        return "teieg-" + name;
+      } else {
+        return "tei-" + name;
+      }
+    }
+
     /* Takes a template in the form of an array of 1 or 2 strings and
        returns a closure around a function that can be called as
        a createdCallback or applied to an individual element.
+
+       Called by the getHandler() and
     */
     decorator(strings) {
       return function() {
@@ -219,6 +261,10 @@ class CETEI {
       }
     }
 
+    /* Returns the handler function for the given element name
+
+       Called by registerAll().
+     */
     getHandler(fn) {
       for (let i = this.behaviors.length - 1; i >= 0; i--) {
         if (this.behaviors[i]["handlers"][fn]) {
@@ -231,6 +277,10 @@ class CETEI {
       }
     }
 
+    /* Returns the fallback function for the given element name.
+
+       Called by fallback().
+     */
     getFallback(fn) {
       for (let i = this.behaviors.length - 1; i >= 0; i--) {
         if (this.behaviors[i]["fallbacks"][fn]) {
@@ -248,6 +298,11 @@ class CETEI {
       }
     }
 
+    /* Registers the list of elements provided with the browser.
+
+       Called by makeHTML5(), but can be called independently if, for example,
+       you've created Custom Elements via an XSLT transformation instead.
+     */
     registerAll(names) {
       for (let name of names) {
         let proto = Object.create(HTMLElement.prototype);
@@ -255,7 +310,7 @@ class CETEI {
         if (fn) {
           proto.createdCallback = fn.call(this);
         }
-        let prefixedName = "tei-" + name;
+        let prefixedName = this.tagName(name);
         try {
           document.registerElement(prefixedName, {prototype: proto});
         } catch (error) {
@@ -266,20 +321,27 @@ class CETEI {
       }
     }
 
+    /* Provides fallback functionality for browsers where Custom Elements
+       are not supported.
+
+       Like registerAll(), this is called by makeHTML5(), but can be called
+       independently.
+    */
     fallback(names) {
       for (let name of names) {
         let fn = this.getFallback(name);
         if (fn) {
-          for (let elt of Array.from(this.dom.getElementsByTagName("tei-" + name))) {
+          for (let elt of Array.from(this.dom.getElementsByTagName(this.tagName(name)))) {
             fn.call(this, elt);
           }
+
         }
       }
     }
 
-    setBaseUrl(base) {
-      this.base = base;
-    }
+    /**********************
+     * Utility functions  *
+     **********************/
 
     /* Takes a relative URL and rewrites it based on the base URL of the
        HTML document */
@@ -289,6 +351,13 @@ class CETEI {
       } else {
         return url;
       }
+    }
+
+    /* Given a space-separated list of URLs (e.g. in a ref with multiple
+       targets), returns just the first one.
+     */
+    first(urls) {
+      return urls.replace(/ .*$/, "");
     }
 
     // public method
@@ -301,12 +370,7 @@ class CETEI {
         //    * optional custom behaviour mapping
     }
 
-    // "private" method
-    _fromTEI(TEI_dom) {
-        let root_el = TEI_dom.documentElement;
-        this.els = new Set( Array.from(root_el.getElementsByTagName("*"), x => x.tagName) );
-        this.els.add(root_el.tagName); // Add the root element to the array
-    }
+
 
 }
 

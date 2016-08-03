@@ -19,6 +19,12 @@ export default {
         }
         shadow.appendChild(img);
       }
+    },
+    "egXML": function() {
+      return function() {
+        let shadow = this.createShadowRoot();
+        shadow.innerHTML = "<pre>" + this.innerHTML.replace(/</g, "&lt;") + "</pre>";
+      }
     }
   },
   "fallbacks": {
@@ -39,6 +45,11 @@ export default {
         content.height = elt.getAttribute("height").replace(/[^.0-9]/g, "");
       }
       elt.appendChild(content);
+    },
+    "egXML": function(elt) {
+      let content = elt.innerHTML;
+      elt.innerHTML = "<span style=\"display:none\">" + elt.innerHTML + "</span>";
+      elt.innerHTML += "<pre>" + content.replace(/</g, "&lt;") + "</pre>";
     }
   }
 }

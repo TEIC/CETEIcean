@@ -1828,7 +1828,7 @@ tei-sponsor {
 }
 tei-sponsor:before {
   font-weight: bold;
-  content: "Sponsor:";
+  content: "Sponsor: ";
 }
 tei-stage {
   display: block;

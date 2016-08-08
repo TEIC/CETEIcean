@@ -30,6 +30,8 @@ collisions (like HTML `<p>` vs. TEI `<p>` for example).
 
 ## Usage
 
+You can use CETEIcean in your projects just by grabbing the CETEI.js. file from the latest release and linking to it in an HTML file like the [examples](http://teic.github.io/CETEIcean/) do. If you want to build and play with it on your own, follow the steps below.
+
 ### Install
 Get [NodeJS](https://nodejs.org/).
 

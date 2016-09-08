@@ -1,5 +1,10 @@
 # CETEIcean 🐳
 /sɪˈti:ʃn/
+
+<a href="#" id="status-image-popup" title="build status image" name="status-images" class="open-popup" data-ember-action="1094">
+            <img src="https://travis-ci.org/TEIC/CETEIcean.svg" alt="build:passed">
+          </a>
+
 ## What is this?
 **tl;dr**: CETEIcean lets you display unmodified TEI documents in a web browser!
 Examples may be found  [here](http://teic.github.io/CETEIcean/).
@@ -29,6 +34,8 @@ HTML it produces is valid and there are no possibilities of element name
 collisions (like HTML `<p>` vs. TEI `<p>` for example). 
 
 ## Usage
+
+You can use CETEIcean in your projects just by grabbing the CETEI.js. file from the latest [release](https://github.com/TEIC/CETEIcean/releases) and linking to it in an HTML file like the [examples](http://teic.github.io/CETEIcean/) do. If you want to build and play with it on your own, follow the steps below.
 
 ### Install
 Get [NodeJS](https://nodejs.org/).

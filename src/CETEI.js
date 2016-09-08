@@ -19,7 +19,7 @@ class CETEI {
        provided in the first parameter and then calls the makeHTML5 method
        on the returned document.
      */
-    getHTML5(TEI_url, callback){
+    getHTML5(TEI_url, callback, perElementFn){
         // Get TEI from TEI_url and create a promise
         let promise = new Promise( function (resolve, reject) {
             let client = new XMLHttpRequest();
@@ -38,22 +38,21 @@ class CETEI {
               reject(this.statusText);
             };
         })
-        .then((TEI) => {
-            this.makeHTML5(TEI, callback);
-        })
         .catch( function(reason) {
             // TODO: better error handling?
             console.log(reason);
         });
 
-        return promise;
+        return promise.then((TEI) => {
+            return this.makeHTML5(TEI, callback, perElementFn);
+        });
 
     }
 
     /* Converts the supplied TEI string into HTML5 Custom Elements. If a callback
        function is supplied, calls it on the result.
      */
-    makeHTML5(TEI, callback){
+    makeHTML5(TEI, callback, perElementFn){
       // TEI is assumed to be a string
       let TEI_dom = ( new window.DOMParser() ).parseFromString(TEI, "text/xml");
 
@@ -96,14 +95,6 @@ class CETEI {
                 newElement.setAttribute("class", att.value.replace(/#/g, ""));
               }
           }
-          for (let node of Array.from(el.childNodes)){
-              if (node.nodeType == Node.ELEMENT_NODE) {
-                  newElement.appendChild(  convertEl(node)  );
-              }
-              else {
-                  newElement.appendChild(node.cloneNode());
-              }
-          }
           // Turn <rendition scheme="css"> elements into HTML styles
           if (el.localName == "tagsDecl") {
             let style = document.createElement("style");
@@ -134,6 +125,17 @@ class CETEI {
               {"matchPattern": el.getAttribute("matchPattern"),
               "replacementPattern": el.getAttribute("replacementPattern")};
           }
+          for (let node of Array.from(el.childNodes)){
+              if (node.nodeType == Node.ELEMENT_NODE) {
+                  newElement.appendChild(  convertEl(node)  );
+              }
+              else {
+                  newElement.appendChild(node.cloneNode());
+              }
+          }
+          if (perElementFn) {
+            perElementFn(newElement);
+          }
           return newElement;
       }
 
@@ -144,7 +146,7 @@ class CETEI {
       } else {
         this.fallback(this.els);
       }
-
+      this.done = true;
       if (callback) {
           callback(this.dom, this);
       }
@@ -193,7 +195,7 @@ class CETEI {
     _insert(elt, strings) {
       if (elt.createShadowRoot) {
         let shadow = elt.createShadowRoot();
-        shadow.innerHTML = strings[0] + elt.innerHTML + (strings[1]?strings[1]:"");
+        shadow.innerHTML += strings[0] + elt.innerHTML + (strings[1]?strings[1]:"");
       } else {
         let span;
         if (strings.length > 1) {
@@ -346,7 +348,7 @@ class CETEI {
     /* Takes a relative URL and rewrites it based on the base URL of the
        HTML document */
     rw(url) {
-      if (!url.match(/^(?:http|mailto|file|\/).*$/)) {
+      if (!url.match(/^(?:http|mailto|file|\/|#).*$/)) {
         return this.base + url;
       } else {
         return url;

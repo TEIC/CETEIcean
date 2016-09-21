@@ -378,6 +378,9 @@ class CETEI {
       return urls.replace(/ .*$/, "");
     }
 
+    /* Takes an element and serializes it to a string or, if the stripElt
+       parameter is set, serializes the element's content.
+     */
     serialize(el, stripElt) {
       let str = "";
       if (!stripElt) {

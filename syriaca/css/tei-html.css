@@ -1828,7 +1828,7 @@ tei-sponsor {
 }
 tei-sponsor:before {
   font-weight: bold;
-  content: "Sponsor:";
+  content: "Sponsor: ";
 }
 tei-stage {
   display: block;
@@ -2091,7 +2091,7 @@ html {
   margin-left: 2em;
   margin-right: 4em;
   padding: 2.5em;
-  font-family: "SertoBatnan", "Serto Batnan", Verdana, Arial, Helvetica, sans-serif;
+  font-family: "Lucida Grande", "Cardo", "Arial Unicode MS", "SertoBatnan", "Serto Batnan", Verdana, Arial, Helvetica, sans-serif;
   font-size: 12pt;
   background-color: white;
   color: #292929;

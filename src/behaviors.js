@@ -8,7 +8,8 @@ export default {
     "graphic": function() {
       let ceteicean = this;
       return function() {
-        let shadow = this.createShadowRoot();
+        let shadow = ceteicean.createShadowRoot();
+        this.addShadowStyle(shadow);
         let img = new Image();
         img.src = ceteicean.rw(this.getAttribute("url"));
         if (this.hasAttribute("width")) {
@@ -20,10 +21,41 @@ export default {
         shadow.appendChild(img);
       }
     },
-    "egXML": function() {
+    "table": function() {
+      let ceteicean = this;
       return function() {
         let shadow = this.createShadowRoot();
-        shadow.innerHTML = "<pre>" + this.innerHTML.replace(/</g, "&lt;") + "</pre>";
+        ceteicean.addShadowStyle(shadow);
+        let shadowContent = document.createElement("table");
+        shadowContent.innerHTML = this.innerHTML;
+        for (let row of Array.from(shadowContent.querySelectorAll("tei-row"))) {
+          let tr = document.createElement("tr");
+          tr.innerHTML = row.innerHTML;
+          for (let attr of Array.from(row.attributes)) {
+            tr.setAttribute(attr.name, attr.value);
+          }
+          row.parentElement.replaceChild(tr, row);
+        }
+        for (let cell of Array.from(shadowContent.querySelectorAll("tei-cell"))) {
+          let td = document.createElement("td");
+          if (cell.hasAttribute("cols")) {
+            td.setAttribute("colspan", cell.getAttribute("cols"));
+          }
+          td.innerHTML = cell.innerHTML;
+          for (let attr of Array.from(cell.attributes)) {
+            td.setAttribute(attr.name, attr.value);
+          }
+          cell.parentElement.replaceChild(td, cell);
+        }
+        shadow.appendChild(shadowContent);
+      }
+    },
+    "egXML": function() {
+      let ceteicean = this;
+      return function() {
+        let shadow = this.createShadowRoot();
+        ceteicean.addShadowStyle(shadow);
+        shadow.innerHTML = "<pre>" + ceteicean.serialize(this, true) + "</pre>";
       }
     }
   },
@@ -35,9 +67,8 @@ export default {
       });
     },
     "graphic": function(elt) {
-      let ceteicean = this;
       let content = new Image();
-      content.src = ceteicean.rw(this.getAttribute("url"));
+      content.src = this.rw(this.getAttribute("url"));
       if (elt.hasAttribute("width")) {
         content.width = elt.getAttribute("width").replace(/[^.0-9]/g, "");
       }
@@ -45,6 +76,31 @@ export default {
         content.height = elt.getAttribute("height").replace(/[^.0-9]/g, "");
       }
       elt.appendChild(content);
+    },
+    "table": function(elt) {
+      let table = document.createElement("table");
+      table.innerHTML = elt.innerHTML;
+      for (let row of Array.from(table.querySelectorAll("tei-row"))) {
+        let tr = document.createElement("tr");
+        tr.innerHTML = row.innerHTML;
+        for (let attr of Array.from(row.attributes)) {
+          tr.setAttribute(attr.name, attr.value);
+        }
+        row.parentElement.replaceChild(tr, row);
+      }
+      for (let cell of Array.from(table.querySelectorAll("tei-cell"))) {
+        let td = document.createElement("td");
+        if (cell.hasAttribute("cols")) {
+          td.setAttribute("colspan", cell.getAttribute("cols"));
+        }
+        td.innerHTML = cell.innerHTML;
+        for (let attr of Array.from(cell.attributes)) {
+          td.setAttribute(attr.name, attr.value);
+        }
+        cell.parentElement.replaceChild(td, cell);
+      }
+      elt.innerHTML = "<span style=\"display:none\">" + elt.innerHTML + "</span>";
+      elt.appendChild(table);
     },
     "egXML": function(elt) {
       let content = elt.innerHTML;

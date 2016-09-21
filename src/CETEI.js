@@ -9,9 +9,16 @@ class CETEI {
         if (base) {
           this.base = base;
         } else {
-          this.base = window.location.href.replace(/\/[^\/]*$/, "/");
+          try {
+            if (window) {
+              this.base = window.location.href.replace(/\/[^\/]*$/, "/");
+            }
+          } catch (e) {
+            this.base = "";
+          }
         }
         this.behaviors.push(behaviors);
+        this.shadowCSS;
     }
 
     // public method
@@ -54,7 +61,7 @@ class CETEI {
      */
     makeHTML5(TEI, callback, perElementFn){
       // TEI is assumed to be a string
-      let TEI_dom = ( new window.DOMParser() ).parseFromString(TEI, "text/xml");
+      let TEI_dom = ( new DOMParser() ).parseFromString(TEI, "text/xml");
 
       this._fromTEI(TEI_dom);
 
@@ -95,6 +102,8 @@ class CETEI {
                 newElement.setAttribute("class", att.value.replace(/#/g, ""));
               }
           }
+          // Preseve element name so we can use it later
+          newElement.setAttribute("data-teiname", el.localName);
           // Turn <rendition scheme="css"> elements into HTML styles
           if (el.localName == "tagsDecl") {
             let style = document.createElement("style");
@@ -164,6 +173,12 @@ class CETEI {
       }
     }
 
+    addShadowStyle(shadow) {
+      if (this.shadowCSS) {
+        shadow.innerHTML = "<style>" + "@import url(\"" + this.shadowCSS + "\");</style>" + shadow.innerHTML;
+      }
+    }
+
     /* Add a user-defined set of behaviors to CETEIcean's processing
        workflow. Added behaviors will override predefined behaviors with the
        same name.
@@ -195,6 +210,7 @@ class CETEI {
     _insert(elt, strings) {
       if (elt.createShadowRoot) {
         let shadow = elt.createShadowRoot();
+        this.addShadowStyle(shadow);
         shadow.innerHTML += strings[0] + elt.innerHTML + (strings[1]?strings[1]:"");
       } else {
         let span;
@@ -245,7 +261,7 @@ class CETEI {
        returns a closure around a function that can be called as
        a createdCallback or applied to an individual element.
 
-       Called by the getHandler() and
+       Called by the getHandler() and getFallback() methods
     */
     decorator(strings) {
       return function() {
@@ -362,6 +378,34 @@ class CETEI {
       return urls.replace(/ .*$/, "");
     }
 
+    serialize(el, stripElt) {
+      let str = "";
+      if (!stripElt) {
+        str += "&lt;" + el.getAttribute("data-teiname");
+        for (let attr of Array.from(el.attributes)) {
+          if (!attr.name.startsWith("data-") && !(["id", "lang", "class"].includes(attr.name))) {
+            str += " " + attr.name + "=\"" + attr.value + "\"";
+          }
+        }
+        if (el.children.length > 0) {
+          str += ">";
+        } else {
+          str += "/>";
+        }
+      }
+      for (let node of Array.from(el.childNodes)) {
+        if (node.nodeType == Node.ELEMENT_NODE) {
+          str += this.serialize(node);
+        } else {
+          str += node.nodeValue;
+        }
+      }
+      if (!stripElt && el.children.length > 0) {
+        str += "&lt;" + el.getAttribute("data-teiname") + ">";
+      }
+      return str;
+    }
+
     // public method
     fromODD(){
         // Place holder for ODD-driven setup.
@@ -377,7 +421,12 @@ class CETEI {
 }
 
 // Make main class available to pre-ES6 browser environments
-if (window) {
-    window.CETEI = CETEI;
+try {
+  if (window) {
+      window.CETEI = CETEI;
+  }
+} catch (e) {
+  // window not defined;
 }
+
 export default CETEI;

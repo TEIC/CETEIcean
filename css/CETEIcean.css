@@ -1304,7 +1304,6 @@ tei-recordingStmt {
 tei-ref {
   color: #5f0000;
   text-decoration: underline;
-  cursor: pointer;
 }
 tei-region {
   /* Empty Rule Set */

@@ -28,6 +28,13 @@ export default {
         ceteicean.addShadowStyle(shadow);
         let shadowContent = document.createElement("table");
         shadowContent.innerHTML = this.innerHTML;
+        if (shadowContent.firstElementChild.localName == "tei-head") {
+          let head = shadowContent.firstElementChild;
+          head.remove();
+          let caption = document.createElement("caption");
+          caption.innerHTML = head.innerHTML;
+          shadowContent.appendChild(caption);
+        }
         for (let row of Array.from(shadowContent.querySelectorAll("tei-row"))) {
           let tr = document.createElement("tr");
           tr.innerHTML = row.innerHTML;
@@ -80,6 +87,13 @@ export default {
     "table": function(elt) {
       let table = document.createElement("table");
       table.innerHTML = elt.innerHTML;
+      if (table.firstElementChild.localName == "tei-head") {
+        let head = table.firstElementChild;
+        head.remove();
+        let caption = document.createElement("caption");
+        caption.innerHTML = head.innerHTML;
+        table.appendChild(caption);
+      }
       for (let row of Array.from(table.querySelectorAll("tei-row"))) {
         let tr = document.createElement("tr");
         tr.innerHTML = row.innerHTML;
@@ -105,7 +119,7 @@ export default {
     "egXML": function(elt) {
       let content = elt.innerHTML;
       elt.innerHTML = "<span style=\"display:none\">" + elt.innerHTML + "</span>";
-      elt.innerHTML += "<pre>" + content.replace(/</g, "&lt;") + "</pre>";
+      elt.innerHTML += "<pre>" + ceteicean.serialize(this, true) + "</pre>";
     }
   }
 }

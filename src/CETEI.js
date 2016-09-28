@@ -390,7 +390,7 @@ class CETEI {
             str += " " + attr.name + "=\"" + attr.value + "\"";
           }
         }
-        if (el.children.length > 0) {
+        if (el.childNodes.length > 0) {
           str += ">";
         } else {
           str += "/>";
@@ -403,7 +403,7 @@ class CETEI {
           str += node.nodeValue;
         }
       }
-      if (!stripElt && el.children.length > 0) {
+      if (!stripElt && el.childNodes.length > 0) {
         str += "&lt;" + el.getAttribute("data-teiname") + ">";
       }
       return str;

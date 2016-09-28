@@ -117,9 +117,9 @@ export default {
       elt.appendChild(table);
     },
     "egXML": function(elt) {
-      let content = elt.innerHTML;
+      let contents = this.serialize(elt, true);
       elt.innerHTML = "<span style=\"display:none\">" + elt.innerHTML + "</span>";
-      elt.innerHTML += "<pre>" + ceteicean.serialize(this, true) + "</pre>";
+      elt.innerHTML += "<pre>" + contents + "</pre>";
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "CETEIcean",
   "version": "0.3.2",
-  "description": "ODD-driven JavaScript library to load a TEI XML document and register it as HTML5 custom elements.",
+  "description": "JavaScript library to load a TEI XML document and register it as HTML5 custom elements.",
   "main": "dist/CETEI.js",
   "jsnext:main": "src/CETEI.js",
   "keywords": [

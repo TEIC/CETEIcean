@@ -27,6 +27,9 @@ class CETEI {
        on the returned document.
      */
     getHTML5(TEI_url, callback, perElementFn){
+        if (window.location.href.startsWith(this.base)) {
+          this.base = TEI_url.replace(/\/[^\/]*$/, "/");
+        }
         // Get TEI from TEI_url and create a promise
         let promise = new Promise( function (resolve, reject) {
             let client = new XMLHttpRequest();
@@ -397,14 +400,19 @@ class CETEI {
         }
       }
       for (let node of Array.from(el.childNodes)) {
-        if (node.nodeType == Node.ELEMENT_NODE) {
-          str += this.serialize(node);
-        } else {
-          str += node.nodeValue;
+        switch (node.nodeType) {
+          case Node.ELEMENT_NODE:
+            str += this.serialize(node);
+            break;
+          case Node.COMMENT_NODE:
+            str += "&lt;!--" + node.nodeValue + "-->";
+            break;
+          default:
+            str += node.nodeValue;
         }
       }
       if (!stripElt && el.childNodes.length > 0) {
-        str += "&lt;" + el.getAttribute("data-teiname") + ">";
+        str += "&lt;/" + el.getAttribute("data-teiname") + ">";
       }
       return str;
     }

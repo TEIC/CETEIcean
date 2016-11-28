@@ -205,7 +205,8 @@ class CETEI {
     // "private" method
     _fromTEI(TEI_dom) {
         let root_el = TEI_dom.documentElement;
-        this.els = new Set( Array.from(root_el.getElementsByTagName("*"), x => x.tagName) );
+        this.els = new Set( Array.from(root_el.getElementsByTagNameNS("http://www.tei-c.org/ns/1.0", "*"), x => x.tagName) );
+        this.els.add("egXML"); // Special case—not in TEI namespace, but needs to be handled
         this.els.add(root_el.tagName); // Add the root element to the array
     }
 
@@ -404,17 +405,37 @@ class CETEI {
           case Node.ELEMENT_NODE:
             str += this.serialize(node);
             break;
+          case Node.PROCESSING_INSTRUCTION_NODE:
+            str += "&lt;?" + node.nodeValue + "?>";
+            break;
           case Node.COMMENT_NODE:
             str += "&lt;!--" + node.nodeValue + "-->";
             break;
           default:
-            str += node.nodeValue;
+            str += node.nodeValue.replace(/</g, "&lt;");
         }
       }
       if (!stripElt && el.childNodes.length > 0) {
         str += "&lt;/" + el.getAttribute("data-teiname") + ">";
       }
       return str;
+    }
+
+    hideContent(elt) {
+      let content = elt.innerHTML;
+      elt.innerHTML = "";
+      let hidden = document.createElement("span");
+      hidden.setAttribute("style", "display:none;");
+      hidden.setAttribute("class", "hide");
+      hidden.innerHTML = content;
+      elt.appendChild(hidden);
+    }
+
+    unEscapeEntities(str) {
+      return str.replace(/&gt;/, ">")
+                .replace(/&quot;/, "\"")
+                .replace(/&apos;/, "'")
+                .replace(/&amp;/, "&");
     }
 
     // public method

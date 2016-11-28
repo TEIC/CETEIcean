@@ -1,5 +1,6 @@
 export default {
   "handlers": {
+    "eg": ["<pre>","</pre>"],
     // inserts a link inside <ptr> using the @target; the link in the
     // @href is piped through the rw (rewrite) function before insertion
     "ptr": ["<a href=\"$rw@target\">$@target</a>"],
@@ -19,6 +20,31 @@ export default {
           img.height = this.getAttribute("height").replace(/[^.0-9]/g, "");
         }
         shadow.appendChild(img);
+      }
+    },
+    "list": function() {
+      let ceteicean = this;
+      return function() {
+        if (this.hasAttribute("type") && this.getAttribute("type") == "gloss") {
+          let shadow = this.createShadowRoot();
+          ceteicean.addShadowStyle(shadow);
+          let dl = document.createElement("dl");
+          for (let child of Array.from(this.children)) {
+            if (child.nodeType == Node.ELEMENT_NODE) {
+              if (child.localName == "tei-label") {
+                let dt = document.createElement("dt");
+                dt.innerHTML = child.innerHTML;
+                dl.appendChild(dt);
+              }
+              if (child.localName == "tei-item") {
+                let dd = document.createElement("dd");
+                dd.innerHTML = child.innerHTML;
+                dl.appendChild(dd);
+              }
+            }
+          }
+          shadow.appendChild(dl);
+        }
       }
     },
     "table": function() {
@@ -84,6 +110,27 @@ export default {
       }
       elt.appendChild(content);
     },
+    "list": function(elt) {
+      if (elt.hasAttribute("type") && elt.getAttribute("type") == "gloss") {
+        let dl = document.createElement("dl");
+        for (let child of Array.from(elt.children)) {
+          if (child.nodeType == Node.ELEMENT_NODE) {
+            if (child.localName == "tei-label") {
+              let dt = document.createElement("dt");
+              dt.innerHTML = child.innerHTML;
+              dl.appendChild(dt);
+            }
+            if (child.localName == "tei-item") {
+              let dd = document.createElement("dd");
+              dd.innerHTML = child.innerHTML;
+              dl.appendChild(dd);
+            }
+          }
+        }
+        this.hideContent(elt);
+        elt.appendChild(dl);
+      }
+    },
     "table": function(elt) {
       let table = document.createElement("table");
       table.innerHTML = elt.innerHTML;
@@ -113,12 +160,12 @@ export default {
         }
         cell.parentElement.replaceChild(td, cell);
       }
-      elt.innerHTML = "<span style=\"display:none\">" + elt.innerHTML + "</span>";
+      this.hideContent(elt);
       elt.appendChild(table);
     },
     "egXML": function(elt) {
       let contents = this.serialize(elt, true);
-      elt.innerHTML = "<span style=\"display:none\">" + elt.innerHTML + "</span>";
+      this.hideContent(elt);
       elt.innerHTML += "<pre>" + contents + "</pre>";
     }
   }

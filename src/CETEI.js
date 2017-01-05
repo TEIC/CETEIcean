@@ -65,6 +65,13 @@ class CETEI {
     makeHTML5(TEI, callback, perElementFn){
       // TEI is assumed to be a string
       let TEI_dom = ( new DOMParser() ).parseFromString(TEI, "text/xml");
+      this.domToHTML5(TEI_dom, callback, perElementFn);
+    }
+
+    /* Converts the supplied TEI DOM into HTML5 Custom Elements. If a callback
+       function is supplied, calls it on the result.
+    */
+    domToHTML5(TEI_dom, callback, perElementFn){
 
       this._fromTEI(TEI_dom);
 

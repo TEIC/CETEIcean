@@ -120,8 +120,8 @@ class CETEI {
           // Preserve element name so we can use it later
           newElement.setAttribute("data-teiname", el.localName);
           // If element is empty, flag it
-          if (el.children.length == 0) {
-            newElement.setAttribute("data-empty",null);
+          if (el.childNodes.length == 0) {
+            newElement.setAttribute("data-empty", "");
           }
           // Turn <rendition scheme="css"> elements into HTML styles
           if (el.localName == "tagsDecl") {
@@ -193,7 +193,7 @@ class CETEI {
     }
 
     /* If a URL where CSS for styling Shadow DOM elements lives has been defined,
-       insert it into the Shadow DOM. 
+       insert it into the Shadow DOM.
      */
     addShadowStyle(shadow) {
       if (this.shadowCSS) {

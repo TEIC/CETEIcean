@@ -192,6 +192,9 @@ class CETEI {
       }
     }
 
+    /* If a URL where CSS for styling Shadow DOM elements lives has been defined,
+       insert it into the Shadow DOM. 
+     */
     addShadowStyle(shadow) {
       if (this.shadowCSS) {
         shadow.innerHTML = "<style>" + "@import url(\"" + this.shadowCSS + "\");</style>" + shadow.innerHTML;
@@ -320,6 +323,13 @@ class CETEI {
       }
     }
 
+    /* Appends any element returned by the function passed in the first
+     * parameter to the element in the second parameter. If the function
+     * returns nothing, this is a no-op aside from any side effects caused
+     * by the provided function.
+
+     * called by getHandler() and fallback()
+     */
     append(fn, elt) {
       if (elt) {
         let content = fn.call(this, elt);
@@ -350,12 +360,17 @@ class CETEI {
       }
     }
 
+    /* Private method called by append() if the browser supports Shadow DOM
+     */
     _appendShadow(elt, content) {
-      var shadow = elt.attachShadow({mode:'closed'});
+      var shadow = elt.attachShadow({mode:'open'});
       this.addShadowStyle(shadow);
       shadow.appendChild(content);
     }
 
+    /* Private method called by append() if the browser does not support
+     * Shadow DOM
+     */
     _appendBasic(elt, content) {
       this.hideContent(elt);
       elt.appendChild(content);
@@ -464,6 +479,9 @@ class CETEI {
       return str;
     }
 
+    /* Wraps the content of the element parameter in a <span class="hide">
+     * with display set to "none".
+     */
     hideContent(elt) {
       if (elt.childNodes.length > 0) {
         let content = elt.innerHTML;

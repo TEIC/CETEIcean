@@ -23,42 +23,20 @@
        ***********************************/
       c.addBehaviors({"handlers":{
         // Overrides the default ptr behavior, displaying a short link
-        "ptr": function() {
-          return function() {
-            var shadow = this.createShadowRoot();
-            var link = document.createElement("a");
-            link.innerHTML = this.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
-            link.href = this.getAttribute("target");
-            shadow.appendChild(link);
-          }
+        "ptr": function(elt) {
+          var link = document.createElement("a");
+          link.innerHTML = elt.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
+          link.href = elt.getAttribute("target");
+          return link;
         },
         // Adds a new handler for <term>, wrapping it in an HTML <b>
-        "term": function() {
-          return function() {
-            var shadow = this.createShadowRoot();
+        "term": function(elt) {
             var b = document.createElement("b");
-            b.innerHTML = this.innerHTML;
-            shadow.appendChild(b);
-          }
+            b.innerHTML = elt.innerHTML;
+            return b;
         },
         // Inserts the first array element before tei:add, and the second, after.
         "add": ["`","´"]
-      },
-      "fallbacks": {
-        "ptr": function(elt) {
-          var content = document.createElement("a");
-          content.setAttribute("href", elt.getAttribute("target"));
-          content.innerHTML = elt.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
-          elt.appendChild(content);
-          elt.addEventListener("click", function(event) {
-            window.location = this.getAttribute("target");
-          });
-        },
-        // Note that this would be better done with CSS. Included for completeness.
-        "term": function(elt) {
-            elt.setAttribute("style", "font-weight: bold");
-        }
-
       }});
       c.getHTML5('testTEI.xml', function(data) {
         document.getElementById("TEI").innerHTML = "";

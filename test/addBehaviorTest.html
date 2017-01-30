@@ -13,13 +13,10 @@
       /***********************************
        * Behaviors, i.e. ways you want specific elements to be handled that
        * you can't do with CSS, can be injected by calling the addBehaviors
-       * method, passing it an object containing a set of handler functions
-       * and fallback functions (for browsers that don't support Web
-       * Components). Handler functions must take a single parameter which
-       * is an HTML element prototype, and fallback functions take a single
-       * parameter which is a copy of the DOM containing the elements to be
-       * handled. The function names must match the name of the element they
-       * will be applied to.
+       * method, passing it an object containing a set of handler functions.
+       * Handler functions must take a single parameter which
+       * is an HTML element. The function names must match the name of the
+       * element they will be applied to.
        ***********************************/
       c.addBehaviors({"handlers":{
         // Overrides the default ptr behavior, displaying a short link

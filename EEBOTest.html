@@ -41,72 +41,36 @@
       CETEIcean.addBehaviors({"handlers":
         {
           "gap": ["[", "]"],
-          // this function doesn't use Web Objects
-          // functionality, and so will be used by all browsers.
-          "note": function() {
-            return function(elt) {
-              if (!elt) {
-                elt = this;
-              }
-              var span = document.createElement("span");
-              span.innerHTML = elt.getAttribute("place") == "margin"?"[<em>in marg.</em> ":"[";
-              elt.insertBefore(span, elt.firstChild);
-              span = document.createElement("span"),
-              span.innerHTML = "]";
-              elt.appendChild(span);
-            }
+          "note": function(elt) {
+            var span = document.createElement("span");
+            span.innerHTML = elt.getAttribute("place") == "margin"?"[<em>in marg.</em> ":"[";
+            span.innerHTML += elt.innerHTML + "]";
+            return span;
           },
-          "pb": function() {
-            var self = this;
-            return function() {
-              var shadow = this.createShadowRoot();
-              var link = document.createElement("a");
-              link.setAttribute("style", "float:right;padding-left:1em;text-decoration:none;color:gray;");
-              if (this.hasAttribute("facs")) {
-                var facs = this.getAttribute("facs").replace("tcp:", "").replace(new RegExp(self.prefixes["tcp"]["matchPattern"]), "?vid=$1&page=$2");
-                link.setAttribute("href", "http://eebo.chadwyck.com/fetchimage" + facs + "&width=1500");
-                var img = document.createElement("img");
-                images.push(img);
-                img.setAttribute("src", "http://eebo.chadwyck.com/fetchimage" + facs + "&width=100");
-                img.setAttribute("height", "50px");
-                if (this.hasAttribute("n")) {
-                  link.innerHTML = "<span style=\"position:relative; top: -1em;\">p. " + this.getAttribute("n") + " </span>";
-                }
-                link.appendChild(img);
+          "pb": function(elt) {
+            var span = document.createElement("span");
+            var link = document.createElement("a");
+            link.setAttribute("style", "float:right;padding-left:1em;text-decoration:none;color:gray;");
+            if (elt.hasAttribute("facs")) {
+              var facs = elt.getAttribute("facs").replace("tcp:", "").replace(new RegExp(this.prefixes["tcp"]["matchPattern"]), "?vid=$1&page=$2");
+              link.setAttribute("href", "http://eebo.chadwyck.com/fetchimage" + facs + "&width=1500");
+              var img = document.createElement("img");
+              images.push(img);
+              img.setAttribute("src", "http://eebo.chadwyck.com/fetchimage" + facs + "&width=100");
+              img.setAttribute("height", "50px");
+              if (elt.hasAttribute("n")) {
+                link.innerHTML = "<span style=\"position:relative; top: -1em;\">p. " + elt.getAttribute("n") + " </span>";
               }
-              shadow.appendChild(document.createElement("br"));
-              shadow.appendChild(link);
-              shadow.appendChild(document.createElement("br"));
-              shadow.appendChild(document.createElement("br"));
-              shadow.appendChild(document.createElement("br"));
+              link.appendChild(img);
             }
+            span.appendChild(document.createElement("br"));
+            span.appendChild(link);
+            span.appendChild(document.createElement("br"));
+            span.appendChild(document.createElement("br"));
+            span.appendChild(document.createElement("br"));
+            return span;
           }
-        },
-      "fallbacks": {
-        "pb": function(elt) {
-          var pgbr = document.createElement("span");
-          var link = document.createElement("a");
-          link.setAttribute("style", "float:right;padding-left:1em;text-decoration:none;color:gray;");
-          if (elt.hasAttribute("facs")) {
-            var facs = elt.getAttribute("facs").replace("tcp:", "").replace(new RegExp(this.prefixes["tcp"]["matchPattern"]), "?vid=$1&page=$2");
-            link.setAttribute("href", "http://eebo.chadwyck.com/fetchimage" + facs + "&width=1500");
-            var img = document.createElement("img");
-            images.push(img);
-            img.setAttribute("src", "http://eebo.chadwyck.com/fetchimage" + facs + "&width=100");
-            img.setAttribute("height", "50px");
-            if (elt.hasAttribute("n")) {
-              link.innerHTML = "<span style=\"position:relative; top: -1em;\">p. " + elt.getAttribute("n") + "</span> ";
-            }
-            link.appendChild(img);
-          }
-          pgbr.appendChild(document.createElement("br"));
-          pgbr.appendChild(link);
-          pgbr.appendChild(document.createElement("br"));
-          pgbr.appendChild(document.createElement("br"));
-          pgbr.appendChild(document.createElement("br"));
-          elt.insertBefore(pgbr, elt.firstChild);
-        }
-      }});
+        }});
       CETEIcean.getHTML5('https://raw.githubusercontent.com/textcreationpartnership/A00689/master/A00689.xml', function(data) {
         document.getElementById("TEI").innerHTML = "";
         document.getElementById("TEI").appendChild(data);

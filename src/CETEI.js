@@ -231,19 +231,24 @@ class CETEI {
 
     // private method
     _insert(elt, strings) {
-      let span;
+      let span = document.createElement("span");
       if (strings.length > 1) {
         if (strings[0].includes("<") && strings[1].includes("</")) {
-          elt.innerHTML = strings[0] + elt.innerHTML + strings[1];
+          span.innerHTML = strings[0] + elt.innerHTML + strings[1];
         } else {
-          elt.innerHTML = "<span>" + strings[0] + "</span>" + elt.innerHTML + "<span>" + strings[1] + "</span>";
+          span.innerHTML = "<span>" + strings[0] + "</span>" + elt.innerHTML + "<span>" + strings[1] + "</span>";
         }
       } else {
         if (strings[0].includes("<")) {
-          elt.innerHTML = strings[0] + elt.innerHTML;
+          span.innerHTML = strings[0] + elt.innerHTML;
         } else {
-          elt.innerHTML = "<span>" + strings[0] + "</span>" + elt.innerHTML;
+          span.innerHTML = "<span>" + strings[0] + "</span>" + elt.innerHTML;
         }
+      }
+      if (span.children.length > 1) {
+        return span;
+      } else {
+        return span.children[0];
       }
     }
 
@@ -287,7 +292,7 @@ class CETEI {
         for (let i = 0; i < strings.length; i++) {
           copy.push(ceteicean._template(strings[i], elt));
         }
-        ceteicean._insert(elt, copy);
+        return ceteicean._insert(elt, copy);
       }
     }
 
@@ -333,7 +338,7 @@ class CETEI {
     append(fn, elt) {
       if (elt) {
         let content = fn.call(this, elt);
-        if (content) {
+        if (content && !(elt.querySelector(":scope > " + content.nodeName))) {
           if (this.supportsShadowDom) {
             this._appendShadow(elt, content);
           } else {
@@ -352,7 +357,7 @@ class CETEI {
         } else {
           return function() {
             let content = fn.call(self, this);
-            if (content) {
+            if (content && !(this.querySelector(":scope > " + content.nodeName))) {
               self._appendBasic(this, content);
             }
           }

@@ -506,6 +506,16 @@ class CETEI {
                 .replace(/&amp;/, "&");
     }
 
+    savePosition() {
+      localStorage.setItem("scroll",window.scrollY);
+    }
+
+    restorePosition() {
+      if (localStorage.getItem("scroll")) {
+        window.scrollTo(0, localStorage.getItem("scroll"));
+      }
+    }
+
     // public method
     fromODD(){
         // Place holder for ODD-driven setup.
@@ -524,6 +534,8 @@ class CETEI {
 try {
   if (window) {
       window.CETEI = CETEI;
+      window.unload = CETEI.savePosition;
+      window.load = CETEI.restorePosition;
   }
 } catch (e) {
   // window not defined;

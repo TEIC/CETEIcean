@@ -66,7 +66,9 @@ class CETEI {
     makeHTML5(TEI, callback, perElementFn){
       // TEI is assumed to be a string
       let TEI_dom = ( new DOMParser() ).parseFromString(TEI, "text/xml");
-      return this.domToHTML5(TEI_dom, callback, perElementFn);
+      var doc = this.domToHTML5(TEI_dom, callback, perElementFn);
+      return this.registerTEIElements(doc, callback);
+
     }
 
     /* Converts the supplied TEI DOM into HTML5 Custom Elements. If a callback
@@ -167,9 +169,14 @@ class CETEI {
           return newElement;
       }
 
-      this.dom = convertEl(TEI_dom.documentElement);
+      return this.dom = convertEl(TEI_dom.documentElement);
 
-      if (document.registerElement) {
+
+    }
+
+    registerTEIElements(doc, callback){
+
+      if (doc.registerElement) {
         this.registerAll(this.els);
       } else {
         this.fallback(this.els);
@@ -181,6 +188,7 @@ class CETEI {
       else {
           return this.dom;
       }
+
     }
 
     /* If the TEI document defines CSS styles in its tagsDecl, this method

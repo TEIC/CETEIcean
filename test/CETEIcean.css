@@ -1,4 +1,23 @@
-
+/* language support */
+/* render Arabic, Persian, Ottoman, Hebrew  as rtl */
+[lang = "ar"],
+[lang = "ota"],
+[lang = "fa"],
+[lang = "he"],
+[lang *="-Arab-AR"]{
+    direction:rtl;
+    text-align:right;
+}
+/* display latin scripts as ltr  */
+[lang = "en"],
+[lang = "fr"],
+[lang = "de"],
+[lang = "it"],
+[lang *="ar-Latn-"],
+[lang *="ota-Latn-"]{
+    direction:ltr;
+    text-align:left;
+}
 
 /* Choice elements */
 tei-choice tei-abbr + tei-expan:before,

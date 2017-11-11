@@ -10,10 +10,10 @@ export default {
       let content = new Image();
       content.src = this.rw(elt.getAttribute("url"));
       if (elt.hasAttribute("width")) {
-        content.width = elt.getAttribute("width").replace(/[^.0-9]/g, "");
+        content.setAttribute("width",elt.getAttribute("width"));
       }
       if (elt.hasAttribute("height")) {
-        content.height = elt.getAttribute("height").replace(/[^.0-9]/g, "");
+        content.setAttribute("height",elt.getAttribute("height"));
       }
       return content;
     },

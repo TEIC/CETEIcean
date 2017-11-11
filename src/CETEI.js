@@ -87,10 +87,8 @@ class CETEI {
               newElement = document.createElement("tei-" + el.tagName);
               break;
             case "http://www.tei-c.org/ns/Examples":
-              if (el.tagName == "egXML") {
-                newElement = document.createElement("teieg-" + el.tagName);
-                break;
-              }
+              newElement = document.createElement("teieg-" + el.tagName);
+              break;
             case "http://relaxng.org/ns/structure/1.0":
               newElement = document.createElement("rng-" + el.tagName);
               break;
@@ -177,8 +175,7 @@ class CETEI {
       this.done = true;
       if (callback) {
           callback(this.dom, this);
-      }
-      else {
+      } else {
           return this.dom;
       }
     }
@@ -255,7 +252,7 @@ class CETEI {
     // private method
     _template(str, elt) {
       let result = str;
-      if (str.search(/$(\w*)@(\w+)/)) {
+      if (str.search(/$(\w*)(@\w+)/)) {
         let re = /\$(\w*)@(\w+)/g;
         let replacements;
         while (replacements = re.exec(str)) {
@@ -414,7 +411,7 @@ class CETEI {
       for (let name of names) {
         let fn = this.getFallback(name);
         if (fn) {
-          for (let elt of Array.from(this.dom.getElementsByTagName(this.tagName(name)))) {
+          for (let elt of Array.from((this.dom?this.dom:document).getElementsByTagName(this.tagName(name)))) {
             this.append(fn, elt);
           }
         }
@@ -440,6 +437,17 @@ class CETEI {
      */
     first(urls) {
       return urls.replace(/ .*$/, "");
+    }
+
+    /* Takes a string and a number and returns the original string
+       printed that number of times.
+    */
+    repeat(str, times) {
+      let result = "";
+      for (let i = 0; i < times; i++) {
+        result += str;
+      }
+      return result;
     }
 
     /* Takes an element and serializes it to a string or, if the stripElt
@@ -506,13 +514,15 @@ class CETEI {
                 .replace(/&amp;/, "&");
     }
 
-    savePosition() {
-      localStorage.setItem("scroll",window.scrollY);
+    static savePosition() {
+      window.localStorage.setItem("scroll",window.scrollY);
     }
 
-    restorePosition() {
-      if (localStorage.getItem("scroll")) {
-        window.scrollTo(0, localStorage.getItem("scroll"));
+    static restorePosition() {
+      if (window.localStorage.getItem("scroll")) {
+        setTimeout(function() {
+          window.scrollTo(0, localStorage.getItem("scroll"))
+        }, 100);
       }
     }
 
@@ -534,8 +544,8 @@ class CETEI {
 try {
   if (window) {
       window.CETEI = CETEI;
-      window.unload = CETEI.savePosition;
-      window.load = CETEI.restorePosition;
+      window.addEventListener("beforeunload", CETEI.savePosition);
+      window.addEventListener("load", CETEI.restorePosition);
   }
 } catch (e) {
   // window not defined;

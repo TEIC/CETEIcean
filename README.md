@@ -12,9 +12,8 @@ Examples may be found  [here](http://teic.github.io/CETEIcean/).
 CETEIcean is a Javascript (ES6) library that allows [TEI](http://tei-c.org)
 documents to be displayed in a web browser without converting them to
 HTML. It uses the emerging [Web Components](http://webcomponents.org) standards,
-especially [Custom Elements](http://w3c.github.io/webcomponents/spec/custom/),
-and [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/). It works by
-loading the TEI file dynamically, renaming the elements to follow the
+especially [Custom Elements](http://w3c.github.io/webcomponents/spec/custom/). It 
+works by loading the TEI file dynamically, renaming the elements to follow the
 Custom Elements conventions, and registering them with the browser. Browsers
 that support Web Components will use them to add the appropriate display and
 behaviors to the TEI elements; other browsers will use fallback methods to

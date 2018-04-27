@@ -167,7 +167,7 @@ class CETEI {
 
       this.dom = convertEl(TEI_dom.documentElement);
 
-      if (document.registerElement) {
+      if (window.customElements) {
         this.registerAll(this.els);
       } else {
         this.fallback(this.els);
@@ -270,9 +270,9 @@ class CETEI {
 
     tagName(name) {
       if (name == "egXML") {
-        return "teieg-" + name;
+        return "teieg-" + name.toLowerCase();
       } else {
-        return "tei-" + name;
+        return "tei-" + name.toLowerCase();
       }
     }
 
@@ -385,14 +385,21 @@ class CETEI {
      */
     registerAll(names) {
       for (let name of names) {
-        let proto = Object.create(HTMLElement.prototype);
         let fn = this.getHandler(name);
-        if (fn) {
-          proto.createdCallback = fn;
+        let cName = name + "Elt";
+        window[cName] = class extends HTMLElement {
+          constructor() {
+            super();
+            if (fn) {
+              fn.call(this);
+            }
+          }
         }
+        //Object.setPrototypeOf(newClass, HTMLElement.prototype);
+
         let prefixedName = this.tagName(name);
         try {
-          document.registerElement(prefixedName, {prototype: proto});
+          window.customElements.define(prefixedName, window[cName]);
         } catch (error) {
           console.log(prefixedName + " couldn't be registered or is already registered.");
           console.log(error);
@@ -450,7 +457,7 @@ class CETEI {
       return result;
     }
 
-    /* Takes an element and serializes it to a string or, if the stripElt
+    /* Takes an element and serializes it to a TEI string or, if the stripElt
        parameter is set, serializes the element's content.
      */
     serialize(el, stripElt) {
@@ -519,10 +526,12 @@ class CETEI {
     }
 
     static restorePosition() {
-      if (window.localStorage.getItem("scroll")) {
-        setTimeout(function() {
-          window.scrollTo(0, localStorage.getItem("scroll"))
-        }, 100);
+      if (!window.location.hash) {
+        if (window.localStorage.getItem("scroll")) {
+          setTimeout(function() {
+            window.scrollTo(0, localStorage.getItem("scroll"))
+          }, 100);
+        }
       }
     }
 

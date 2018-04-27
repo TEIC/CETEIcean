@@ -8,7 +8,16 @@ export default {
   sourceMap: false,
   moduleName: 'CETEI',
   plugins: [
-    babel({exclude: 'node_modules/**', "presets": ["es2015-rollup"]}),
-    uglify()
+    babel({exclude: 'node_modules/**', 
+      "presets": [
+        ["env", {
+          "modules": false,
+          "targets": {
+            "chrome": 65,
+            "safari": 11
+          }
+        }]
+      ]})//,
+    //uglify()
   ]
 }

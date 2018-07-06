@@ -335,7 +335,7 @@ class CETEI {
     append(fn, elt) {
       if (elt) {
         let content = fn.call(this, elt);
-        if (content && !(elt.querySelector(":scope > " + content.nodeName))) {
+        if (content && !this._childExists(content.firstElementChild, content.nodeName)) {
           if (this.supportsShadowDom) {
             this._appendShadow(elt, content);
           } else {
@@ -354,11 +354,22 @@ class CETEI {
         } else {
           return function() {
             let content = fn.call(self, this);
-            if (content && !(this.querySelector(":scope > " + content.nodeName))) {
+            if (content && !this._childExists(content.firstElementChild, content.nodeName)) {
               self._appendBasic(this, content);
             }
           }
         }
+      }
+    }
+
+    /* Private method called by append(). Takes a child element and a name, and recurses through the
+     * child's siblings until an element with that name is found, returning true if it is and false if not.
+     */
+    _childExists(elt, name) {
+      if (elt && elt.nodeName == name) {
+        return true;
+      } else {
+        return elt && elt.nextElementSibling && this._childExists(elt.nextElementSibling, name);
       }
     }
 

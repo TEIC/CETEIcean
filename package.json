@@ -21,12 +21,15 @@
     "babel-preset-env": "^1.6.1",
     "http-server": "^0.11.1",
     "onchange": "2.4.0",
-    "rollup": "0.58.1",
+    "rollup": "0.62.0",
     "rollup-plugin-babel": "^3.0.3",
-    "rollup-plugin-uglify": "1.0.0"
+    "rollup-plugin-terser": "1.0.1"
   },
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "dev": "npm run build && http-server -p 8888 & onchange src -- npm run build"
+  },
+  "dependencies": {
+    "terser": "^3.7.7"
   }
 }

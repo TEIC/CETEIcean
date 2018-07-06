@@ -335,7 +335,7 @@ class CETEI {
     append(fn, elt) {
       if (elt) {
         let content = fn.call(this, elt);
-        if (content && !this._childExists(content.firstElementChild, content.nodeName)) {
+        if (content && !this._childExists(elt.firstElementChild, content.nodeName)) {
           if (this.supportsShadowDom) {
             this._appendShadow(elt, content);
           } else {
@@ -354,7 +354,7 @@ class CETEI {
         } else {
           return function() {
             let content = fn.call(self, this);
-            if (content && !this._childExists(content.firstElementChild, content.nodeName)) {
+            if (content && !this._childExists(elt.firstElementChild, content.nodeName)) {
               self._appendBasic(this, content);
             }
           }
@@ -455,6 +455,10 @@ class CETEI {
      */
     first(urls) {
       return urls.replace(/ .*$/, "");
+    }
+
+    normalizeURI(urls) {
+      return this.rw(this.first(urls))
     }
 
     /* Takes a string and a number and returns the original string

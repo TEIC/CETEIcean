@@ -23,13 +23,11 @@
     "onchange": "2.4.0",
     "rollup": "0.62.0",
     "rollup-plugin-babel": "^3.0.3",
-    "rollup-plugin-terser": "1.0.1"
+    "rollup-plugin-terser": "1.0.1",
+    "terser": "^3.7.7"
   },
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "dev": "npm run build && http-server -p 8888 & onchange src -- npm run build"
-  },
-  "dependencies": {
-    "terser": "^3.7.7"
   }
 }

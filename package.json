@@ -11,7 +11,7 @@
     "ODD"
   ],
   "author": "Raff Viglianti and Hugh Cayless",
-  "license": "MIT",
+  "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
     "url": "https://github.com/TEIC/CETEIcean.git"
@@ -19,7 +19,7 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
-    "http-server": "0.9.0",
+    "http-server": "^0.11.1",
     "onchange": "2.4.0",
     "rollup": "0.58.1",
     "rollup-plugin-babel": "^3.0.3",

@@ -2,11 +2,13 @@ import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
 
 export default {
-  entry: 'src/CETEI.js',
-  format: 'iife',
-  dest: 'dist/CETEI.js',
-  sourceMap: false,
-  moduleName: 'CETEI',
+  input: 'src/CETEI.js',
+  output: {
+    file: 'dist/CETEI.js',
+    format: 'iife',
+    name: 'CETEI',
+    sourcemap: false,
+  },
   plugins: [
     babel({exclude: 'node_modules/**', 
       "presets": [

@@ -19,7 +19,7 @@ export default {
             "safari": 11
           }
         }]
-      ]})//,
-    //uglify()
+      ]}),
+    uglify()
   ]
 }

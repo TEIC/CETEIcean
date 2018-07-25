@@ -509,7 +509,7 @@ class CETEI {
       return str;
     }
 
-    /* Wraps the content of the element parameter in a <span class="hide">
+    /* Wraps the content of the element parameter in a <span data-hidden>
      * with display set to "none".
      */
     hideContent(elt) {
@@ -518,7 +518,7 @@ class CETEI {
         elt.innerHTML = "";
         let hidden = document.createElement("span");
         hidden.setAttribute("style", "display:none;");
-        hidden.setAttribute("class", "hide");
+        hidden.setAttribute("data-hidden", "");
         hidden.innerHTML = content;
         elt.appendChild(hidden);
       }

@@ -17,8 +17,9 @@ export default {
       }
       return content;
     },
-    "list": function(elt) {
-      if (elt.hasAttribute("type") && elt.getAttribute("type") == "gloss") {
+    "list": {
+      // will only run on a list where @type="gloss"
+      "[type=gloss]": function(elt) {
         let dl = document.createElement("dl");
         for (let child of Array.from(elt.children)) {
           if (child.nodeType == Node.ELEMENT_NODE) {
@@ -35,8 +36,6 @@ export default {
           }
         }
         return dl;
-      } else {
-        return null;
       }
     },
     "table": function(elt) {

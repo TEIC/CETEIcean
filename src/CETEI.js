@@ -230,23 +230,11 @@ class CETEI {
     _insert(elt, strings) {
       let span = document.createElement("span");
       if (strings.length > 1) {
-        if (strings[0].includes("<") && strings[1].includes("</")) {
-          span.innerHTML = strings[0] + elt.innerHTML + strings[1];
-        } else {
-          span.innerHTML = "<span>" + strings[0] + "</span>" + elt.innerHTML + "<span>" + strings[1] + "</span>";
-        }
+        span.innerHTML = strings[0] + elt.innerHTML + strings[1];
       } else {
-        if (strings[0].includes("<")) {
-          span.innerHTML = strings[0] + elt.innerHTML;
-        } else {
-          span.innerHTML = "<span>" + strings[0] + "</span>" + elt.innerHTML;
-        }
+        span.innerHTML = strings[0] + elt.innerHTML;
       }
-      if (span.children.length > 1) {
-        return span;
-      } else {
-        return span.children[0];
-      }
+      return span;
     }
 
     // private method
@@ -276,13 +264,34 @@ class CETEI {
       }
     }
 
-    /* Takes a template in the form of an array of 1 or 2 strings and
-       returns a closure around a function that can be called as
-       a createdCallback or applied to an individual element.
+    /* Takes a template in the form of either an array of 1 or 2 
+       strings or an object with CSS selector keys and either functions
+       or arrays as described above. Returns a closure around a function 
+       that can be called in the element constructor or applied to an 
+       individual element.
 
        Called by the getHandler() and getFallback() methods
     */
-    decorator(strings) {
+    decorator(template) {
+      if (Array.isArray(template)) {
+        return this._decorator(template)
+      } else {
+        let ceteicean = this;
+        return function(elt) {
+          for (let key of Object.keys(template)) {
+            if (key === "_" || elt.matches(key)) {
+              if (Array.isArray(template[key])) {
+                return ceteicean._decorator(template[key]).call(ceteicean, elt);
+              } else {
+                return template[key].call(ceteicean, elt);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    _decorator(strings) {
       let ceteicean = this;
       return function (elt) {
         let copy = [];
@@ -300,26 +309,25 @@ class CETEI {
     getHandler(fn) {
       for (let i = this.behaviors.length - 1; i >= 0; i--) {
         if (this.behaviors[i]["handlers"][fn]) {
-          if (Array.isArray(this.behaviors[i]["handlers"][fn])) {
-            return this.append(this.decorator(this.behaviors[i]["handlers"][fn]));
-          } else {
+          if ({}.toString.call(this.behaviors[i]["handlers"][fn]) === '[object Function]') {
             return this.append(this.behaviors[i]["handlers"][fn]);
+          } else {
+            return this.append(this.decorator(this.behaviors[i]["handlers"][fn]));
           }
         }
       }
     }
 
     /* Returns the fallback function for the given element name.
-
        Called by fallback().
      */
     getFallback(fn) {
       for (let i = this.behaviors.length - 1; i >= 0; i--) {
         if (this.behaviors[i]["handlers"][fn]) {
-          if (Array.isArray(this.behaviors[i]["handlers"][fn])) {
-            return this.decorator(this.behaviors[i]["handlers"][fn]);
-          } else {
+          if ({}.toString.call(this.behaviors[i]["handlers"][fn]) === '[object Function]') {
             return this.behaviors[i]["handlers"][fn];
+          } else {
+            return this.decorator(this.behaviors[i]["handlers"][fn]);
           }
         }
       }
@@ -336,27 +344,14 @@ class CETEI {
       if (elt) {
         let content = fn.call(this, elt);
         if (content && !this._childExists(elt.firstElementChild, content.nodeName)) {
-          if (this.supportsShadowDom) {
-            this._appendShadow(elt, content);
-          } else {
-            this._appendBasic(elt, content);
-          }
+          this._appendBasic(elt, content);
         }
       } else {
         let self = this;
-        if (this.supportsShadowDom) {
-          return function() {
-            let content = fn.call(self, this);
-            if (content) {
-              self._appendShadow(this, content);
-            }
-          }
-        } else {
-          return function() {
-            let content = fn.call(self, this);
-            if (content && !this._childExists(elt.firstElementChild, content.nodeName)) {
-              self._appendBasic(this, content);
-            }
+        return function() {
+          let content = fn.call(self, this);
+          if (content && !self._childExists(this.firstElementChild, content.nodeName)) {
+            self._appendBasic(this, content);
           }
         }
       }
@@ -373,7 +368,7 @@ class CETEI {
       }
     }
 
-    /* Private method called by append() if the browser supports Shadow DOM
+    /* DEPRECATED. Private method called by append() if the browser supports Shadow DOM. 
      */
     _appendShadow(elt, content) {
       var shadow = elt.attachShadow({mode:'open'});
@@ -400,7 +395,7 @@ class CETEI {
         let cName = name + "Elt";
         window[cName] = class extends HTMLElement {
           constructor() {
-            super();
+            super(); 
             if (fn) {
               fn.call(this);
             }

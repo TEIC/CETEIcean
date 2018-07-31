@@ -34,10 +34,8 @@ class CETEI {
         // Get TEI from TEI_url and create a promise
         let promise = new Promise( function (resolve, reject) {
             let client = new XMLHttpRequest();
-
             client.open('GET', TEI_url);
             client.send();
-
             client.onload = function () {
               if (this.status >= 200 && this.status < 300) {
                 resolve(this.response);
@@ -167,16 +165,20 @@ class CETEI {
 
       this.dom = convertEl(TEI_dom.documentElement);
 
-      if (window.customElements) {
-        this.registerAll(this.els);
-      } else {
-        this.fallback(this.els);
-      }
+      this.applyBehaviors();
       this.done = true;
       if (callback) {
           callback(this.dom, this);
       } else {
           return this.dom;
+      }
+    }
+
+    applyBehaviors() {
+      if (window.customElements) {
+        this.define(this.els);
+      } else {
+        this.fallback(this.els);
       }
     }
 
@@ -190,7 +192,7 @@ class CETEI {
     }
 
     /* If a URL where CSS for styling Shadow DOM elements lives has been defined,
-       insert it into the Shadow DOM.
+       insert it into the Shadow DOM. DEPRECATED
      */
     addShadowStyle(shadow) {
       if (this.shadowCSS) {
@@ -203,10 +205,14 @@ class CETEI {
        same name.
     */
     addBehaviors(bhvs){
-      if (bhvs["handlers"] || bhvs ["fallbacks"]) {
+      if (bhvs["handlers"]) {
+        this.behaviors.push(bhvs["handlers"]);
+      } 
+      if (typeof(bhvs) === "object") {
         this.behaviors.push(bhvs);
-      } else {
-        console.log("No handlers or fallback methods found.");
+      }
+      if (bhvs["fallbacks"]) {
+        console.log("Fallback behaviors are no longer used.")
       }
     }
 
@@ -229,12 +235,33 @@ class CETEI {
     // private method
     _insert(elt, strings) {
       let span = document.createElement("span");
+      for (let node of Array.from(elt.childNodes)) {
+        if (node.nodeType === Node.ELEMENT_NODE && !node.hasAttribute("data-processed")) {
+          this._processElement(node);
+        }
+      }
       if (strings.length > 1) {
         span.innerHTML = strings[0] + elt.innerHTML + strings[1];
       } else {
         span.innerHTML = strings[0] + elt.innerHTML;
       }
       return span;
+      
+    }
+
+    _processElement(elt) {
+      if (elt.hasAttribute("data-teiname") && ! elt.hasAttribute("data-processed")) {
+        let fn = this.getFallback(elt.getAttribute("data-teiname"));
+        if (fn) {
+          this.append(fn,elt);
+          elt.setAttribute("data-processed","");
+        }
+      }
+      for (let node of Array.from(elt.childNodes)) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          this._processElement(node);
+        }
+      }
     }
 
     // private method
@@ -279,12 +306,19 @@ class CETEI {
         let ceteicean = this;
         return function(elt) {
           for (let key of Object.keys(template)) {
-            if (key === "_" || elt.matches(key)) {
+            if (elt.matches(key)) {
               if (Array.isArray(template[key])) {
                 return ceteicean._decorator(template[key]).call(ceteicean, elt);
               } else {
                 return template[key].call(ceteicean, elt);
               }
+            }
+          }
+          if (template["_"]) {
+            if (Array.isArray(template["_"])) {
+              return ceteicean._decorator(template["_"]).call(ceteicean, elt);
+            } else {
+              return template["_"].call(ceteicean, elt);
             }
           }
         }
@@ -304,15 +338,15 @@ class CETEI {
 
     /* Returns the handler function for the given element name
 
-       Called by registerAll().
+       Called by define().
      */
     getHandler(fn) {
       for (let i = this.behaviors.length - 1; i >= 0; i--) {
-        if (this.behaviors[i]["handlers"][fn]) {
-          if ({}.toString.call(this.behaviors[i]["handlers"][fn]) === '[object Function]') {
-            return this.append(this.behaviors[i]["handlers"][fn]);
+        if (this.behaviors[i][fn]) {
+          if ({}.toString.call(this.behaviors[i][fn]) === '[object Function]') {
+            return this.append(this.behaviors[i][fn]);
           } else {
-            return this.append(this.decorator(this.behaviors[i]["handlers"][fn]));
+            return this.append(this.decorator(this.behaviors[i][fn]));
           }
         }
       }
@@ -323,11 +357,11 @@ class CETEI {
      */
     getFallback(fn) {
       for (let i = this.behaviors.length - 1; i >= 0; i--) {
-        if (this.behaviors[i]["handlers"][fn]) {
-          if ({}.toString.call(this.behaviors[i]["handlers"][fn]) === '[object Function]') {
-            return this.behaviors[i]["handlers"][fn];
+        if (this.behaviors[i][fn]) {
+          if ({}.toString.call(this.behaviors[i][fn]) === '[object Function]') {
+            return this.behaviors[i][fn];
           } else {
-            return this.decorator(this.behaviors[i]["handlers"][fn]);
+            return this.decorator(this.behaviors[i][fn]);
           }
         }
       }
@@ -357,6 +391,20 @@ class CETEI {
       }
     }
 
+    attach(elt, fn, node) {
+      elt[fn].call(elt, node);
+      if (!window.customElements && node.nodeType === Node.ELEMENT_NODE) {
+        for (let e of Array.from(node.querySelectorAll("*"))) {
+          if (!e.hasAttribute("data-processed")) {
+            let fn; 
+            if (fn = this.getFallback(e.getAttribute("data-teiname"))) {
+              this.append(fn, e);
+            }
+          }
+        }
+      } 
+    }
+
     /* Private method called by append(). Takes a child element and a name, and recurses through the
      * child's siblings until an element with that name is found, returning true if it is and false if not.
      */
@@ -376,12 +424,17 @@ class CETEI {
       shadow.appendChild(content);
     }
 
-    /* Private method called by append() if the browser does not support
-     * Shadow DOM
+    /* Private method called by append() 
      */
     _appendBasic(elt, content) {
       this.hideContent(elt);
       elt.appendChild(content);
+    }
+
+    /* Wrapper for deprecated method now known as define()
+     */
+    registerAll(names) {
+      this.define(names);
     }
 
     /* Registers the list of elements provided with the browser.
@@ -389,23 +442,31 @@ class CETEI {
        Called by makeHTML5(), but can be called independently if, for example,
        you've created Custom Elements via an XSLT transformation instead.
      */
-    registerAll(names) {
+    define(names) {
       for (let name of names) {
-        let fn = this.getHandler(name);
-        let cName = name + "Elt";
-        window[cName] = class extends HTMLElement {
-          constructor() {
-            super(); 
-            if (fn) {
-              fn.call(this);
-            }
-          }
-        }
-        //Object.setPrototypeOf(newClass, HTMLElement.prototype);
-
-        let prefixedName = this.tagName(name);
         try {
-          window.customElements.define(prefixedName, window[cName]);
+          let fn = this.getHandler(name);
+          window.customElements.define(this.tagName(name), class extends HTMLElement {
+            constructor() {
+              super(); 
+              if (!this.matches(":defined")) { // "Upgraded" undefined elements can have attributes & children; new elements can't
+                if (fn) {
+                  fn.call(this);
+                }
+                // We don't want to double-process elements, so add a flag
+                this.setAttribute("data-processed","");
+              }
+            }
+            // Process new elements when they are connected to the browser DOM
+            connectedCallback() {
+              if (!this.hasAttribute("data-processed")) {
+                if (fn) {
+                  fn.call(this);
+                }
+                this.setAttribute("data-processed","");
+              }
+            };
+          });
         } catch (error) {
           console.log(prefixedName + " couldn't be registered or is already registered.");
           console.log(error);
@@ -417,15 +478,17 @@ class CETEI {
     /* Provides fallback functionality for browsers where Custom Elements
        are not supported.
 
-       Like registerAll(), this is called by makeHTML5(), but can be called
+       Like define(), this is called by makeHTML5(), but can be called
        independently.
     */
     fallback(names) {
       for (let name of names) {
         let fn = this.getFallback(name);
         if (fn) {
-          for (let elt of Array.from((this.dom?this.dom:document).getElementsByTagName(this.tagName(name)))) {
-            this.append(fn, elt);
+          for (let elt of Array.from((this.dom && !this.done?this.dom:document).getElementsByTagName(this.tagName(name)))) {
+            if (!elt.hasAttribute("data-processed")) {
+              this.append(fn, elt);
+            }
           }
         }
       }
@@ -467,6 +530,41 @@ class CETEI {
       return result;
     }
 
+    /* Performs a deep copy operation of the input node while stripping
+     * out child elements introduced by CETEIcean.
+     */ 
+    copyAndReset(node) {
+      let _clone = (n) => {
+        let result = n.nodeType === Node.ELEMENT_NODE?document.createElement(n.nodeName):n.cloneNode(true);
+        if (n.attributes) {
+          for (let att of Array.from(n.attributes)) {
+            if (att.name !== "data-processed") {
+              result.setAttribute(att.name,att.value);
+            }
+          }
+        }
+        for (let node of Array.from(n.childNodes)){
+          if (node.nodeType == Node.ELEMENT_NODE) {
+            if (!n.hasAttribute("data-empty")) {
+              if (node.hasAttribute("data-original")) {
+                for (let childNode of Array.from(node.childNodes)) {
+                  result.appendChild(_clone(childNode));
+                }
+                return result;
+              } else {
+                result.appendChild(_clone(node));
+              }
+            }
+          }
+          else {
+            result.appendChild(node.cloneNode());
+          }
+        }
+        return result;
+      }
+      return _clone(node);
+    }
+
     /* Takes an element and serializes it to a TEI string or, if the stripElt
        parameter is set, serializes the element's content.
      */
@@ -488,6 +586,7 @@ class CETEI {
           str += "/>";
         }
       }
+
       for (let node of Array.from(el.childNodes)) {
         switch (node.nodeType) {
           case Node.ELEMENT_NODE:
@@ -509,18 +608,21 @@ class CETEI {
       return str;
     }
 
-    /* Wraps the content of the element parameter in a <span data-hidden>
+    /* Wraps the content of the element parameter in a <span data-original>
      * with display set to "none".
      */
     hideContent(elt) {
       if (elt.childNodes.length > 0) {
-        let content = elt.innerHTML;
-        elt.innerHTML = "";
         let hidden = document.createElement("span");
-        hidden.setAttribute("style", "display:none;");
-        hidden.setAttribute("data-hidden", "");
-        hidden.innerHTML = content;
         elt.appendChild(hidden);
+        hidden.setAttribute("style", "display:none;");
+        hidden.setAttribute("data-original", "");
+        for (let node of Array.from(elt.childNodes)) {
+          if (node !== hidden) {
+            hidden.appendChild(elt.removeChild(node));
+          }
+        }
+        
       }
     }
 

@@ -16,7 +16,8 @@ export default {
           "modules": false,
           "targets": {
             "chrome": 65,
-            "safari": 11
+            "safari": 11,
+            "firefox": 60
           }
         }]
       ]}),

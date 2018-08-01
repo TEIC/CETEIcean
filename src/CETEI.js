@@ -249,6 +249,7 @@ class CETEI {
       
     }
 
+    // private method. Runs behaviors recursively on the supplied element and children
     _processElement(elt) {
       if (elt.hasAttribute("data-teiname") && ! elt.hasAttribute("data-processed")) {
         let fn = this.getFallback(elt.getAttribute("data-teiname"));

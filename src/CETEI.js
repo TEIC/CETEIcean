@@ -235,6 +235,11 @@ class CETEI {
     // private method
     _insert(elt, strings) {
       let span = document.createElement("span");
+      for (let node of Array.from(elt.childNodes)) {
+        if (node.nodeType === Node.ELEMENT_NODE && !node.hasAttribute("data-processed")) {
+          this._processElement(node);
+        }
+      }
       if (strings.length > 1) {
         span.innerHTML = strings[0] + elt.innerHTML + strings[1];
       } else {
@@ -242,6 +247,22 @@ class CETEI {
       }
       return span;
       
+    }
+
+    // private method. Runs behaviors recursively on the supplied element and children
+    _processElement(elt) {
+      if (elt.hasAttribute("data-teiname") && ! elt.hasAttribute("data-processed")) {
+        let fn = this.getFallback(elt.getAttribute("data-teiname"));
+        if (fn) {
+          this.append(fn,elt);
+          elt.setAttribute("data-processed","");
+        }
+      }
+      for (let node of Array.from(elt.childNodes)) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          this._processElement(node);
+        }
+      }
     }
 
     // private method

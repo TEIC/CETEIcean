@@ -93,10 +93,10 @@ class CETEI {
               } else {
                 newElement.setAttribute(att.name, att.value);
               }
-              if (att.name == "xml:id" && !copy) {
+              if (att.name == "xml:id") {
                 newElement.setAttribute("id", att.value);
               }
-              if (att.name == "xml:lang" && !copy) {
+              if (att.name == "xml:lang") {
                 newElement.setAttribute("lang", att.value);
               }
               if (att.name == "rendition") {
@@ -412,7 +412,7 @@ class CETEI {
       elt[fn].call(elt, node);
       if (node.nodeType === Node.ELEMENT_NODE) {
         for (let e of Array.from(node.childNodes)) {
-          this._processElement(node);
+          this._processElement(e);
         }
       } 
     }
@@ -481,7 +481,7 @@ class CETEI {
             };
           });
         } catch (error) {
-          console.log(prefixedName + " couldn't be registered or is already registered.");
+          console.log(this._tagName(name) + " couldn't be registered or is already registered.");
           console.log(error);
         }
 
@@ -556,21 +556,21 @@ class CETEI {
             }
           }
         }
-        for (let node of Array.from(n.childNodes)){
-          if (node.nodeType == Node.ELEMENT_NODE) {
+        for (let nd of Array.from(n.childNodes)){
+          if (nd.nodeType == Node.ELEMENT_NODE) {
             if (!n.hasAttribute("data-empty")) {
-              if (node.hasAttribute("data-original")) {
-                for (let childNode of Array.from(node.childNodes)) {
+              if (nd.hasAttribute("data-original")) {
+                for (let childNode of Array.from(nd.childNodes)) {
                   result.appendChild(_clone(childNode));
                 }
                 return result;
               } else {
-                result.appendChild(_clone(node));
+                result.appendChild(_clone(nd));
               }
             }
           }
           else {
-            result.appendChild(node.cloneNode());
+            result.appendChild(nd.cloneNode());
           }
         }
         return result;

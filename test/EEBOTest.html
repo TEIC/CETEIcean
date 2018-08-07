@@ -33,7 +33,7 @@
   <body>
     <div id="TEI">
       <h1>Loading...</h1>
-      <p>Sadly, this page will not work in Internet Explorer and some older browsers, due to outdated Javascript support. We suggest you use Chrome or Firefox.</p>
+      <p>This page may not work in Internet Explorer and some older browsers, due to outdated Javascript support. We suggest you use Chrome or Firefox.</p>
     </div>
     <script src="../dist/CETEI.js"></script>
     <script>
@@ -53,7 +53,7 @@
             var link = document.createElement("a");
             link.setAttribute("style", "float:right;padding-left:1em;text-decoration:none;color:gray;");
             if (elt.hasAttribute("facs")) {
-              var facs = elt.getAttribute("facs").replace("tcp:", "").replace(new RegExp(this.prefixes["tcp"]["matchPattern"]), "?vid=$1&page=$2");
+              var facs = elt.getAttribute("facs").replace("tcp:", "").replace(new RegExp(this.prefixDefs["tcp"]["matchPattern"]), "?vid=$1&page=$2");
               link.setAttribute("href", "http://eebo.chadwyck.com/fetchimage" + facs + "&width=1500");
               var img = document.createElement("img");
               images.push(img);

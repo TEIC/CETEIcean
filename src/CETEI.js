@@ -3,9 +3,10 @@ class CETEI {
 
     constructor(base){
         this.els = [];
-        this.behaviors = [];
+        this.namespaces = {};
+        this.behaviors = {};
         this.hasStyle = false;
-        this.prefixes = [];
+        this.prefixDefs = [];
         if (base) {
           this.base = base;
         } else {
@@ -17,24 +18,24 @@ class CETEI {
             this.base = "";
           }
         }
-        this.behaviors.push(behaviors);
+        this.addBehaviors(behaviors);
         this.shadowCSS;
         this.supportsShadowDom = document.head.createShadowRoot || document.head.attachShadow;
     }
 
     // public method
-    /* Returns a Promise that fetches a TEI source document from the URL
+    /* Returns a Promise that fetches an XML source document from the URL
        provided in the first parameter and then calls the makeHTML5 method
        on the returned document.
      */
-    getHTML5(TEI_url, callback, perElementFn){
-        if (window.location.href.startsWith(this.base) && (TEI_url.indexOf("/") >= 0)) {
-          this.base = TEI_url.replace(/\/[^\/]*$/, "/");
+    getHTML5(XML_url, callback, perElementFn){
+        if (window.location.href.startsWith(this.base) && (XML_url.indexOf("/") >= 0)) {
+          this.base = XML_url.replace(/\/[^\/]*$/, "/");
         }
-        // Get TEI from TEI_url and create a promise
+        // Get XML from XML_url and create a promise
         let promise = new Promise( function (resolve, reject) {
             let client = new XMLHttpRequest();
-            client.open('GET', TEI_url);
+            client.open('GET', XML_url);
             client.send();
             client.onload = function () {
               if (this.status >= 200 && this.status < 300) {
@@ -52,56 +53,45 @@ class CETEI {
             console.log(reason);
         });
 
-        return promise.then((TEI) => {
-            return this.makeHTML5(TEI, callback, perElementFn);
+        return promise.then((XML) => {
+            return this.makeHTML5(XML, callback, perElementFn);
         });
 
     }
 
-    /* Converts the supplied TEI string into HTML5 Custom Elements. If a callback
+    /* Converts the supplied XML string into HTML5 Custom Elements. If a callback
        function is supplied, calls it on the result.
      */
-    makeHTML5(TEI, callback, perElementFn){
-      // TEI is assumed to be a string
-      let TEI_dom = ( new DOMParser() ).parseFromString(TEI, "text/xml");
-      return this.domToHTML5(TEI_dom, callback, perElementFn);
+    makeHTML5(XML, callback, perElementFn){
+      // XML is assumed to be a string
+      let XML_dom = ( new DOMParser() ).parseFromString(XML, "text/xml");
+      return this.domToHTML5(XML_dom, callback, perElementFn);
     }
 
-    /* Converts the supplied TEI DOM into HTML5 Custom Elements. If a callback
+    /* Converts the supplied XML DOM into HTML5 Custom Elements. If a callback
        function is supplied, calls it on the result.
     */
-    domToHTML5(TEI_dom, callback, perElementFn){
+    domToHTML5(XML_dom, callback, perElementFn){
 
-      this._fromTEI(TEI_dom);
+      this._learnElementNames(XML_dom);
 
       let convertEl = (el) => {
-          // Create new element. TEI elements get prefixed with 'tei-',
-          // TEI example elements with 'teieg-'. All others keep
+          // Elements with defined namespaces get the prefix mapped to that element. All others keep
           // their namespaces and are copied as-is.
           let newElement;
-          let copy = false;
-          switch (el.namespaceURI) {
-            case "http://www.tei-c.org/ns/1.0":
-              newElement = document.createElement("tei-" + el.tagName);
-              break;
-            case "http://www.tei-c.org/ns/Examples":
-              newElement = document.createElement("teieg-" + el.tagName);
-              break;
-            case "http://relaxng.org/ns/structure/1.0":
-              newElement = document.createElement("rng-" + el.tagName);
-              break;
-            default:
-              newElement = document.importNode(el, false);
-              copy = true;
+          if (this.namespaces[el.namespaceURI]) {
+            let prefix = this.namespaces[el.namespaceURI];
+            newElement = document.createElement(prefix + "-" + el.tagName);
+          } else {
+            newElement = document.importNode(el, false);
           }
           // Copy attributes; @xmlns, @xml:id, @xml:lang, and
           // @rendition get special handling.
           for (let att of Array.from(el.attributes)) {
-              if (!att.name.startsWith("xmlns") || copy) {
-                newElement.setAttribute(att.name, att.value);
-              } else {
-                if (att.name == "xmlns")
+              if (att.name == "xmlns") {
                 newElement.setAttribute("data-xmlns", att.value); //Strip default namespaces, but hang on to the values
+              } else {
+                newElement.setAttribute(att.name, att.value);
               }
               if (att.name == "xml:id" && !copy) {
                 newElement.setAttribute("id", att.value);
@@ -114,7 +104,7 @@ class CETEI {
               }
           }
           // Preserve element name so we can use it later
-          newElement.setAttribute("data-teiname", el.localName);
+          newElement.setAttribute("data-origname", el.localName);
           // If element is empty, flag it
           if (el.childNodes.length == 0) {
             newElement.setAttribute("data-empty", "");
@@ -144,8 +134,8 @@ class CETEI {
           }
           // Get prefix definitions
           if (el.localName == "prefixDef") {
-            this.prefixes.push(el.getAttribute("ident"));
-            this.prefixes[el.getAttribute("ident")] =
+            this.prefixDefs.push(el.getAttribute("ident"));
+            this.prefixDefs[el.getAttribute("ident")] =
               {"matchPattern": el.getAttribute("matchPattern"),
               "replacementPattern": el.getAttribute("replacementPattern")};
           }
@@ -163,17 +153,22 @@ class CETEI {
           return newElement;
       }
 
-      this.dom = convertEl(TEI_dom.documentElement);
+      this.dom = convertEl(XML_dom.documentElement);
 
       this.applyBehaviors();
       this.done = true;
       if (callback) {
-          callback(this.dom, this);
+        callback(this.dom, this);
+        window.dispatchEvent(ceteiceanLoad);
       } else {
-          return this.dom;
+        window.dispatchEvent(ceteiceanLoad);
+        return this.dom;
       }
     }
 
+    /*  
+     *
+     */
     applyBehaviors() {
       if (window.customElements) {
         this.define(this.els);
@@ -205,15 +200,35 @@ class CETEI {
        same name.
     */
     addBehaviors(bhvs){
-      if (bhvs["handlers"]) {
-        this.behaviors.push(bhvs["handlers"]);
-      } 
-      if (typeof(bhvs) === "object") {
-        this.behaviors.push(bhvs);
+      if (bhvs.namespaces) {
+        for (let prefix of Object.keys(bhvs.namespaces)) {
+          if (!this.namespaces[bhvs.namespaces[prefix]]) {
+            this.namespaces[bhvs.namespaces[prefix]] = prefix;
+          }
+          if (bhvs[prefix]) {
+            for (let b of Object.keys(bhvs[prefix])) {
+              this.behaviors[this.namespaces[bhvs.namespaces[prefix]] + ":" + b] = bhvs[prefix][b];
+            }
+          }
+        }
       }
+      // Support old-style TEI-specific behaviors
+      if (bhvs.handlers) {
+        for (let b of Object.keys(bhvs.handlers)) {
+          if (b !== "egXML") {
+            this.behaviors["tei:" + b] = bhvs.handlers[b];
+          } else {
+            this.behaviors["teieg:egXML"] = bhvs.handlers[b];
+          }
+        }
+      } 
       if (bhvs["fallbacks"]) {
         console.log("Fallback behaviors are no longer used.")
       }
+    }
+
+    addNamespaces(namespaces) {
+
     }
 
     /* Sets the base URL for the document. Used to rewrite relative links in the
@@ -225,11 +240,10 @@ class CETEI {
     }
 
     // "private" method
-    _fromTEI(TEI_dom) {
-        let root_el = TEI_dom.documentElement;
-        this.els = new Set( Array.from(root_el.getElementsByTagNameNS("http://www.tei-c.org/ns/1.0", "*"), x => x.tagName) );
-        this.els.add("egXML"); // Special case—not in TEI namespace, but needs to be handled
-        this.els.add(root_el.tagName); // Add the root element to the array
+    _learnElementNames(XML_dom) {
+        let root = XML_dom.documentElement;
+        this.els = new Set( Array.from(root.querySelectorAll("*"), e => (this.namespaces[e.namespaceURI]?this.namespaces[e.namespaceURI]+":":"") + e.tagName) );
+        this.els.add((this.namespaces[root.namespaceURI]?this.namespaces[root.namespaceURI]+":":"") + root.tagName); // Add the root element to the array
     }
 
     // private method
@@ -251,8 +265,8 @@ class CETEI {
 
     // private method. Runs behaviors recursively on the supplied element and children
     _processElement(elt) {
-      if (elt.hasAttribute("data-teiname") && ! elt.hasAttribute("data-processed")) {
-        let fn = this.getFallback(elt.getAttribute("data-teiname"));
+      if (elt.hasAttribute("data-origname") && ! elt.hasAttribute("data-processed")) {
+        let fn = this.getFallback(this._bName(elt));
         if (fn) {
           this.append(fn,elt);
           elt.setAttribute("data-processed","");
@@ -268,8 +282,8 @@ class CETEI {
     // private method
     _template(str, elt) {
       let result = str;
-      if (str.search(/$(\w*)(@\w+)/)) {
-        let re = /\$(\w*)@(\w+)/g;
+      if (str.search(/\$(\w*)(@([a-zA-Z:]+))/ )) {
+        let re = /\$(\w*)@([a-zA-Z:]+)/g;
         let replacements;
         while (replacements = re.exec(str)) {
           if (elt.hasAttribute(replacements[2])) {
@@ -284,12 +298,18 @@ class CETEI {
       return result;
     }
 
-    tagName(name) {
-      if (name == "egXML") {
-        return "teieg-" + name.toLowerCase();
+    // Private method. Given a qualified name (e.g. tei:text), return the element name
+    _tagName(name) {
+      if (name.includes(":"), 1) {
+        return name.replace(/:/,"-").toLowerCase();;
       } else {
-        return "tei-" + name.toLowerCase();
+        return "ceteicean-" + name.toLowerCase();
       }
+    }
+
+    // Private method. Given an element, return its qualified name as defined in a behaviors object
+    _bName(e) {
+      return e.tagName.substring(0,e.tagName.indexOf("-")).toLowerCase() + ":" + e.getAttribute("data-origname");
     }
 
     /* Takes a template in the form of either an array of 1 or 2 
@@ -342,13 +362,11 @@ class CETEI {
        Called by define().
      */
     getHandler(fn) {
-      for (let i = this.behaviors.length - 1; i >= 0; i--) {
-        if (this.behaviors[i][fn]) {
-          if ({}.toString.call(this.behaviors[i][fn]) === '[object Function]') {
-            return this.append(this.behaviors[i][fn]);
-          } else {
-            return this.append(this.decorator(this.behaviors[i][fn]));
-          }
+      if (this.behaviors[fn]) {
+        if ({}.toString.call(this.behaviors[fn]) === '[object Function]') {
+          return this.append(this.behaviors[fn]);
+        } else {
+          return this.append(this.decorator(this.behaviors[fn]));
         }
       }
     }
@@ -357,13 +375,11 @@ class CETEI {
        Called by fallback().
      */
     getFallback(fn) {
-      for (let i = this.behaviors.length - 1; i >= 0; i--) {
-        if (this.behaviors[i][fn]) {
-          if ({}.toString.call(this.behaviors[i][fn]) === '[object Function]') {
-            return this.behaviors[i][fn];
-          } else {
-            return this.decorator(this.behaviors[i][fn]);
-          }
+      if (this.behaviors[fn]) {
+        if ({}.toString.call(this.behaviors[fn]) === '[object Function]') {
+          return this.behaviors[fn];
+        } else {
+          return this.decorator(this.behaviors[fn]);
         }
       }
     }
@@ -394,14 +410,9 @@ class CETEI {
 
     attach(elt, fn, node) {
       elt[fn].call(elt, node);
-      if (!window.customElements && node.nodeType === Node.ELEMENT_NODE) {
-        for (let e of Array.from(node.querySelectorAll("*"))) {
-          if (!e.hasAttribute("data-processed")) {
-            let fn; 
-            if (fn = this.getFallback(e.getAttribute("data-teiname"))) {
-              this.append(fn, e);
-            }
-          }
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        for (let e of Array.from(node.childNodes)) {
+          this._processElement(node);
         }
       } 
     }
@@ -443,11 +454,12 @@ class CETEI {
        Called by makeHTML5(), but can be called independently if, for example,
        you've created Custom Elements via an XSLT transformation instead.
      */
+    // Need to come up with a new way to get tag name from name. Possibly prefixed names in behaviors?
     define(names) {
       for (let name of names) {
         try {
           let fn = this.getHandler(name);
-          window.customElements.define(this.tagName(name), class extends HTMLElement {
+          window.customElements.define(this._tagName(name), class extends HTMLElement {
             constructor() {
               super(); 
               if (!this.matches(":defined")) { // "Upgraded" undefined elements can have attributes & children; new elements can't
@@ -486,7 +498,7 @@ class CETEI {
       for (let name of names) {
         let fn = this.getFallback(name);
         if (fn) {
-          for (let elt of Array.from((this.dom && !this.done?this.dom:document).getElementsByTagName(this.tagName(name)))) {
+          for (let elt of Array.from((this.dom && !this.done?this.dom:document).getElementsByTagName(this._tagName(name)))) {
             if (!elt.hasAttribute("data-processed")) {
               this.append(fn, elt);
             }
@@ -566,13 +578,13 @@ class CETEI {
       return _clone(node);
     }
 
-    /* Takes an element and serializes it to a TEI string or, if the stripElt
+    /* Takes an element and serializes it to an XML string or, if the stripElt
        parameter is set, serializes the element's content.
      */
     serialize(el, stripElt) {
       let str = "";
       if (!stripElt) {
-        str += "&lt;" + el.getAttribute("data-teiname");
+        str += "&lt;" + el.getAttribute("data-origname");
         for (let attr of Array.from(el.attributes)) {
           if (!attr.name.startsWith("data-") && !(["id", "lang", "class"].includes(attr.name))) {
             str += " " + attr.name + "=\"" + attr.value + "\"";
@@ -604,7 +616,7 @@ class CETEI {
         }
       }
       if (!stripElt && el.childNodes.length > 0) {
-        str += "&lt;/" + el.getAttribute("data-teiname") + ">";
+        str += "&lt;/" + el.getAttribute("data-origname") + ">";
       }
       return str;
     }
@@ -642,9 +654,13 @@ class CETEI {
       if (!window.location.hash) {
         if (window.localStorage.getItem("scroll")) {
           setTimeout(function() {
-            window.scrollTo(0, localStorage.getItem("scroll"))
+            window.scrollTo(0, localStorage.getItem("scroll"));
           }, 100);
         }
+      } else {
+        setTimeout(function() {
+          document.querySelector(window.location.hash).scrollIntoView();
+        }, 100);
       }
     }
 
@@ -667,7 +683,8 @@ try {
   if (window) {
       window.CETEI = CETEI;
       window.addEventListener("beforeunload", CETEI.savePosition);
-      window.addEventListener("load", CETEI.restorePosition);
+      var ceteiceanLoad = new Event("ceteiceanload");
+      window.addEventListener("ceteiceanload", CETEI.restorePosition);
   }
 } catch (e) {
   // window not defined;

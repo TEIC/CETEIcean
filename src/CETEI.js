@@ -81,7 +81,7 @@ class CETEI {
           let newElement;
           if (this.namespaces.has(el.namespaceURI)) {
             let prefix = this.namespaces.get(el.namespaceURI);
-            newElement = document.createElement(prefix + "-" + el.tagName);
+            newElement = document.createElement(prefix + "-" + el.localName);
           } else {
             newElement = document.importNode(el, false);
           }
@@ -238,8 +238,8 @@ class CETEI {
     // "private" method
     _learnElementNames(XML_dom) {
         let root = XML_dom.documentElement;
-        this.els = new Set( Array.from(root.querySelectorAll("*"), e => (this.namespaces.has(e.namespaceURI)?this.namespaces.get(e.namespaceURI) + ":":"") + e.tagName) );
-        this.els.add((this.namespaces.has(root.namespaceURI)?this.namespaces.get(root.namespaceURI)+":":"") + root.tagName); // Add the root element to the array
+        this.els = new Set( Array.from(root.querySelectorAll("*"), e => (this.namespaces.has(e.namespaceURI)?this.namespaces.get(e.namespaceURI) + ":":"") + e.localName) );
+        this.els.add((this.namespaces.has(root.namespaceURI)?this.namespaces.get(root.namespaceURI)+":":"") + root.localName); // Add the root element to the array
     }
 
     // private method

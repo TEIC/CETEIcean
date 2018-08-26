@@ -22,9 +22,9 @@ export default {
       }
       return content;
     },
-    "list": {
+    "list": [
       // will only run on a list where @type="gloss"
-      "[type=gloss]": function(elt) {
+      ["[type=gloss]", function(elt) {
         let dl = document.createElement("dl");
         for (let child of Array.from(elt.children)) {
           if (child.nodeType == Node.ELEMENT_NODE) {
@@ -42,7 +42,7 @@ export default {
         }
         return dl;
       }
-    },
+    ]],
     "table": function(elt) {
       let table = document.createElement("table");
       table.innerHTML = elt.innerHTML;
@@ -73,7 +73,17 @@ export default {
         cell.parentElement.replaceChild(td, cell);
       }
       return table;
-    }
+    },
+    "teiHeader": function(e) {
+      this.hideContent(e);
+    },
+    "title": [
+      ["tei-titlestmt>tei-title", function(elt) {
+        let title = document.createElement("title");
+        title.innerHTML = elt.innerText;
+        document.querySelector("head").appendChild(title);
+      }]
+    ]
   },
   "teieg": {
     "egXML": function(elt) {

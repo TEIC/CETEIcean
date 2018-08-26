@@ -3,7 +3,7 @@ class CETEI {
 
     constructor(base){
         this.els = [];
-        this.namespaces = {};
+        this.namespaces = new Map();
         this.behaviors = {};
         this.hasStyle = false;
         this.prefixDefs = [];
@@ -79,8 +79,8 @@ class CETEI {
           // Elements with defined namespaces get the prefix mapped to that element. All others keep
           // their namespaces and are copied as-is.
           let newElement;
-          if (this.namespaces[el.namespaceURI]) {
-            let prefix = this.namespaces[el.namespaceURI];
+          if (this.namespaces.has(el.namespaceURI)) {
+            let prefix = this.namespaces.get(el.namespaceURI);
             newElement = document.createElement(prefix + "-" + el.tagName);
           } else {
             newElement = document.importNode(el, false);
@@ -166,7 +166,7 @@ class CETEI {
       }
     }
 
-    /*  
+    /*  Define or apply behaviors for the document
      *
      */
     applyBehaviors() {
@@ -202,12 +202,12 @@ class CETEI {
     addBehaviors(bhvs){
       if (bhvs.namespaces) {
         for (let prefix of Object.keys(bhvs.namespaces)) {
-          if (!this.namespaces[bhvs.namespaces[prefix]]) {
-            this.namespaces[bhvs.namespaces[prefix]] = prefix;
+          if (!this.namespaces.has(bhvs.namespaces[prefix]) && !Array.from(this.namespaces.values()).includes(prefix)) {
+            this.namespaces.set(bhvs.namespaces[prefix], prefix);
           }
           if (bhvs[prefix]) {
             for (let b of Object.keys(bhvs[prefix])) {
-              this.behaviors[this.namespaces[bhvs.namespaces[prefix]] + ":" + b] = bhvs[prefix][b];
+              this.behaviors[this.namespaces.get(bhvs.namespaces[prefix]) + ":" + b] = bhvs[prefix][b];
             }
           }
         }
@@ -227,10 +227,6 @@ class CETEI {
       }
     }
 
-    addNamespaces(namespaces) {
-
-    }
-
     /* Sets the base URL for the document. Used to rewrite relative links in the
        XML source (which may be in a completely different location from the HTML
        wrapper).
@@ -242,8 +238,8 @@ class CETEI {
     // "private" method
     _learnElementNames(XML_dom) {
         let root = XML_dom.documentElement;
-        this.els = new Set( Array.from(root.querySelectorAll("*"), e => (this.namespaces[e.namespaceURI]?this.namespaces[e.namespaceURI]+":":"") + e.tagName) );
-        this.els.add((this.namespaces[root.namespaceURI]?this.namespaces[root.namespaceURI]+":":"") + root.tagName); // Add the root element to the array
+        this.els = new Set( Array.from(root.querySelectorAll("*"), e => (this.namespaces.has(e.namespaceURI)?this.namespaces.get(e.namespaceURI) + ":":"") + e.tagName) );
+        this.els.add((this.namespaces.has(root.namespaceURI)?this.namespaces.get(root.namespaceURI)+":":"") + root.tagName); // Add the root element to the array
     }
 
     // private method
@@ -321,25 +317,17 @@ class CETEI {
        Called by the getHandler() and getFallback() methods
     */
     decorator(template) {
-      if (Array.isArray(template)) {
+      if (Array.isArray(template) && !Array.isArray(template[0])) {
         return this._decorator(template)
-      } else {
-        let ceteicean = this;
-        return function(elt) {
-          for (let key of Object.keys(template)) {
-            if (elt.matches(key)) {
-              if (Array.isArray(template[key])) {
-                return ceteicean._decorator(template[key]).call(ceteicean, elt);
-              } else {
-                return template[key].call(ceteicean, elt);
-              }
-            }
-          }
-          if (template["_"]) {
-            if (Array.isArray(template["_"])) {
-              return ceteicean._decorator(template["_"]).call(ceteicean, elt);
+      } 
+      let ceteicean = this;
+      return function(elt) {
+        for (let rule of template) {
+          if (elt.matches(rule[0]) || rule[0] === "_") {
+            if (Array.isArray(rule[1])) {
+              return ceteicean._decorator(rule[1]).call(ceteicean, elt);
             } else {
-              return template["_"].call(ceteicean, elt);
+              return rule[1].call(ceteicean, elt);
             }
           }
         }
@@ -628,7 +616,7 @@ class CETEI {
       if (elt.childNodes.length > 0) {
         let hidden = document.createElement("span");
         elt.appendChild(hidden);
-        hidden.setAttribute("style", "display:none;");
+        hidden.setAttribute("hidden", "");
         hidden.setAttribute("data-original", "");
         for (let node of Array.from(elt.childNodes)) {
           if (node !== hidden) {

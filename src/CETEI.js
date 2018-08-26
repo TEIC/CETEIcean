@@ -205,10 +205,12 @@ class CETEI {
           if (!this.namespaces.has(bhvs.namespaces[prefix]) && !Array.from(this.namespaces.values()).includes(prefix)) {
             this.namespaces.set(bhvs.namespaces[prefix], prefix);
           }
-          if (bhvs[prefix]) {
-            for (let b of Object.keys(bhvs[prefix])) {
-              this.behaviors[this.namespaces.get(bhvs.namespaces[prefix]) + ":" + b] = bhvs[prefix][b];
-            }
+        }
+      }
+      for (let prefix of this.namespaces.values()) {
+        if (bhvs[prefix]) {
+          for (let b of Object.keys(bhvs[prefix])) {
+            this.behaviors[prefix + ":" + b] = bhvs[prefix][b];
           }
         }
       }

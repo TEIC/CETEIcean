@@ -36,6 +36,17 @@ collisions (like HTML `<p>` vs. TEI `<p>` for example).
 
 You can use CETEIcean in your projects just by grabbing the CETEI.js file from the latest [release](https://github.com/TEIC/CETEIcean/releases) and linking to it in an HTML file like the [examples](http://teic.github.io/CETEIcean/) do. Note that you'll want also to grab the example CSS or make your own. If you want to build and play with it on your own, follow the steps below.
 
+### Example
+This code fetches a TEI file, transforms it into HTML Custom Elements, and places the result in a div with id "TEI".
+
+```js
+var CETEIcean = new CETEI()
+CETEIcean.getHTML5("URL_TO_YOUR_TEI.xml", function(data) {
+  document.getElementById("TEI").appendChild(data)
+})
+```
+
+
 ### Install
 Get [NodeJS](https://nodejs.org/).
 

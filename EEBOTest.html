@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="css/CETEIcean.css" media="screen" charset="utf-8">
+    <link rel="stylesheet" href="CETEIcean.css" media="screen" charset="utf-8">
     <style media="screen">
       tei-g[ref="char:cmbAbbrStroke"] {
         display: inline-block;
@@ -32,13 +32,14 @@
   </head>
   <body>
     <div id="TEI">
-      Sadly, this page will not work in Internet Explorer, due to its outdated Javascript support. We suggest you use Chrome or Firefox.
+      <h1>Loading...</h1>
+      <p>This page may not work in Internet Explorer and some older browsers, due to outdated Javascript support. We suggest you use Chrome or Firefox.</p>
     </div>
-    <script src="js/CETEI.js"></script>
+    <script src="../dist/CETEI.js"></script>
     <script>
       var CETEIcean = new CETEI();
       var images = [];
-      CETEIcean.addBehaviors({"handlers":
+      CETEIcean.addBehaviors({"tei":
         {
           "gap": ["[", "]"],
           "note": function(elt) {
@@ -52,7 +53,7 @@
             var link = document.createElement("a");
             link.setAttribute("style", "float:right;padding-left:1em;text-decoration:none;color:gray;");
             if (elt.hasAttribute("facs")) {
-              var facs = elt.getAttribute("facs").replace("tcp:", "").replace(new RegExp(this.prefixes["tcp"]["matchPattern"]), "?vid=$1&page=$2");
+              var facs = elt.getAttribute("facs").replace("tcp:", "").replace(new RegExp(this.prefixDefs["tcp"]["matchPattern"]), "?vid=$1&page=$2");
               link.setAttribute("href", "http://eebo.chadwyck.com/fetchimage" + facs + "&width=1500");
               var img = document.createElement("img");
               images.push(img);
@@ -85,14 +86,14 @@
           }
         }
         // If not logged in to EEBO, use a local image instead of the preview
-        var testimg = new Image();
-        testimg.onerror = function() {
+        var img = new Image();
+        img.onerror = function() {
           console.log("Not logged in.");
           images.forEach(function(elt) {
             elt.src = elt.src.replace("http://eebo.chadwyck.com/fetchimage", "images/page.jpg");
           });
         }
-        testimg.src = "http://eebo.chadwyck.com/fetchimage?vid=5891&page=1&width=100";
+        img.src = "http://eebo.chadwyck.com/fetchimage?vid=5891&page=1&width=100";
       });
     </script>
   </body>

@@ -9,30 +9,30 @@
                 {
                     "namespaces": {"doc": "http://docbook.org/ns/docbook"},
                     "doc": {
-                        "link": {
-                            "[xlink\\:href]": ["<a href=\"$@xlink:href\">","</a>"],
-                            "_": function(elt) {
+                        "link": []
+                            ["[xlink\\:href]", ["<a href=\"$@xlink:href\">","</a>"]],
+                            ["_", function(elt) {
                                 let a = document.createElement("a");
                                 a.setAttribute("href", elt.innerText);
                                 a.innerHTML = elt.innerHTML;
                                 return a;
-                            }
+                            }]
                         },
-                        "footnote": {
-                            "div.notes>doc-footnote": function(elt) {
+                        "footnote": [
+                            ["div.notes>doc-footnote", function(elt) {
                                 let note = document.createElement("span");
                                 note.innerHTML = elt.getAttribute("data-footnote-id").replace(/^fn/,"") + ". " + elt.innerHTML; 
                                 return note;
-                            },
-                            "_": function(elt){
+                            }],
+                            ["_", function(elt){
                                 let a = document.createElement("a");
                                 counter++;
                                 elt.setAttribute("data-footnote-id", "fn" + counter);
                                 a.setAttribute("href", "#" + elt.getAttribute("data-footnote-id"));
                                 a.innerHTML = "[" + counter + "]";
                                 return a;
-                            }
-                        },
+                            }]
+                        ],
                         "imagedata": function(elt) {
                             let content = new Image();
                             content.src = this.rw(elt.getAttribute("fileref"));
@@ -45,11 +45,11 @@
                             return content;
                         },
                         "programlisting": ["<pre>","</pre>"],
-                        "title": {
-                            "doc-article>doc-title": function(elt) {
+                        "title": [
+                            ["doc-article>doc-title", function(elt) {
                                 document.title = elt.innerText;
-                            }
-                        }
+                            }]
+                        ]
                     }
                 }
             );

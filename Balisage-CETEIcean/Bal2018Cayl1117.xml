@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="balisage-1-3.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+  version="5.0-subset Balisage-1.3">
+  <title>CETEIcean: TEI in the Browser</title>
+  <info>
+    <abstract>
+      <para>CETEIcean is a Javascript library designed to render TEI XML in a modern web browser. It
+        does not rely on XSLT or XQuery transformations of the source and is ideal for a
+        distributed, web-based document preparation workflow.</para>
+    </abstract>
+    <author>
+      <personname>
+        <firstname>Hugh</firstname>
+        <surname>Cayless</surname>
+      </personname>
+      <personblurb>
+        <para>Hugh is a Senior Digital Humanities Developer at the Duke Collaboratory for Classics
+          Computing (DC3).</para>
+      </personblurb>
+    </author>
+    <author>
+      <personname>
+        <firstname>Raffaele</firstname>
+        <surname>Viglianti</surname>
+      </personname>
+      <personblurb>
+        <para>Raff is a Research Associate at the Maryland Institute for Technology in the
+          Humanities (MITH).</para>
+      </personblurb>
+    </author>
+  </info>
+  <section>
+    <title>Introduction</title>
+    <para>The standard method for displaying a TEI document on the web is to either pre-transform it
+      to HTML using XSLT or to dynamically transform it to HTML, again usually with XSLT or possibly
+      XQuery. This method, while obviously totally viable, does tend to enshrine a particular
+      workflow and division of responsibilities that may not be optimally flexible. We will present
+      an alternative approach that permits a lighter-weight development workflow and uses more
+      standard web technologies. </para>
+    <para>The TEI Stylesheets and (though to a lesser extent, usually) more specialized XSLT
+      conversions are large, complex software packages in their own right. Their development and
+      maintenance requires experienced XSLT developers. Much though we might regret it, this is no
+      longer a widespread skill. Even very sophisticated XSLT transforms usually involve discarding
+      or substantially reformatting some data in the source. That XSLT is capable of this is
+      obviously a strength, but we would argue there is a subtle pressure towards rewriting your
+      data model for presentation rather than making use of it. Moreover, since XSLT has become a
+      niche specialty, projects are more likely to either just use an existing package for
+      transformation or rely on inexperienced developers customizing such a package. More subtly,
+      the way XSLT transforms divorce the presentation of texts from the work done to model them
+      means there is a disjunction between the (often intensive in TEI) intellectual labor of
+      encoding texts and the presentation of those texts online. Browsers today are dynamic and
+      powerful rendering engines, so why not apply them more directly to the TEI’s data model? </para>
+    <para>CETEIcean (sɪˈti:ʃn)<footnote>
+        <para><link xlink:href="https://github.com/TEIC/CETEIcean"
+          >https://github.com/TEIC/CETEIcean</link>. CETEIcean is released under a <link xlink:href="https://opensource.org/licenses/BSD-2-Clause">BSD 2-clause
+            license</link>.</para>
+      </footnote> was developed to support a lightweight TEI presentation workflow that requires
+      neither pre-display document transformation nor any complex server-side architecture. All that
+      is needed to use it is a web server. The browser does all of the work. CETEIcean is an
+      ECMAScript (JavaScript) library that reads in TEI XML and converts it to HTML Custom Elements.
+      The converted source can then be rendered using standard CSS and JavaScript techniques.
+      CETEIcean supplies a method, calld "behaviors" to add decorations—or even make widgets out
+      of—TEI elements. An obvious advantage to using JavaScript and CSS is that people with these
+      skills are much easier to find, making both initial development and ongoing support simpler.
+      But beyond these mundane questions, we have found that having the TEI’s data model directly
+      available makes some interesting techniques possible. </para>
+    <para>Because it does not rely on a transformation step, the use of CETEIcean means that a
+      distributed development workflow can be used. The Digital Latin Library (DLL)<footnote>
+        <para><link xlink:href="http://digitallatin.org/">http://digitallatin.org/</link>.</para>
+      </footnote> is a new initiative to publish digital critical editions of Latin texts. We have
+      been using GitHub Pages and CETEIcean to work on pre-publication texts. A “stub” HTML file is
+      placed on our GitHub Pages site that points to the raw XML in a separate GitHub repository.
+      When the stub file is loaded in a browser, it fetches the source file and displays it. What
+      this means in practice is that editors working on the XML source have only to push to GitHub
+      to be able to see how their TEI document will look in a web browser. The editor does not need
+      to be able to run their own XSLT transform, nor is there any setup required beyond a very
+      simple HTML file being placed in the GitHub Pages repo. This “push to publish” workflow means
+      it is very simple to check your own or others’ work. If the encoder and the editor are not the
+      same person, reviewing the encoder’s work is trivial. Moreover, because the reviewer is
+      looking at a 1::1 representation of the source, errors are more likely be easy to
+      troubleshoot, as they haven’t gone through a transformation process that might accidentally
+      suppress or obfuscate them.<footnote>
+        <para>Examples are available at <link
+            xlink:href="https://digitallatin.github.io/viewer/calpurnius.html#poem1"
+            >https://digitallatin.github.io/viewer/calpurnius.html</link> and <link
+            xlink:href="https://digitallatin.github.io/viewer/balex.html#part1"
+            >https://digitallatin.github.io/viewer/balex.html</link>. Both examples pull their
+          source text from a separate repository on GitHub.</para>
+      </footnote>
+    </para>
+    <para>The “push to publish” workflow is also useful in the classroom; we have adopted it to
+      teach TEI as part of the Introduction to Digital Studies in the Arts and Humanities, a
+      graduate course at the Maryland Institute for Technology in the Humanities. Students are able
+      to focus on learning how to encode texts with the TEI and are not required to learn XSLT to
+      preview or publish their work. By simply adopting an HTML template equipped with CETEIcean,
+      they are able to engage with issues related to digital publication with a lower learning
+      curve. With the 1::1 representation of the TEI source, students are able to use CSS to style
+      their encoding directly. This kind of workflow is of course possible using XSLT 1.0
+      with an <code>xml-stylesheet</code> processing instruction in the source XML or using 
+      (non-standard) JavaScript-based XSLT transforms, but we think CETEIcean permits more 
+      flexibility than the processing instruction method and that JavaScript is more powerful
+      than XSLT 1.0.<footnote>
+        <para>See below for a discussion of proprietary XSLT 2.0 and 3.0 browser-based implementations.</para>
+      </footnote></para>
+  </section>
+  <section>
+    <title>Implementation</title>
+    <para>CETEIcean converts all TEI elements to an “HTML” equivalent with a <code>tei-</code>
+      prefix. TEI attributes, which mainly have no namespace, are simply copied over. The
+        <code>@xml:lang</code> and <code>@xml:id</code> attributes are converted to their HTML
+      equivalents <code>@lang</code> and <code>@id</code>. Data attributes are used to preserve
+      namespace information, original element name, and whether the element is empty. For most
+      elements, this is sufficient, but for TEI elements which have HTML equivalents, more work is
+      necessary. TEI has a couple of constructs roughly equivalent to HTML <code>&lt;a href></code>
+      for example, namely <code>&lt;ref target></code> and <code>&lt;ptr target/></code> (the former
+      represents linked text with one or more targets and the latter a bare pointer with no text).
+      While linking behaviors can be applied to these post-conversion, those links do not have the
+      full status of HTML links—browsers do not preview the link URL on hover, for example.
+      CETEIcean handles this differently depending on whether the browser in question handles
+      registering Custom Elements.<footnote>
+        <para>See <link xlink:href="https://caniuse.com/#feat=custom-elementsv1"
+            >https://caniuse.com/#feat=custom-elementsv1</link> for a chart of current browser
+          support for Custom Elements v1.</para>
+      </footnote> Recent builds of Chrome and Safari support the feature. In
+      Firefox, the support is experimental. </para>
+    <para>In browsers with Custom Elements support, the additional behaviors are applied in the
+      element’s constructor. So when the element is added to the DOM, it gets additional features.
+      TEI <code>&lt;ptr></code> elements, for example, get an <code>&lt;a href></code> element
+      inserted inside them, with the @href and the content set to the @target of the
+        <code>&lt;ptr></code>. Tables are another case where HTML and CSS can have a hard time with
+      non-HTML table elements (the new CSS Grid Layout module may resolve this issue), so TEI tables
+      have their content hidden and replaced with HTML table elements. </para>
+    <para>In browsers which have not yet implemented Custom Elements, the same effects are achieved
+      using a fallback method which calls the same behavior function. A baseline set of element
+      behaviors is defined for CETEIcean, but these may be redefined or extended by the addition of
+      custom behaviors. Behaviors are simply JavaScript objects which list element handlers which
+      match the TEI element name. These handlers may either be JavaScript functions or arrays
+      containing one or two strings. The latter are automatically converted to functions which
+      insert the content of the array into the element, prefixing or wrapping its content. We might
+      define a behavior for the TEI <code>&lt;add></code> element, for example, which would wrap its
+      contents in the Leiden Convention markers for text added to a document. <figure>
+        <title>Fig. 1: Behavior Example</title>
+        <programlisting>
+The behavior definition:
+  "add": ["`","´"]
+The source:
+	&lt;add>an addition&lt;/add> (in the TEI namespace)
+The output:
+	&lt;tei-add>&lt;span>`&lt;/span>an addition&lt;span>´&lt;/span>&lt;/tei-add>
+        </programlisting>
+      </figure> The latter method provides a useful alternative to using CSS content to decorate
+      elements, as that produces text which is not selectable in the browser. </para>
+  </section>
+  <section>
+    <title>TEI in the Browser</title>
+    <para>CETEIcean is not the first solution to permit TEI in the browser. TEI Boilerplate (<link
+        xlink:href="http://dcl.ils.indiana.edu/teibp/">http://dcl.ils.indiana.edu/teibp/</link>)
+      uses an XSLT script to wrap the TEI document in HTML and convert those TEI elements that have
+      specific HTML equivalents, such as <code>&lt;ref></code> and <code>&lt;ptr></code> discussed
+      above. The transformation is triggered by an “xsl-transform” instruction which has to be added
+      to the source file, and because browser-based XSLT capabilities stalled at XSLT 1.0, it is
+      limited to that version of the language. The now-deprecated Saxon-CE implementation<footnote>
+        <para>Saxon CE: <link xlink:href="http://www.saxonica.com/ce/index.xml"
+            >http://www.saxonica.com/ce/index.xml</link>.</para>
+      </footnote> supported XSLT 2.0, and its replacement, Saxon-JS<footnote>
+        <para>Saxon-JS: <link xlink:href="http://www.saxonica.com/saxon-js/index.xml"
+            >http://www.saxonica.com/saxon-js/index.xml</link>.</para>
+      </footnote>, supports XSLT 3.0 and provides significant performance improvements. Saxon-JS
+      requires a commercial version of Saxon to compile the stylesheets into JavaScript, however,
+      which means it is not really viable in an open source environment. As a matter of policy, the
+      TEI Consortium won’t distribute software that requires users to purchase a software license in
+      order to use it. </para>
+    <para>Moreover, since web technologies like CSS and Javascript are now capable of delivering a
+      browser-based TEI and since they have become a de facto requirement, even in an environment where XSLT or XQuery are
+      transforming the TEI source to HTML before delivery, perhaps it is fair to argue that we should simply
+      use them and skip the XSLT step. XML technologies (XSLT and XQuery) are arguably the most
+      effective at manipulating XML and CETEIcean is not meant to replace them for every operation.
+      Rather, it offers a lightweight, yet fully-featured, solution for publishing text encoded with
+      XML. Occasionally, however, transformation and DOM manipulation can be essential to
+      publication. While performing transformations on the server may be the most effective solution
+      in those cases, JavaScript is still capable of performing complex DOM operations. For example,
+      the Shelley-Godwin Archive (S-GA)<footnote>
+        <para><link xlink:href="http://shelleygodwinarchive.org/"
+            >http://shelleygodwinarchive.org/</link>.</para>
+      </footnote> displays TEI documents that encode the mise-en-page of manuscript material, that
+      is, the XML identifies zones of writing (main, marginal, etc) and authorial revisions
+      (deletions, additions, and their location on the page). In the TEI, additions in the margin
+      are encoded separately from the main zone of writing, but in display they need to be
+      positioned near the line where they logically belong. If we were using XSLT to transform TEI
+      to HTML, we may position the marginal text in a way that makes it easier to render; in this
+      case, we use JavaScript to determine the position based on the TEI encoding and adjust the CSS
+      dynamically (see the result in Fig 2)<footnote>
+        <para>S-GA has been using a project-specific JavaScript solution for publishing this
+          material and is in the process of switching to CETEIcean.</para>
+      </footnote>. <figure>
+        <title>Fig. 2: a rendering of S-GA TEI using CETEIcean. The position of the marginal
+          additions on the left is determined by processing the TEI with JavaScript at rendering
+          time.</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Bal2018Cayl111701.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </para>
+    <para>The DLL’s edition viewer does some DOM manipulation to generate a traditional apparatus
+      criticus from the TEI <code>&lt;app></code> elements in a text. A source text with inline
+      elements (see Figure 3) is displayed as text (Figure 4) plus apparatus (Figure 5). This kind
+      of transformation is fairly standard, and it would not be unusual to see it done with XSLT
+      instead. What is unique about the DLL viewer is its use of the TEI’s model of textual
+      variation to produce a dynamic apparatus. Besides the traditional appearance of the app.
+      crit., the viewer also generates widgets which manipulate the edition’s DOM (which
+      isomorphically presents the TEI’s model), and thereby allow a reader to make decisions about
+      what should appear in the reading text. The TEI models textual variation by placing the
+      variants in parallel inside an <code>&lt;app></code> element. The variant to appear in the
+      main text is placed in a <code>&lt;lem></code> and any additional variants go in
+        <code>&lt;rdg></code> elements. The DLL viewer’s widgets allow readers to change any
+        <code>&lt;rdg></code> into a <code>&lt;lem></code> (and the <code>&lt;lem></code> into a
+        <code>&lt;rdg></code>), promoting that reading to the main text. The page’s CSS takes care
+      of the rendering, as <code>&lt;lem></code>s are displayed and <code>&lt;rdg></code>s are not.
+      In this way, the edition’s readers can try out different versions of the text and see how the
+      affect its flow and meaning. This makes for a much more powerful and intuitive critical
+      edition than is possible in print (or static HTML). Obviously, something similar could be done
+      with an HTML version converted from TEI with XSLT, but having the affordances of the TEI model
+      directly available in the browser makes it easier for a developer to see how that model can be
+      leveraged. <figure>
+        <title>Fig. 3: The first lines of Calpurnius Siculus’ first eclogue</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Bal2018Cayl111702.png" width="700px"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <figure>
+        <title>Fig. 4: Lines 1-5 (from
+            <link>https://digitallatin.github.io/viewer/calpurnius.html#poem1</link></title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Bal2018Cayl111703.png" width="500px"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <figure>
+        <title>Fig. 5: Apparatus criticus for line 1-3 (from
+            <link>https://digitallatin.github.io/viewer/calpurnius.html#poem1</link></title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Bal2018Cayl111704.png" width="600px"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </para>
+  </section>
+  <section>
+    <title>Limitations and Solutions</title>
+    <para>There are, of course, cases where one might want some radical transformation of one’s
+      source encoding. The natural inclination (and CETEIcean’s default) in rendering a TEI document
+      in a browser is to make the header invisible, for example. After all, it’s the text that’s
+      meant to be read. But a number of projects put important information in the
+        <code>&lt;teiHeader></code>, and they might reasonably want to display that in the rendered
+      document. Things like critical apparatuses are an example where a natural display form must be
+      created by extracting information from the text and reformatting it. CETEIcean by itself does
+      not help particularly with these cases, although it is quite possible to accomplish the goal
+      with Javascript, as the S-GA and DLL do. </para>
+    <para>A more important concern is what to do about search engines. Google, for example, used to
+      make some attempt to index pages rendered using AJAX calls, where the page content isn’t
+      actually present in the page source, but is fetched at load time, but deprecated this practice
+      in 2015. The DLL’s pre-publication editions would never have been indexed anyway, as their
+      source is fetched from the <code>raw.githubusercontent.com</code> domain, which excludes all
+      web crawlers. For purposes of the DLL workflow, Google-invisibility is actually an advantage,
+      as it means pre-publication materials can be open, but at the same time not very discoverable,
+      and will not be in competition with the eventual publication. But when those editions are
+      published, we definitely want them to be searchable. The DLL’s solution at publication time is
+      to deliver a partially-converted file—i.e. A TEI file already converted to HTML Custom
+      Elements. The rendering is still done using CETEIcean, CSS, and additional JavaScript, but the
+      source is indexable by search engines. An XSLT or XQuery conversion to a Custom Elements
+      format is trivial to write—the core of the DLL implementation is 30 lines of XQuery, for
+      example. An alternative method would be to embed the TEI XML source in the HTML page and let
+      CETEIcean load that, though it is hard to know what a search engine might make of such a
+      Chimera. It is worth noting that (anecdotally) TEI Boilerplate does not fare well with search
+      engines either.</para>
+  </section>
+  <section>
+    <title>Conclusion</title>
+    <para>CETEIcean does not provide a complete replacement for XSLT and XQuery as a means for
+      publishing TEI on the web, but we do think it is a viable alternative for some projects, and
+      is particularly useful in situations where a quick view of work in progress is needed. It
+      especially shines in situations where the TEI’s model of the text can be usefully leveraged to
+      allow interesting dynamic functionality in the browser. The isomorphism of CETEIcean documents
+      to their TEI sources also means it will support things like robust annotation (since
+      annotation targets should be able to be trivially mapped to the source documents) and
+      in-browser editing (because we can easily turn the HTML back into TEI). In sum, it seems like
+      this approach has a great deal of potential and starts to get us out of the cul-de-sac our
+      XSLT dependency had put us in.</para>
+  </section>
+</article>

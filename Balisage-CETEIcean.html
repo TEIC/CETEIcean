@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="css/balisage.css">
+        <script src="../js/CETEI.js"></script>
+        <script>
+            let c = new CETEI();
+            let counter = 0;
+            c.addBehaviors(
+                {
+                    "namespaces": {"doc": "http://docbook.org/ns/docbook"},
+                    "doc": {
+                        "link": {
+                            "[xlink\\:href]": ["<a href=\"$@xlink:href\">","</a>"],
+                            "_": function(elt) {
+                                let a = document.createElement("a");
+                                a.setAttribute("href", elt.innerText);
+                                a.innerHTML = elt.innerHTML;
+                                return a;
+                            }
+                        },
+                        "footnote": {
+                            "div.notes>doc-footnote": function(elt) {
+                                let note = document.createElement("span");
+                                note.innerHTML = elt.getAttribute("data-footnote-id").replace(/^fn/,"") + ". " + elt.innerHTML; 
+                                return note;
+                            },
+                            "_": function(elt){
+                                let a = document.createElement("a");
+                                counter++;
+                                elt.setAttribute("data-footnote-id", "fn" + counter);
+                                a.setAttribute("href", "#" + elt.getAttribute("data-footnote-id"));
+                                a.innerHTML = "[" + counter + "]";
+                                return a;
+                            }
+                        },
+                        "imagedata": function(elt) {
+                            let content = new Image();
+                            content.src = this.rw(elt.getAttribute("fileref"));
+                            if (elt.hasAttribute("width")) {
+                                content.setAttribute("width",elt.getAttribute("width"));
+                            }
+                            if (elt.hasAttribute("height")) {
+                                content.setAttribute("height",elt.getAttribute("height"));
+                            }
+                            return content;
+                        },
+                        "programlisting": ["<pre>","</pre>"],
+                        "title": {
+                            "doc-article>doc-title": function(elt) {
+                                document.title = elt.innerText;
+                            }
+                        }
+                    }
+                }
+            );
+            c.getHTML5('Balisage-CETEIcean/Bal2018Cayl1117.xml', function(data) {
+                document.querySelector("body").appendChild(data);
+                let notes = document.createElement("div");
+                notes.setAttribute("class", "notes");
+                notes.innerHTML = "<h3>Notes</h3>"
+                for (let note of document.querySelectorAll("doc-footnote")) {
+                    let printnote = c.copyAndReset(note);
+                    notes.appendChild(printnote);
+                    printnote.id = note.getAttribute("data-footnote-id");
+                }
+                c.attach(document.querySelector("body"),"appendChild",notes);
+            });
+            
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

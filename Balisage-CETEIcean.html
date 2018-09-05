@@ -9,7 +9,7 @@
                 {
                     "namespaces": {"doc": "http://docbook.org/ns/docbook"},
                     "doc": {
-                        "link": []
+                        "link": [
                             ["[xlink\\:href]", ["<a href=\"$@xlink:href\">","</a>"]],
                             ["_", function(elt) {
                                 let a = document.createElement("a");
@@ -17,7 +17,7 @@
                                 a.innerHTML = elt.innerHTML;
                                 return a;
                             }]
-                        },
+                        ],
                         "footnote": [
                             ["div.notes>doc-footnote", function(elt) {
                                 let note = document.createElement("span");

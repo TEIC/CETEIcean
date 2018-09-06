@@ -44,6 +44,7 @@ export default {
       }
     ]],
     "note": [
+      // Make endnotes
       ["[place=end]", function(elt){
         if (!this.noteIndex){
           this["noteIndex"] = 1;

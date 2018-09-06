@@ -39,7 +39,7 @@
     <script>
       var CETEIcean = new CETEI();
       var images = [];
-      CETEIcean.addBehaviors({"handlers":
+      CETEIcean.addBehaviors({"tei":
         {
           "gap": ["[", "]"],
           "note": function(elt) {
@@ -86,14 +86,14 @@
           }
         }
         // If not logged in to EEBO, use a local image instead of the preview
-        var testimg = new Image();
-        testimg.onerror = function() {
+        var img = new Image();
+        img.onerror = function() {
           console.log("Not logged in.");
           images.forEach(function(elt) {
             elt.src = elt.src.replace("http://eebo.chadwyck.com/fetchimage", "images/page.jpg");
           });
         }
-        testimg.src = "http://eebo.chadwyck.com/fetchimage?vid=5891&page=1&width=100";
+        img.src = "http://eebo.chadwyck.com/fetchimage?vid=5891&page=1&width=100";
       });
     </script>
   </body>

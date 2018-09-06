@@ -229,6 +229,26 @@ class CETEI {
       }
     }
 
+    /* Adds or replaces an individual behavior. Takes a namespace prefix or namespace definition,
+     * the element name, and the behavior. E.g.
+     * addBehavior("tei", "add", ["`","`"]) for an already-declared namespace or
+     * addBehavior({"doc": "http://docbook.org/ns/docbook"}, "note", ["[","]"]) for a new one
+     */
+    addBehavior(ns, element, b) {
+      let p;
+      if (ns === Object(ns)) {
+        for (let prefix of Object.keys(ns)) {
+          if (!this.namespaces.has(ns[prefix])) {
+            this.namespaces.set(ns[prefix], prefix);
+            p = prefix;
+          }
+        }
+      } else {
+        p = ns;
+      }
+      this.behaviors[p + ":" + element] = b;
+    }
+
     /* Sets the base URL for the document. Used to rewrite relative links in the
        XML source (which may be in a completely different location from the HTML
        wrapper).

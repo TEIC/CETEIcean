@@ -148,7 +148,7 @@ class CETEI {
               }
           }
           if (perElementFn) {
-            perElementFn(newElement);
+            perElementFn(newElement, el);
           }
           return newElement;
       }
@@ -274,8 +274,11 @@ class CETEI {
       }
       if (strings.length > 1) {
         span.innerHTML = strings[0] + elt.innerHTML + strings[1];
+        span.setAttribute("data-before", strings[0].replace(/<[^>]+>/g,"").length);
+        span.setAttribute("data-after", strings[1].replace(/<[^>]+>/g,"").length);
       } else {
         span.innerHTML = strings[0] + elt.innerHTML;
+        span.setAttribute("data-before", strings[0].replace(/<[^>]+>/g,"").length);
       }
       return span;
       
@@ -464,7 +467,6 @@ class CETEI {
        Called by makeHTML5(), but can be called independently if, for example,
        you've created Custom Elements via an XSLT transformation instead.
      */
-    // Need to come up with a new way to get tag name from name. Possibly prefixed names in behaviors?
     define(names) {
       for (let name of names) {
         try {

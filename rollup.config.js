@@ -9,7 +9,7 @@ export default {
     name: 'CETEI',
     sourcemap: false,
   },
-  plugins: [
+  external: [
     babel({exclude: 'node_modules/**', 
       "presets": [
         ["env", {

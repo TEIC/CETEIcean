@@ -23,6 +23,7 @@
     "onchange": "^6.0.0",
     "rollup": "0.62.0",
     "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-terser": "1.0.1",
     "terser": "^3.17.0"
   },

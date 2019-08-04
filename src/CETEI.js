@@ -591,7 +591,7 @@ class CETEI {
               if (nd.hasAttribute("data-original")) {
                 for (let childNode of Array.from(nd.childNodes)) {
                   let child = result.appendChild(_clone(childNode));
-                  if (child.hasAttribute("data-origid")) {
+                  if (child.nodeType === Node.ELEMENT_NODE && child.hasAttribute("data-origid")) {
                     child.setAttribute("id", child.getAttribute("data-origid"));
                     child.removeAttribute("data-origid");
                   }

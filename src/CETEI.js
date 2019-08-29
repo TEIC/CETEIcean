@@ -430,9 +430,11 @@ class CETEI {
       } else {
         let self = this;
         return function() {
-          let content = fn.call(self, this);
-          if (content && !self._childExists(this.firstElementChild, content.nodeName)) {
-            self._appendBasic(this, content);
+          if (!this.hasAttribute("data-processed")) {
+            let content = fn.call(self, this);
+            if (content && !self._childExists(this.firstElementChild, content.nodeName)) {
+              self._appendBasic(this, content);
+            }
           }
         }
       }
@@ -632,7 +634,7 @@ class CETEI {
           str += "/>";
         }
       }
-
+      //TODO: Be smarter about skipping generated content with hidden original
       for (let node of Array.from(el.childNodes)) {
         switch (node.nodeType) {
           case Node.ELEMENT_NODE:

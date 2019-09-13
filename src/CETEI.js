@@ -701,7 +701,7 @@ class CETEI {
         }
       } else {
         setTimeout(function() {
-          document.querySelector(window.location.hash).scrollIntoView();
+          document.querySelector(window.decodeURI(window.location.hash)).scrollIntoView();
         }, 100);
       }
     }

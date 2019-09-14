@@ -1,9 +1,7 @@
 # CETEIcean 🐳
 /sɪˈti:ʃn/
 
-<a href="#" id="status-image-popup" title="build status image" name="status-images" class="open-popup" data-ember-action="1094">
-            <img src="https://travis-ci.org/TEIC/CETEIcean.svg" alt="build:passed">
-          </a>
+[![Build Status](https://travis-ci.com/TEIC/CETEIcean.svg?branch=master)](https://travis-ci.com/TEIC/CETEIcean)
 
 ## What is this?
 **tl;dr**: CETEIcean lets you display unmodified TEI documents in a web browser!

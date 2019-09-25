@@ -1,0 +1,8 @@
+tei-div {
+  display: block;
+}
+tei-p {
+  display: block;
+  margin-top: .5em;
+  margin-bottom: .5em;
+}

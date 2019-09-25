@@ -102,7 +102,7 @@ tei-p {
   margin-bottom: .5em;
 }
 ```
-Some things to notice: the element names are prefixed with "tei-", which is what CETEIcean does to turn TEI elements into HTML Custom Elements. These rules mean divs are displayed as blocks (starting on a new line), as are paragraphs, and the latter also have some spacing before and after. Deciding what styles to apply to the currently unstyled elements may not always be easy, but we can begin by picking some simple cases. The source document uses lists for its table of contents and indices, always with `@type="simple"`. We can use CSS to format these as lists. Add the following to the `tei.css` file:
+Some things to notice: the element names in our CSS selectors are prefixed with "tei-", which is what CETEIcean does to turn TEI elements into HTML Custom Elements. These rules mean divs are displayed as blocks (starting on a new line), as are paragraphs, and the latter also have some spacing before and after. Deciding what styles to apply to the currently unstyled elements may not always be easy, but we can begin by picking some simple cases. The source document uses lists for its table of contents and indices, always with `@type="simple"`. We can use CSS to format these as lists. Add the following to the `tei.css` file:
 ```css
 tei-list[type=simple] {
   list-style-type: none;
@@ -164,7 +164,7 @@ CETEIcean has a number of built-in behaviors, which is why it was able to deal w
 ```
 to your behaviors object. You will want to add CSS styles or behaviors to cope with the contents if you do so. 
 
-We will not work through all of the possibilites for our source document in this tutorial. You should experiment and decide how you want to represent the source's markup. A more fully worked out example is available in the <example> folder, and the original HTML version and TEI P4 source may be found at <https://docsouth.unc.edu/fpn/washington/menu.html>.
+We will not work through all of the possibilites for our source document in this tutorial. You should experiment and decide how you want to represent the source's markup. A more fully worked out example is available in the <./example> folder, and the original HTML version and TEI P4 source may be found at <https://docsouth.unc.edu/fpn/washington/menu.html>.
 
 
 

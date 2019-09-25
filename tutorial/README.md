@@ -164,7 +164,7 @@ CETEIcean has a number of built-in behaviors, which is why it was able to deal w
 ```
 to your behaviors object. You will want to add CSS styles or behaviors to cope with the contents if you do so. 
 
-We will not work through all of the possibilites for our source document in this tutorial. You should experiment and decide how you want to represent the source's markup. A more fully worked out example is available in the <./example> folder, and the original HTML version and TEI P4 source may be found at <https://docsouth.unc.edu/fpn/washington/menu.html>.
+We will not work through all of the possibilites for our source document in this tutorial. You should experiment and decide how you want to represent the source's markup. A more fully worked out example is available in the [example/](example) folder, and the original HTML version and TEI P4 source may be found at <https://docsouth.unc.edu/fpn/washington/menu.html>.
 
 
 

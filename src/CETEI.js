@@ -440,15 +440,6 @@ class CETEI {
       }
     }
 
-    attach(elt, fn, node) {
-      elt[fn].call(elt, node);
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        for (let e of Array.from(node.childNodes)) {
-          this._processElement(e);
-        }
-      } 
-    }
-
     /* Private method called by append(). Takes a child element and a name, and recurses through the
      * child's siblings until an element with that name is found, returning true if it is and false if not.
      */

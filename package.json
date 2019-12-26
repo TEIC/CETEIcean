@@ -28,6 +28,7 @@
   },
   "scripts": {
     "build": "rollup -c rollup.config.js",
+    "build:tutorial": "npm run build && cp dist/CETEI.js tutorial/js/CETEI.js",
     "dev": "npm run build && http-server -p 8888 & onchange src -- npm run build"
   }
 }

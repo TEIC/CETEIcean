@@ -34,7 +34,7 @@ collisions (like HTML `<p>` vs. TEI `<p>` for example).
 
 You can use CETEIcean in your projects just by grabbing the CETEI.js file from the latest [release](https://github.com/TEIC/CETEIcean/releases) and linking to it in an HTML file like the [examples](http://teic.github.io/CETEIcean/) do. Note that you'll want also to grab the example CSS or make your own. If you want to build and play with it on your own, follow the steps below.
 
-### Example
+### Simple Usage Example
 This code fetches a TEI file, transforms it into HTML Custom Elements, and places the result in a div with id "TEI".
 
 ```js
@@ -44,6 +44,37 @@ CETEIcean.getHTML5("URL_TO_YOUR_TEI.xml", function(data) {
 })
 ```
 
+### Other methods
+
+#### getHTML5( url, callback, perElementFn )
+Returns a Promise that fetches an XML source document then calls the makeHTML5 method on the returned document.
+
+Parameters:
+* `url`: The XML document will be fetched from the provided URL.
+* `callback`: A function to be called on the results.
+* `perElementFn`: A function to be called on each resulting element.
+
+#### makeHTML5( XML, callback, perElementFn )
+Converts the supplied XML string into HTML5 Custom Elements.
+
+Parameters:
+* `XML`: The XML document serialized to string.
+* `callback`: A function to be called on the results.
+* `perElementFn`: A function to be called on each resulting element.
+
+#### domToHTML5( XML_dom, callback, perElementFn )
+Converts the supplied XML string into HTML5 Custom Elements.
+
+Parameters:
+* `XML_dom`: The XML document as DOM.
+* `callback`: A function to be called on the results.
+* `perElementFn`: A function to be called on each resulting element.
+
+#### unsetNamespace( ns )
+To change a namespace to prefix mapping, the namespace must first be unset. Takes a namespace URI. In order to process a TEI P4 document, e.g., the TEI namespace must be unset before it can be set to the empty string.
+
+#### setBaseUrl( base )
+Sets the base URL for the document. Used to rewrite relative links in the XML source (which may be in a completely different location from the HTML wrapper).
 
 ### Install
 Get [NodeJS](https://nodejs.org/).

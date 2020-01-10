@@ -103,6 +103,9 @@ class CETEI {
                 newElement.setAttribute("class", att.value.replace(/#/g, ""));
               }
           }
+          if (el.hasAttributes()) {
+            newElement.setAttribute("data-origatts", el.getAttributeNames().join(" "));
+          }
           // Preserve element name so we can use it later
           newElement.setAttribute("data-origname", el.localName);
           // If element is empty, flag it
@@ -283,10 +286,7 @@ class CETEI {
       // If we have before and after tags have them parsed by
       // .innerHTML and then add the content to the resulting child
       if (strings[0].match("<[^>]+>") && strings[1] && strings[1].match("<[^>]+>")) { 
-        span.innerHTML = strings[0] + (strings[1]?strings[1]:"");
-        for (let node of Array.from(elt.childNodes)) {
-          span.firstElementChild.appendChild(node.cloneNode(true));
-        }
+        span.innerHTML = strings[0] + elt.innerHTML + (strings[1]?strings[1]:"");
       } else {
         span.innerHTML = strings[0];
         span.setAttribute("data-before", strings[0].replace(/<[^>]+>/g,"").length);
@@ -607,13 +607,23 @@ class CETEI {
     /* Takes an element and serializes it to an XML string or, if the stripElt
        parameter is set, serializes the element's content.
      */
-    serialize(el, stripElt) {
+    serialize(el, stripElt, ws) {
       let str = "";
-      if (!stripElt) {
-        str += "&lt;" + el.getAttribute("data-origname");
+      let ignorable = (txt) => {
+        return !(/[^\t\n\r ]/.test(txt));
+      }
+      if (!stripElt && el.nodeType == Node.ELEMENT_NODE) {
+        if ((typeof ws === "string") && ws !== "") {
+          str += "\n" + ws + "<";
+        } else  {
+          str += "<";
+        }
+        str += el.getAttribute("data-origname");
+        // HTML5 lowercases all attribute names; @data-origatts contains the original names
+        let attrNames = el.hasAttribute("data-origatts") ? el.getAttribute("data-origatts").split(" ") : [];
         for (let attr of Array.from(el.attributes)) {
           if (!attr.name.startsWith("data-") && !(["id", "lang", "class"].includes(attr.name))) {
-            str += " " + attr.name + "=\"" + attr.value + "\"";
+            str += " " + attrNames.find(function(e) {return e.toLowerCase() == attr.name}) + "=\"" + attr.value + "\"";
           }
           if (attr.name == "data-xmlns") {
             str += " xmlns=\"" + attr.value +"\"";
@@ -629,20 +639,35 @@ class CETEI {
       for (let node of Array.from(el.childNodes)) {
         switch (node.nodeType) {
           case Node.ELEMENT_NODE:
-            str += this.serialize(node);
+            if (typeof ws === "string") {
+              str += this.serialize(node, false, ws + "  ");
+            } else {
+              str += this.serialize(node, false, ws);
+            }
             break;
           case Node.PROCESSING_INSTRUCTION_NODE:
-            str += "&lt;?" + node.nodeValue + "?>";
+            str += "<?" + node.nodeValue + "?>";
             break;
           case Node.COMMENT_NODE:
-            str += "&lt;!--" + node.nodeValue + "-->";
+            str += "<!--" + node.nodeValue + "-->";
             break;
           default:
-            str += node.nodeValue.replace(/</g, "&lt;");
+            if (stripElt && ignorable(node.nodeValue)) {
+              str += node.nodeValue.replace(/^\s*\n/, "");
+            }
+            if ((typeof ws === "string") && ignorable(node.nodeValue)) {
+              break;
+            }
+            str += node.nodeValue;
         }
       }
       if (!stripElt && el.childNodes.length > 0) {
-        str += "&lt;/" + el.getAttribute("data-origname") + ">";
+        if (typeof ws === "string") {
+          str += "\n" + ws + "</";
+        } else  {
+          str += "</";
+        }
+        str += el.getAttribute("data-origname") + ">";
       }
       return str;
     }
@@ -692,7 +717,10 @@ class CETEI {
         }
       } else {
         setTimeout(function() {
-          document.querySelector(window.location.hash).scrollIntoView();
+          let h = document.querySelector(window.location.hash);
+          if (h) {
+            h.scrollIntoView();
+          }
         }, 100);
       }
     }

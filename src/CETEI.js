@@ -234,7 +234,10 @@ class CETEI {
       }
     } else {
       setTimeout(function() {
-        document.querySelector(window.location.hash).scrollIntoView();
+        let h = document.querySelector(window.location.hash);
+        if (h) {
+          h.scrollIntoView();
+        }
       }, 100);
     }
   }

@@ -102,15 +102,27 @@ export function rw(url) {
 
 /* 
   Takes an element and serializes it to an XML string or, if the stripElt
-  parameter is set, serializes the element's content.
+  parameter is set, serializes the element's content. The ws parameter, if
+  set, will switch on minimal "pretty-printing" and indenting of the serialized
+  result.
 */
-export function serialize(el, stripElt) {
+export function serialize(el, stripElt, ws) {
   let str = "";
-  if (!stripElt) {
-    str += "&lt;" + el.getAttribute("data-origname");
+  let ignorable = (txt) => {
+    return !(/[^\t\n\r ]/.test(txt));
+  }
+  if (!stripElt && el.nodeType == Node.ELEMENT_NODE) {
+    if ((typeof ws === "string") && ws !== "") {
+      str += "\n" + ws + "<";
+    } else  {
+      str += "<";
+    }
+    str += el.getAttribute("data-origname");
+    // HTML5 lowercases all attribute names; @data-origatts contains the original names
+    let attrNames = el.hasAttribute("data-origatts") ? el.getAttribute("data-origatts").split(" ") : [];
     for (let attr of Array.from(el.attributes)) {
       if (!attr.name.startsWith("data-") && !(["id", "lang", "class"].includes(attr.name))) {
-        str += " " + attr.name + "=\"" + attr.value + "\"";
+        str += " " + attrNames.find(function(e) {return e.toLowerCase() == attr.name}) + "=\"" + attr.value + "\"";
       }
       if (attr.name == "data-xmlns") {
         str += " xmlns=\"" + attr.value +"\"";
@@ -126,23 +138,39 @@ export function serialize(el, stripElt) {
   for (let node of Array.from(el.childNodes)) {
     switch (node.nodeType) {
       case Node.ELEMENT_NODE:
-        str += this.serialize(node);
+        if (typeof ws === "string") {
+          str += this.serialize(node, false, ws + "  ");
+        } else {
+          str += this.serialize(node, false, ws);
+        }
         break;
       case Node.PROCESSING_INSTRUCTION_NODE:
-        str += "&lt;?" + node.nodeValue + "?>";
+        str += "<?" + node.nodeValue + "?>";
         break;
       case Node.COMMENT_NODE:
-        str += "&lt;!--" + node.nodeValue + "-->";
+        str += "<!--" + node.nodeValue + "-->";
         break;
       default:
-        str += node.nodeValue.replace(/</g, "&lt;");
+        if (stripElt && ignorable(node.nodeValue)) {
+          str += node.nodeValue.replace(/^\s*\n/, "");
+        }
+        if ((typeof ws === "string") && ignorable(node.nodeValue)) {
+          break;
+        }
+        str += node.nodeValue;
     }
   }
   if (!stripElt && el.childNodes.length > 0) {
-    str += "&lt;/" + el.getAttribute("data-origname") + ">";
+    if (typeof ws === "string") {
+      str += "\n" + ws + "</";
+    } else  {
+      str += "</";
+    }
+    str += el.getAttribute("data-origname") + ">";
   }
   return str;
 }
+
 
 export function unEscapeEntities(str) {
   return str.replace(/&gt;/, ">")

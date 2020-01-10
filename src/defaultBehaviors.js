@@ -119,7 +119,12 @@ export default {
   "teieg": {
     "egXML": function(elt) {
       let pre = document.createElement("pre");
-      pre.innerHTML = this.serialize(elt, true);
+      let content = this.serialize(elt, true).replace(/</g, "&lt;");
+      let ws = content.match(/^[\t ]+/);
+      if (ws) {
+        content = content.replace(new RegExp("^" + ws[0], "mg"), "");
+      }
+      pre.innerHTML = content;
       return pre;
     }
   }

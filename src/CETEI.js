@@ -127,6 +127,9 @@ class CETEI {
       }
       // Preserve element name so we can use it later
       newElement.setAttribute("data-origname", el.localName);
+      if (el.hasAttributes()) {
+        newElement.setAttribute("data-origatts", el.getAttributeNames().join(" "));
+      }
       // If element is empty, flag it
       if (el.childNodes.length == 0) {
         newElement.setAttribute("data-empty", "");

@@ -61,7 +61,7 @@ function decorator(template) {
   if (Array.isArray(template) && !Array.isArray(template[0])) {
     return applyDecorator(template)
   } 
-  return (elt) => {
+  return function(elt) {
     for (let rule of template) {
       if (elt.matches(rule[0]) || rule[0] === "_") {
         if (Array.isArray(rule[1])) {

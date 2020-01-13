@@ -12,10 +12,14 @@ class CETEI {
     this.addBehavior = addBehavior.bind(this);
     this.applyBehaviors = applyBehaviors.bind(this);
 
-    // Bind utilities
+    // Bind selected utilities
     this.utilities = {}
     for (const u of Object.keys(utilities)) {
-      this.utilities[u] = utilities[u].bind(this);
+      if (u == "rw") {
+        this.utilities[u] = utilities[u].bind(this);
+      } else {
+        this.utilities[u] = utilities[u];
+      }
     }
 
     // Set properties

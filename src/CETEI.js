@@ -229,14 +229,15 @@ class CETEI {
    **********************/
 
   static savePosition() {
-    window.localStorage.setItem("scroll", window.scrollY);
+    window.sessionStorage.setItem(window.location + "-scroll", window.scrollY);
   }
   
   static restorePosition() {
     if (!window.location.hash) {
-      if (window.localStorage.getItem("scroll")) {
+      let scroll;
+      if (scroll = window.sessionStorage.getItem(window.location + "-scroll")) {
         setTimeout(function() {
-          window.scrollTo(0, localStorage.getItem("scroll"));
+          window.scrollTo(0, scroll);
         }, 100);
       }
     } else {

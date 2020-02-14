@@ -6,7 +6,7 @@
   version="1.0">
   <xsl:output method="html" indent="no"/>
   
-  <xsl:param name="CSS">http://teic.github.io/CETEIcean/css/CETEIcean.css</xsl:param>
+  <xsl:param name="CSS">https://teic.github.io/CETEIcean/css/CETEIcean.css</xsl:param>
   <xsl:param name="CETEI">https://github.com/TEIC/CETEIcean/releases/download/v0.4.0/CETEI.js</xsl:param>
   
   <xsl:template match="/">
@@ -15,16 +15,6 @@
       <head>
         <link rel="stylesheet" href="{$CSS}"/>
         <script type="text/javascript" src="{$CETEI}"></script>
-        <script type="text/javascript">
-          var c = new CETEI();
-          c.els = [<xsl:call-template name="elements"/>];
-          c.els.push("egXML");
-          if (document.registerElement) {
-            c.registerAll(c.els);
-          } else {
-            c.fallback(c.els);
-          }
-        </script>
         <xsl:if test="//t:rendition[@scheme='css']">
           <style>
             <xsl:apply-templates select="//t:rendition[@scheme='css']" mode="style"/>
@@ -35,6 +25,12 @@
 </xsl:text>
         <xsl:apply-templates select="node()|comment()|processing-instruction()"/><xsl:text>
 </xsl:text>
+        <script type="text/javascript">
+          var c = new CETEI();
+          c.els = [<xsl:call-template name="elements"/>];
+          c.els.push("egXML");
+          c.applyBehaviors();
+        </script>
       </body>
     </html>
   </xsl:template>
@@ -55,7 +51,15 @@
       <xsl:if test="rendition">
         <xsl:attribute name="class"><xsl:value-of select="substring-after(@rendition, '#')"/></xsl:attribute>
       </xsl:if>
-      <xsl:attribute name="data-teiname"><xsl:value-of select="local-name(.)"/></xsl:attribute>
+      <xsl:attribute name="data-origname"><xsl:value-of select="local-name(.)"/></xsl:attribute>
+      <xsl:if test="@*">
+        <xsl:attribute name="data-origatts">
+          <xsl:for-each select="@*">
+            <xsl:value-of select="local-name(.)"/>
+            <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
+          </xsl:for-each>
+        </xsl:attribute>
+      </xsl:if>
       <xsl:for-each select="@*">
         <xsl:copy-of select="."/>
       </xsl:for-each>
@@ -75,7 +79,7 @@
       <xsl:if test="rendition">
         <xsl:attribute name="class"><xsl:value-of select="substring-after(@rendition, '#')"/></xsl:attribute>
       </xsl:if>
-      <xsl:attribute name="data-teiname"><xsl:value-of select="local-name(.)"/></xsl:attribute>
+      <xsl:attribute name="data-origname"><xsl:value-of select="local-name(.)"/></xsl:attribute>
       <xsl:for-each select="@*">
         <xsl:copy-of select="."/>
       </xsl:for-each>
@@ -105,7 +109,7 @@
   
   <xsl:template name="elements">
     <xsl:for-each select="//*[namespace-uri(.) = 'http://www.tei-c.org/ns/1.0']">
-      <xsl:if test="not(preceding::*[local-name() = local-name(current())])">"<xsl:value-of select="local-name()"/>"<xsl:if test="position() != last()">,</xsl:if></xsl:if></xsl:for-each>    
+      <xsl:if test="not(preceding::*[local-name() = local-name(current())])">"tei:<xsl:value-of select="local-name()"/>"<xsl:if test="position() != last()">,</xsl:if></xsl:if></xsl:for-each>    
   </xsl:template>
   
   <!-- Handle CSS Styles -->

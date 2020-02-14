@@ -51,7 +51,7 @@ class CETEI {
     on the returned document.
   */
   getHTML5(XML_url, callback, perElementFn){
-    if (window.location.href.startsWith(this.base) && (XML_url.indexOf("/") >= 0)) {
+    if (window && window.location.href.startsWith(this.base) && (XML_url.indexOf("/") >= 0)) {
       this.base = XML_url.replace(/\/[^\/]*$/, "/");
     }
     // Get XML from XML_url and create a promise
@@ -189,9 +189,13 @@ class CETEI {
     this.done = true;
     if (callback) {
       callback(this.dom, this);
-      window.dispatchEvent(ceteiceanLoad);
+      if (window) {
+        window.dispatchEvent(ceteiceanLoad);
+      }
     } else {
-      window.dispatchEvent(ceteiceanLoad);
+      if (window) {
+        window.dispatchEvent(ceteiceanLoad);
+      }
       return this.dom;
     }
   }
@@ -252,7 +256,6 @@ class CETEI {
 
 }
 
-// Make main class available to pre-ES6 browser environments
 try {
   if (window) {
       window.CETEI = CETEI;
@@ -261,8 +264,7 @@ try {
       window.addEventListener("ceteiceanload", CETEI.restorePosition);
   }
 } catch (e) {
-  // window not defined
   console.log(e);
 }
-
+// Make main class available to pre-ES6 browser environments
 export default CETEI;

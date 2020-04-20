@@ -2,7 +2,7 @@
 
 This tutorial will walk you through the steps to publish a TEI file online using CETEIcean. We will start with a simple (though quite large) file in TEI P5 form, `fpn-washington.xml`, which we want to display in a web browser.
 
-First, a note about viewing the results of your work: CETEIcean's default method for displaying TEI relies on loading a TEI file from another location. Not all browsers will allow you to do this when you view an HTML file directly on your file system. You should try it, but if it doesn't work, then you will have to run a web server, put your files on a web server, or use a text editor with preview capabilities. [Atom](https://atom.io), with the `atom-html-preview` plugin is the example we will use for this tutorial, but there are many other options. You should download and install Atom, or an equivalent text editor, before starting this tutorial. A text editor is different from other programs you may already have and use for editing 'text', such as LibreOffice or Word, in that it edits only plain text files.
+First, a note about viewing the results of your work: CETEIcean's default method for displaying TEI relies on loading a TEI file from another location. Not all browsers will allow you to do this when you view an HTML file directly on your file system. You should try it, but if it doesn't work, then you will have to run a web server, put your files on a web server, or use a text editor with preview capabilities. [Atom](https://atom.io), with the `atom-html-preview` plugin is the example we will use for this tutorial, but there are many other options. You should download and install Atom, or an equivalent text editor, before starting this tutorial. A text editor is different from other programs you may already use for editing 'text', such as LibreOffice or Word, in that it edits only plain text files.
 
 We will start by setting up a directory structure for our files. You may simply want to copy the structure of this tutorial, which looks like:
 
@@ -38,7 +38,7 @@ Inside the root folder, create an `index.html` file, with the content:
 </html>
 ```
 
-This will serve as a shell into which we will put the instructions that will display our TEI file. Like TEI, HTML files have a header, named `head`, and a `body`. We will put links to our CSS (Cascading Style Sheets) and JavaScript files and write a bit of JavaScript to get CETEIcean running. In the first empty line in the header, type:
+This will serve as a shell into which we will put the instructions that will display our TEI file. Like TEI, HTML files have a header, named `head`, and a `body`. We will put links to our CSS (Cascading Style Sheets) and JavaScript files and write a bit of JavaScript to get CETEIcean running. In the first empty line in the `<head>`, type:
 
 ```html
   <link rel="stylesheet" href="css/tei.css">
@@ -47,7 +47,7 @@ This will link our CSS file to our HTML page, giving it access to the styling di
 ```html
   <script src="js/CETEI.js"></script>
 ```
-Now, we are ready to load our file. Add another `<script></script>` element to your `index.html` file, this time without a `@src` attribute (because we're going to put the script inside it).
+Now we are ready to load our file. Add another `<script></script>` element to your `index.html` file, this time without a `@src` attribute (because we're going to put the script inside it).
 
 Inside your new script element, add the lines:
 
@@ -58,9 +58,9 @@ Inside your new script element, add the lines:
   });
 ```
 
-You don't need to be a JavaScript expert to use CETEIcean, but learning how the basics work will be helpful. If you want advanced behaviors, you will have to know JavaScript. An excellent guide is available from the [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide) (MDN) in many languages. The few lines of code above are doing a few things: first, a variable, `c` is defined as a new CETEI object. This will do the work of loading and styling our source file for us. Next, we tell `c` to load the source file and turn it into HTML Custom Elements, and we're also giving is a function that will take the results and put them into the `<body>` of our index.html file. `document.getElementsByTagName('body')` calls a function available on the built-in `document` object (`document` is the HTML document loaded into the browser) that finds all the body elements and returns them in an Array (a list whose members can be accessed by index number). There is only one body element, so we're getting the first item in the Array, at index 0. To that item, an HTML Element, we are appending as a child the TEI document we just loaded.
+You don't need to be a JavaScript expert to use CETEIcean, but learning how the basics work will be helpful. If you want advanced behaviors, you will have to know JavaScript. An excellent guide is available from the [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide) (MDN) in many languages. The lines of code above are doing a few things: first, a variable, `c` is defined as a new CETEI object. This will do the work of loading and styling our source file for us. Next, we tell `c` to load the source file and turn it into HTML Custom Elements, and we're also giving it a function that will take the results and put them into the `<body>` of our index.html file. `document.getElementsByTagName('body')` calls a function available on the built-in `document` object (`document` is the HTML document loaded into the browser) that finds all the body elements and returns them in an Array (a list whose members can be accessed by index number). There is only one body element, so we're getting the first item in the Array, at index 0. To that item, an HTML Element, we are appending as a child the TEI document we just loaded.
 
-At this point, if you're using Atom, you should be able to run HTML Preview from the Packages menu and see your document. If you aren't using Atom, you can try putting your documents on a web server. If you're familiar with using GitHub, you can use GitHub Pages ([tutorial](https://guides.github.com/features/pages/)—you can skip the themes step and just use a repository with this tutorial in it). If you have Python installed on your computer, you can run a simple web server in the tutorial directory with the command:
+At this point, if you're using Atom, you should be able to run HTML Preview from the Packages menu and see your document. If you aren't using Atom, you can try putting your documents on a web server. If you're familiar with using GitHub, you can use GitHub Pages ([tutorial](https://guides.github.com/features/pages/)—you can skip the themes step and just use a repository with the tutorial you're reading in it). If you have Python installed on your computer, you can run a simple web server in the tutorial directory with the command:
 ```bash
 python -m SimpleHTTPServer
 ```
@@ -102,7 +102,7 @@ tei-p {
   margin-bottom: .5em;
 }
 ```
-Some things to notice: the element names in our CSS selectors are prefixed with "tei-", which is what CETEIcean does to turn TEI elements into HTML Custom Elements. These rules mean divs are displayed as blocks (starting on a new line), as are paragraphs, and the latter also have some spacing before and after. Deciding what styles to apply to the currently unstyled elements may not always be easy, but we can begin by picking some simple cases. The source document uses lists for its table of contents and indices, always with `@type="simple"`. We can use CSS to format these as lists. Add the following to the `tei.css` file:
+Some things to notice: the element names in our CSS selectors are prefixed with "tei-", which is what CETEIcean does to turn TEI elements into HTML Custom Elements. These rules mean divs are displayed as blocks (they start on a new line and are followed by a break at the end), as are paragraphs, and the latter also have some spacing before and after. Deciding what styles to apply to the currently unstyled elements may not always be easy, but we can begin by picking some simple cases. The source document uses lists for its table of contents and indices, always with `@type="simple"`. We can use CSS to format these as lists. Add the following to the `tei.css` file:
 ```css
 tei-list[type=simple] {
   list-style-type: none;
@@ -124,7 +124,7 @@ tei-lb:before {
   content: "\A";
 }
 ```
-This tells the browser to insert a new-line character (the "\A") before each `<tei-lb>` and to treat it as preformatted text (as you would a block of code, for example), because normally in HTML, new lines are ignored for formatting purposes. There's more we can do with CSS, but this is a good point to look at where you might use CETEIcean behaviors for formatting instead. HTML has an element equivalent to `<lb/>`, the `<br>` element. What if we just put a `<br>` inside our `<tei-lb>`? We can do that by adding some behaviors. In your index.html, add the following after between the first and second lines of the code in the `<script></script>` tags:
+This tells the browser to insert a new-line character (the "\A") before each `<tei-lb>` and to treat it as preformatted text (as you would a block of code, for example). We have to do this because in HTML new lines are normally ignored for formatting purposes. There's more we can do with CSS, but this is a good point to look at where you might use CETEIcean behaviors for formatting instead. HTML has an element equivalent to `<lb/>`, the `<br>` element. What if we just put a `<br>` inside our `<tei-lb>`? We can do that by adding some behaviors. In your index.html, add the following after between the first and second lines of the code in the `<script></script>` tags:
 ```js
   let behaviors = {
     "tei": {
@@ -133,7 +133,7 @@ This tells the browser to insert a new-line character (the "\A") before each `<t
   };
   c.addBehaviors(behaviors);
 ```
-What this will do is create a Javascript object and assign it to a variable, `behaviors`, which we then pass to the `CETEI` object we created earlier, using the `addBehaviors` method. Inside that behaviors object, we have a section labeled "tei" (which is the prefix for all of our Custom Elements), and inside that, we define behaviors for elements. When CETEIcean sees a match for an element name, like "lb" (note that it uses the un-prefixed TEI name), it applies what it finds. For "lb", it sees an Array with one element, "<br>", so it will insert that `<br>` tag before the content of any `<tei-lb>` element it finds. `<tei-lb>` is an empty element anyway, so the final result as seen by the browser will be
+What this will do is create a Javascript object and assign it to a variable, `behaviors`, which we then pass to the `CETEI` object we created earlier, using the `addBehaviors` method. Inside that behaviors object, we have a section labeled "tei" (which is the prefix for all of our Custom Elements), and inside that, we define behaviors for elements. When CETEIcean sees a match for an element name, like "lb" (note that it uses the un-prefixed TEI name), it applies what it finds. For "lb", it sees an Array with one element, `<br>`, so it will insert that `<br>` tag before the content of any `<tei-lb>` element it finds. `<tei-lb>` is an empty element anyway, so the final result as seen by the browser will be
 ```html
 <tei-lb><br></tei-lb>
 ```

@@ -139,7 +139,7 @@ What this will do is create a Javascript object and assign it to a variable, `be
 ```
 The browser will not know what to do with `<tei-lb>` and so will ignore it, but it will know what to do with `<br>`, and will display it as a new line. Note that if you use the behavior, you won't want the CSS rule for `tei-lb`, or you'll get two line breaks for every one in your source.
 
-Behaviors can get more complex than this. You may have noticed that our source document has `<div>` elements, which nest, and which may have `<head>` elements. In HTML, the convention is to represent different levels of header with `h1`, `h2`, `h3`, and so on (up to `h7`). We can do this using a more sophisticated behavior:
+Behaviors can get more complex than this. You may have noticed that our source document has `<div>` elements, which nest, and which may have `<head>` elements. In HTML, the convention is to represent different levels of header with `h1`, `h2`, `h3`, and so on (up to `h6`). We can do this using a more sophisticated behavior:
 ```js
   let behaviors = {
     "tei": {
@@ -156,7 +156,7 @@ Behaviors can get more complex than this. You may have noticed that our source d
   };
   c.addBehaviors(behaviors);
 ```
-This new "head" behavior is doing something different. It takes a JavaScript function instead of an Array, which gets the element being processed as a parameter (the `e`). It creates a `level` variable, which contains the depth of the `<tei-div>` containing the `<tei-head>`, creates an `<h[level]>` element corresponding to the level, copies the content of the current element into it, and returns the new header element. CETEIcean will hide the content of the `<tei-head>` and show the heading element instead. Note that the code shown here has a potential bug: a very deeply nested document might produce, e.g. an `<h8>` element, which is not valid HTML. Our current source doesn't go more than three levels deep, but we might want to add a check ensure we don't go beyond `<h7>`.
+This new "head" behavior is doing something different. It takes a JavaScript function instead of an Array, which gets the element being processed as a parameter (the `e`). It creates a `level` variable, which contains the depth of the `<tei-div>` containing the `<tei-head>`, creates an `<h[level]>` element corresponding to the level, copies the content of the current element into it, and returns the new header element. CETEIcean will hide the content of the `<tei-head>` and show the heading element instead. Note that the code shown here has a potential bug: a very deeply nested document might produce, e.g. an `<h7>` element, which is not valid HTML. Our current source doesn't go more than three levels deep, but we might want to add a check ensure we don't go beyond `<h6>`.
 
 CETEIcean has a number of built-in behaviors, which is why it was able to deal with TEI `<graphic>`s, for example, without any work on our part. You can replace or switch off built-in behaviors by adding matches for them. If you want to display the contents of the TEI Header, which is hidden by default, you can add:
 ```js

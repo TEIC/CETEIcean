@@ -53,7 +53,7 @@
             var link = document.createElement("a");
             link.setAttribute("style", "float:right;padding-left:1em;text-decoration:none;color:gray;");
             if (elt.hasAttribute("facs")) {
-              var facs = elt.getAttribute("facs").replace("tcp:", "").replace(new RegExp(this.prefixDefs["tcp"]["matchPattern"]), "?vid=$1&page=$2");
+              var facs = elt.getAttribute("facs").replace("tcp:", "").replace(new RegExp(this.getPrefixDef("tcp")["matchPattern"]), "?vid=$1&page=$2");
               link.setAttribute("href", "http://eebo.chadwyck.com/fetchimage" + facs + "&width=1500");
               var img = document.createElement("img");
               images.push(img);

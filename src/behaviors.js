@@ -1,4 +1,3 @@
-import {define, fallback} from './customElements';
 
 /* 
   Add a user-defined set of behaviors to CETEIcean's processing
@@ -49,11 +48,30 @@ export function addBehavior(ns, element, b) {
   this.behaviors[`${p}:${element}`] = b;
 }
 
+/*
+  Removes a previously-defined or default behavior. Takes a namespace prefix or namespace definition
+  and the element name.
+*/
+export function removeBehavior(ns, element) {
+  let p;
+  if (ns === Object(ns)) {
+    for (let prefix of Object.keys(ns)) {
+      if (!this.namespaces.has(ns[prefix])) {
+        this.namespaces.set(ns[prefix], prefix);
+        p = prefix;
+      }
+    }
+  } else {
+    p = ns;
+  }
+  delete this.behaviors[`${p}:${element}`];
+}
+
 // Define or apply behaviors for the document
 export function applyBehaviors() {
   if (window.customElements) {
-    define.call(this, this.els);
+    this.define.call(this, this.els);
   } else {
-    fallback.call(this, this.els);
+    this.fallback.call(this, this.els);
   }
 }

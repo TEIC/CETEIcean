@@ -45,6 +45,11 @@ class CETEI {
     if (!this.options.omitDefaultBehaviors) {
       this.addBehaviors(defaultBehaviors);
     }
+    if (!this.options.restorePosition) {
+      if (window) {
+        window.removeEventListener("ceteiceanload");
+      }
+    }
   }
 
   /* 
@@ -500,7 +505,7 @@ fallback(names) {
       }
     } else {
       setTimeout(function() {
-        let h = document.querySelector(window.location.hash);
+        let h = document.querySelector(window.decodeURI(window.location.hash));
         if (h) {
           h.scrollIntoView();
         }
@@ -520,5 +525,5 @@ try {
 } catch (e) {
   console.log(e);
 }
-// Make main class available to pre-ES6 browser environments
+
 export default CETEI

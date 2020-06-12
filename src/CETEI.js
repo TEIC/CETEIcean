@@ -45,9 +45,9 @@ class CETEI {
     if (!this.options.omitDefaultBehaviors) {
       this.addBehaviors(defaultBehaviors);
     }
-    if (!this.options.restorePosition) {
+    if (this.options.ignoreFragmentId) {
       if (window) {
-        window.removeEventListener("ceteiceanload");
+        window.removeEventListener("ceteiceanload", CETEI.restorePosition);
       }
     }
   }

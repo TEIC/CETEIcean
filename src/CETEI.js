@@ -415,6 +415,8 @@ template(str, elt) {
         } else {
           result = result.replace(replacements[0], elt.getAttribute(replacements[2]));
         }
+      } else {
+        result = result.replace(replacements[0], "");
       }
     }
   }

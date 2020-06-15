@@ -208,16 +208,6 @@ class CETEI {
   }
 
   /* 
-    If the TEI document defines CSS styles in its tagsDecl, this method
-    copies them into the wrapper HTML document's head.
-  */
-  addStyle(doc, data) {
-    if (this.hasStyle) {
-      doc.getElementsByTagName("head").item(0).appendChild(data.getElementsByTagName("style").item(0).cloneNode(true));
-    }
-  }
-
-  /* 
     To change a namespace -> prefix mapping, the namespace must first be 
     unset. Takes a namespace URI. In order to process a TEI P4 document, e.g.,
     the TEI namespace must be unset before it can be set to the empty string.

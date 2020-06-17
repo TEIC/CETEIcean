@@ -3,24 +3,27 @@
 /* on TEI Boilerplate                                                        */
 
 /* language support */
-/* render Arabic, Persian, Ottoman, Hebrew  as rtl */
+/* render Arabic, Persian, Ottoman, Hebrew and Yiddish  as rtl */
 [lang = "ar"],
 [lang = "ota"],
 [lang = "fa"],
 [lang = "he"],
+[lang = "yi"],
 [lang *="-Arab-AR"]{
-    direction:rtl;
-    text-align:right;
+  direction:rtl;
+  text-align:right;
 }
-/* display latin scripts as ltr  */
+/* display latin and some other scripts as ltr  */
 [lang = "en"],
 [lang = "fr"],
 [lang = "de"],
 [lang = "it"],
+[lang = "ru"],
+[lang = "pl"],
 [lang *="ar-Latn-"],
 [lang *="ota-Latn-"]{
-    direction:ltr;
-    text-align:left;
+  direction:ltr;
+  text-align:left;
 }
 
 /* Choice elements */
@@ -46,10 +49,10 @@ tei-ab {
   margin-top: 1em;
   margin-bottom: 1em;
 }
-tei-accMat {
+tei-accmat {
   display: block;
 }
-tei-accMat:before {
+tei-accmat:before {
   content: "accompanying materials: ";
 }
 tei-acquisition {
@@ -88,22 +91,22 @@ tei-additions {
 tei-additions:before {
   content: "Significant additions within the document: ";
 }
-tei-addrLine {
+tei-addrline {
   display: block;
 }
-tei-address[data-tei-rend~="block"], addresss[data-tei-rendition~="#block"] {
+tei-address[data-tei-rend~="block"], tei-addresss[data-tei-rendition~="#block"] {
   display: block;
 }
-tei-adminInfo {
+tei-admininfo {
   display: block;
 }
 tei-app tei-note {
   display: none;
 }
-tei-appInfo {
+tei-appinfo {
   display: block;
 }
-tei-appInfo:before {
+tei-appinfo:before {
   content: "Application information: ";
 }
 tei-application {
@@ -145,7 +148,7 @@ tei-bibl[data-tei-rend~="block"], bibl[data-tei-rendition~="#block"] {
   padding-left: 2em;
   text-indent: -2em;
 }
-tei-biblFull {
+tei-biblfull {
   display: block;
 }
 tei-binding {
@@ -172,7 +175,7 @@ tei-birth:before {
   content: "Birth: ";
 }
 /* c */
-tei-cRefPattern {
+tei-crefpattern {
   display: none;
 }
 tei-caption {
@@ -409,7 +412,7 @@ tei-item {
   display: list-item;
   margin-left: 1em;
 }
-tei-cell item {
+tei-cell tei-item {
   margin-left: 1em;
 }
 
@@ -499,7 +502,7 @@ tei-listapp {
 tei-listbibl {
   display:block;
   list-style-type: none;
-  margin-left: .5 em;
+  margin-left: .5em;
   margin-top: .5em;
 }
 tei-listbibl > tei-head {
@@ -544,10 +547,10 @@ tei-milestone {
   margin-right: auto;
   text-align: center;
 }
-tei-musicNotation {
+tei-musicnotation {
   font-weight: bold;
 }
-tei-musicNotation:before {
+tei-musicnotation:before {
   font-weight: bold;
   content: "Musical Notation: ";
 }
@@ -562,10 +565,10 @@ tei-notesstmt {
 tei-ovar {
   font-style: italic;
 }
-tei-origPlace {
+tei-origplace {
   font-weight: bold;
 }
-tei-origPlace:before {
+tei-origplace:before {
   font-weight: bold;
   content: "Place of Origin: ";
 }
@@ -577,10 +580,10 @@ tei-p {
   margin-bottom: 1em;
   text-align: justify;
 }
-*[data-tei-rendition~="#center"] p {
+*[data-tei-rendition~="#center"] tei-p {
   text-align: center;
 }
-tei-availability > p:first-child {
+tei-availability > tei-p:first-child {
   margin-top: 0em;
 }
 tei-performance {
@@ -593,7 +596,7 @@ tei-person {
   margin-top: 1em;
   margin-bottom: 1em;
 }
-tei-personGrp {
+tei-persongrp {
   display: block;
   margin-top: 1em;
   margin-bottom: 1em;
@@ -718,7 +721,7 @@ tei-sealdesc {
   margin-top: 1em;
   margin-bottom: 1em;
 }
-tei-secFol:before {
+tei-secfol:before {
   font-weight: bold;
   content: "Second Folio: ";
 }
@@ -750,19 +753,19 @@ tei-signed {
   display: block;
   margin-top: 2em;
 }
-tei-soCalled {
+tei-socalled {
   quotes: "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d";
 }
-tei-soCalled:before {
+tei-socalled:before {
   content: open-quote;
 }
-tei-soCalled:after {
+tei-socalled:after {
   content: close-quote;
 }
-tei-soCalled[data-tei-next]:after {
+tei-socalled[data-tei-next]:after {
   content: "" !important;
 }
-tei-soCalled[data-tei-prev]:before {
+tei-socalled[data-tei-prev]:before {
   content: "" !important;
 }
 tei-sound {
@@ -828,8 +831,6 @@ tei-table {
   display: block;
   border-top: thin solid black;
   border-left: thin solid black;
-}
-tei-table {
   margin-top: 2em;
   margin-bottom: 2em;
   font-size: 12pt;
@@ -898,14 +899,9 @@ tei-witdetail {
   display:none;
 }
 
-/* styles for HTML shell and HTML elements in TEI (e.g.,<a> and <img>) */
-html > body {
-  margin: 0;
-  padding: 0;
-}
+/* styles for the HTML shell */
 html {
   margin: 0;
-  padding: 0;
   margin-left: 2em;
   margin-right: 4em;
   padding: 2.5em;
@@ -913,4 +909,8 @@ html {
   font-size: 12pt;
   background-color: white;
   color: #292929;
+}
+html > body {
+  margin: 0;
+  padding: 0;
 }

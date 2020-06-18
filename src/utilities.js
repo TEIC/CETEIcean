@@ -112,7 +112,7 @@ export function getPrefixDef(prefix) {
 */
 export function rw(url) {
   if (!url.match(/^(?:http|mailto|file|\/|#).*$/)) {
-    return this.base + url;
+    return this.base + this.utilities.first(url);
   } else {
     return url;
   }

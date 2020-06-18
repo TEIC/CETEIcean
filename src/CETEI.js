@@ -191,6 +191,7 @@ class CETEI {
     }
 
     this.dom = convertEl(XML_dom.documentElement);
+    this.utilities.dom = this.dom;
 
     this.applyBehaviors();
     this.done = true;
@@ -400,8 +401,8 @@ template(str, elt) {
     let replacements;
     while (replacements = re.exec(str)) {
       if (elt.hasAttribute(replacements[2])) {
-        if (replacements[1] && utilities[replacements[1]]) {
-          result = result.replace(replacements[0], utilities[replacements[1]](elt.getAttribute(replacements[2])));
+        if (replacements[1] && this.utilities[replacements[1]]) {
+          result = result.replace(replacements[0], this.utilities[replacements[1]](elt.getAttribute(replacements[2])));
         } else {
           result = result.replace(replacements[0], elt.getAttribute(replacements[2]));
         }

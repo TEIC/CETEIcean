@@ -13,7 +13,6 @@
       CETEIcean.getHTML5('testTEI.xml', function(data) {
         document.getElementById("TEI").innerHTML = "";
         document.getElementById("TEI").appendChild(data);
-        CETEIcean.addStyle(document, data);
       });
 
       // Alternatively, use then()

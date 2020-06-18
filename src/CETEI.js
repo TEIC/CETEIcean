@@ -292,9 +292,9 @@ decorator(template) {
     for (let rule of template) {
       if (elt.matches(rule[0]) || rule[0] === "_") {
         if (Array.isArray(rule[1])) {
-          return self.decorator(rule[1]).call(this, elt);
+          return self.decorator(rule[1]).call(self, elt);
         } else {
-          return rule[1].call(this, elt);
+          return rule[1].call(self, elt);
         }
       }
     }

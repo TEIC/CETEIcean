@@ -75,7 +75,6 @@
       CETEIcean.getHTML5('https://raw.githubusercontent.com/textcreationpartnership/A00689/master/A00689.xml', function(data) {
         document.getElementById("TEI").innerHTML = "";
         document.getElementById("TEI").appendChild(data);
-        CETEIcean.addStyle(document, data);
         // Fix combining abbreviation marker in Chrome
         if (!!window.chrome) {
           var gs = document.getElementsByTagName("tei-g");

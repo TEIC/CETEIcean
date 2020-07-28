@@ -49,16 +49,25 @@ En el directorio raíz crea un archivo `index.html`, con el siguiente contenido:
 
 This will serve as a shell into which we will put the instructions that will display our TEI file. Like TEI, HTML files have a header, named `head`, and a `body`. We will put links to our CSS (Cascading Style Sheets) and JavaScript files and write a bit of JavaScript to get CETEIcean running. In the first empty line in the `<head>`, type:
 
+Este archivo servirá como una estructura en la cual pondremos las instrucciones para mostrar nuestro archivo TEI. Al igual que en TEI, los archivos HTML tienen un encabezado, llamado `head` y un cuerpo de texto, llamado `body`.  Agregaremos enlaces a nuestra CSS (Cascading Style Sheets) y a archivos de JavaScript, y escribiremos un poco de JavaScript para hacer que CETEIcean funcione. En la primera línea vacía del `<head>`, escribe:
+
 ```html
   <link rel="stylesheet" href="css/tei.css">
 ```
 This will link our CSS file to our HTML page, giving it access to the styling directives inside (there are only a few—we'll add more). Next, we'll link in the CETEIcean library by adding this line after the stylesheet link:
+
+Esto conectará nuestro archivo CSS con nuestra página HTML, dándole acceso a las directivas de estilo que este contiene (solo hay unas pocas, pero añadiremos más). A continuación, incluiremos la librería de CETEIcean añadiendo la siguiente línea luego del enlace a la hoja de estilo:
+
 ```html
   <script src="js/CETEI.js"></script>
 ```
 Now we are ready to load our file. Add another `<script></script>` element to your `index.html` file, this time without a `@src` attribute (because we're going to put the script inside it).
 
+Ahora ya estamos listos para cargar tu archive. Añade otro elemento `<script></script>` a tu archivo index.html, esta vez sin el atributo `@src` (porque vamos a poner el script dentro de él). 
+
 Inside your new script element, add the lines:
+
+En el interior de tu nuevo elemento 'script', añade estas líneas:
 
 ```js
   let c = new CETEI();
@@ -68,6 +77,8 @@ Inside your new script element, add the lines:
 ```
 
 You don't need to be a JavaScript expert to use CETEIcean, but learning how the basics work will be helpful. If you want advanced behaviors, you will have to know JavaScript. An excellent guide is available from the [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide) (MDN) in many languages. The lines of code above are doing a few things: first, a variable, `c` is defined as a new CETEI object. This will do the work of loading and styling our source file for us. Next, we tell `c` to load the source file and turn it into HTML Custom Elements, and we're also giving it a function that will take the results and put them into the `<body>` of our index.html file. `document.getElementsByTagName('body')` calls a function available on the built-in `document` object (`document` is the HTML document loaded into the browser) that finds all the body elements and returns them in an Array (a list whose members can be accessed by index number). There is only one body element, so we're getting the first item in the Array, at index 0. To that item, an HTML Element, we are appending as a child the TEI document we just loaded.
+
+No necesitas ser un experto en JavaScript para usar CETEIcean, pero aprender su funcionamiento básico puede ser de utilidad. Si deseas incluir funciones avanzadas, tendrás que aprender JavaScript. En la red para desarrolladores de Mozilla puede encontrarse una excelente [guía de JavaScript](https://developer.mozilla.org/es/docs/Web/JavaScript/Guide) en varios lenguajes, incluido el español. Las líneas de código que añadimos están haciendo varias cosas: en primer lugar, una variable, `c` es definida como un nuevo objeto CETEI. Esto hará el trabajo de cargar y darle estilo a nuestro archivo fuente. A continuación, le indicaremos a `c` que cargue el archivo fuente y lo convierta en HTML (Custom Elements), y también le daremos una función que tomará los resultados y los pondrá en el `<body>`de nuestro archivo index.html. `document.getElementsByTagName('body')` llama a una función disponible en objeto `document` (`document` es el documento HTML cargado en el navegador) que busca todos los elementos 'body' y los devuelve como una lista ordenada (en la que se puede acceder a los miembros que la componen a través de su número índice). Solo hay un elemento 'body', por lo que obtendremos una sola entrada en nuestra lista, con el índice 0. Anexaremos este ítem, un elemento HTML, como un hijo del documento TEI que acabamos de cargar. 
 
 At this point, if you're using Atom, you should be able to run HTML Preview from the Packages menu and see your document. If you aren't using Atom, you can try putting your documents on a web server. If you're familiar with using GitHub, you can use GitHub Pages ([tutorial](https://guides.github.com/features/pages/)—you can skip the themes step and just use a repository with the tutorial you're reading in it). If you have Python installed on your computer, you can run a simple web server in the tutorial directory with the command:
 ```bash

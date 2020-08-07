@@ -119,6 +119,9 @@ Some of these may not need any special styling or behaviors, but others definite
 
 Take a look at the `tei.css` file in the `css/` folder. As you can see, it only has a couple of rules so far:
 
+Algunos de estos elementos pueden no necesitar estilos o comportamientos especiales, pero otros definitivamente lo harán.
+Hecha un vistazo al archivo `tei.css` de la carpeta `css/`. Como puedes ver, por ahora tiene unas pocas reglas:
+
 ```css
 tei-div {
   display: block;
@@ -130,6 +133,9 @@ tei-p {
 }
 ```
 Some things to notice: the element names in our CSS selectors are prefixed with "tei-", which is what CETEIcean does to turn TEI elements into HTML Custom Elements. These rules mean divs are displayed as blocks (they start on a new line and are followed by a break at the end), as are paragraphs, and the latter also have some spacing before and after. Deciding what styles to apply to the currently unstyled elements may not always be easy, but we can begin by picking some simple cases. The source document uses lists for its table of contents and indices, always with `@type="simple"`. We can use CSS to format these as lists. Add the following to the `tei.css` file:
+
+Algunas cosas para tener en cuenta: los nombres de los elementos en nuestros selectores CSS tienen el prefijo “tei-”, esto es necesario para que CETEIcean pueda convertir los elementos de TEI en elementos personalizados (Custom Elements) de HTML. Estas reglas establecen que los elementos div se visualicen como bloques (empiezan en una nueva línea y terminan con un corte), lo mismo sucede con los párrafos, que también tienen un espaciado superior y posterior. Decidir qué estilos aplicar a los elementos que todavía no tienen reglas de estilo puede no resultar sencillo, pero podemos comenzar eligiendo algunos de los casos más simples. El documento fuente utiliza listas para la tabla de contenido y los índices, siempre con el atributo `@type="simple"`. Podemos usar CSS para darle formato a esas listas. Añade lo siguiente en el archivo `tei.css`:
+
 ```css
 tei-list[type=simple] {
   list-style-type: none;
@@ -139,12 +145,18 @@ tei-list[type=simple]>tei-item {
 }
 ```
 The first selector will match `<tei-list type="simple">` elements and specifies that list items should not be decorated with bullets or numbers. The second identifies `<tei-item>` elements as list items (like `<li>` in HTML). If you make this change and reload your preview, you will see that the table of contents is now formatted as a list. You can experiment with adding margins and other styles to make it look better. The `<hi rend="italics">` elements can be dealt with easily too:
+
+El primer selector encuentra los elementos `<tei-list type="simple">` y especifica que los ítems de la lista no deben estar decorados con viñetas ni número. El segundo identifica los elementos `<tei-item>` como ítems de lista (como `<li>` en HTML). Si recargas la visualización de tu archivo en el navegador luego de realizar estos cambios, verás que el contenido de las tablas ahora tiene el formato de una lista. Puedes experimentar añadiendo márgenes y otras reglas de estilo para hacer que la presentación del archivo se vea mejor. También puedes darle formato al elemento `<hi rend="italics">`fácilmente: 
+
 ```css
 tei-hi[rend=italics] {
   font-style: italic;
 }
 ```
 Line beginnings are a little trickier, and require a CSS "pseudo-selector":
+
+Los comienzos de línea son un poco más complicados y requieren un “pseudo-selector” CSS:
+
 ```css
 tei-lb:before {
   white-space: pre;
@@ -152,6 +164,9 @@ tei-lb:before {
 }
 ```
 This tells the browser to insert a new-line character (the "\A") before each `<tei-lb>` and to treat it as preformatted text (as you would a block of code, for example). We have to do this because in HTML new lines are normally ignored for formatting purposes. There's more we can do with CSS, but this is a good point to look at where you might use CETEIcean behaviors for formatting instead. HTML has an element equivalent to `<lb/>`, the `<br>` element. What if we just put a `<br>` inside our `<tei-lb>`? We can do that by adding some behaviors. In your index.html, add the following between the first and second lines of the code in the `<script></script>` tags:
+
+Esto le indica al navegador que inserte un carácter de nueva línea ("\A") por cada `<tei-lb>` y que lo trate como texto sin formato (como lo harías con una sección de código, por ejemplo). Tenemos que hacer esto porque en HTML las nuevas líneas son normalmente ignoradas a los propósitos del formato. Hay más cosas que se pueden hacer con CSS, pero este es un buen punto para ver en qué casos también podemos utilizar los comportamientos (behavoirs) de CETEIcean para dar formato. HTML tiene un elemento equivalente a `<br>`, el elemento `<lb/>` ¿Por qué no simplemente colocar un `<br>` en nuestro `<tei-lb>`? Podemos hacer esto añadiendo algunos comportamientos. En tu archivo index.html añade lo siguiente entre la primera y la segunda línea del código que se encuentra entre as etiquetas `<script></script>`:
+
 ```js
   let behaviors = {
     "tei": {

@@ -176,12 +176,21 @@ Esto le indica al navegador que inserte un carácter de nueva línea ("\A") por 
   c.addBehaviors(behaviors);
 ```
 What this will do is create a Javascript object and assign it to a variable, `behaviors`, which we then pass to the `CETEI` object we created earlier, using the `addBehaviors` method. Inside that behaviors object, we have a section labeled "tei" (which is the prefix for all of our Custom Elements), and inside that, we define behaviors for elements. When CETEIcean sees a match for an element name, like "lb" (note that it uses the un-prefixed TEI name), it applies what it finds. For "lb", it sees an Array with one element, `<br>`, so it will insert that `<br>` tag before the content of any `<tei-lb>` element it finds. `<tei-lb>` is an empty element anyway, so the final result as seen by the browser will be
+
+Esto creará un objeto Javascript y le asignará la variable `behaviors`, que luego enlazaremos con el objeto `CETEI` que creamos antes, usando el método `addBehaviors`. En el interior de ese objeto behaviors, tenemos una sección etiquetada como “tei” (que es el prefijo para todos nuestros elementos personalizados), y dentro de esta se definen los comportamientos para los elementos. Cuando CETEIcean encuentra una coincidencia para el nombre de un elemento, como “lb” (ten en cuenta que se utiliza el nombre de TEI sin el prefijo), aplica los comportamientos que encuentra. Para “lb”, por ejmplo, encuentra un vector (Array) con otro elemento, `<br>`, por lo que insertará la etiqueta `<br>` antes de contenido de cualquier elemento `<tei-lb>` que encuentre. `<tei-lb>` es un elemento vacío de cualquier forma, por lo que el resultado final para el navegador será:
+
 ```html
 <tei-lb><br></tei-lb>
 ```
+
 The browser will not know what to do with `<tei-lb>` and so will ignore it, but it will know what to do with `<br>`, and will display it as a new line. Note that if you use the behavior, you won't want the CSS rule for `tei-lb`, or you'll get two line breaks for every one in your source.
 
+El navegador no sabrá qué hacer con el elmento `<tei-lb>`, así que lo ignorará, pero sí sabe cómo interpretar el elemento `<br>` y lo mostrará como una nueva línea. Ten en cuenta que si utilizas este comportamiento, no debes añadir una regla CSS para `tei-lb`, o terminarás obteniendo dos líneas nuevas por cada una en tu documento fuente.
+
 Behaviors can get more complex than this. You may have noticed that our source document has `<div>` elements, which nest, and which may have `<head>` elements. In HTML, the convention is to represent different levels of header with `h1`, `h2`, `h3`, and so on (up to `h6`). We can do this using a more sophisticated behavior:
+
+Los comportamientos puedes ser más complejos que esto. Quizás hayas notado que nuestro documento fuente tiene elementos `<div>` que contienen otros `<div>` y pueden tener elementos `<head>`. En HTML, la convención es representar los diferentes niveles de encabezados con los elementos `h1`, `h2`, `h3`, etc. (hasta `h6`). Podemos lograr esto utilizando un comportamiento más complejo:
+
 ```js
   let behaviors = {
     "tei": {
@@ -200,17 +209,19 @@ Behaviors can get more complex than this. You may have noticed that our source d
 ```
 This new "head" behavior is doing something different. It takes a JavaScript function instead of an Array, which gets the element being processed as a parameter (the `e`). It creates a `level` variable, which contains the depth of the `<tei-div>` containing the `<tei-head>`, creates an `<h[level]>` element corresponding to the level, copies the content of the current element into it, and returns the new header element. CETEIcean will hide the content of the `<tei-head>` and show the heading element instead. Note that the code shown here has a potential bug: a very deeply nested document might produce, e.g. an `<h7>` element, which is not valid HTML. Our current source doesn't go more than three levels deep, but we might want to add a check ensure we don't go beyond `<h6>`.
 
+Este nuevo comportamiento para encabezados está haciendo algo diferente. Toma una función de JavaScript en lugar de un vector. Lo que hace que el elemento sea procesado como un parámetro (el e). Esto crea la variable `level`, que contiene el nivel de encabezamiento de la `<tei-div>` que contiene el `<tei-head>`, crea un elemento `<h[nivel]>` con el nivel correspondiente, y copia el contenido del elemento original en el nuevo elemento de encabezado. CETEIcean esconderá el contenido de `<tei-head>` y en cambio mostrará el contenido del nuevo elemento de encabezado. Te en cuenta que este código tiene un problema potencial: un documento con muchas divisiones anidadas unas dentro de otras podría llegar a producir un elemento de encabezado superior al límite admitido por HTML (por ejemplo un elemento `<h7>`). Nuestro documento fuente no tiene más de tres niveles de anidamiento, pero para utilizarlo en otras fuentes sería prudente revisar que el anidamiento no supere el novel del elemento `<h6>`.
+
 CETEIcean has a number of built-in behaviors, which is why it was able to deal with TEI `<graphic>`s, for example, without any work on our part. You can replace or switch off built-in behaviors by adding matches for them. If you want to display the contents of the TEI Header, which is hidden by default, you can add:
+
+CETEIcean posee una cantidad de comportamientos integrados, esto le permite procesar los elementos `<graphic>` de TEI, por ejemplo, sin necesidad de ninguna modificación de nuestra parte. Puedes reemplazar o desactivar estos comportamientos integrados añadiéndoles valores. Si deseas mostrar el contenido del TEI Header, que está oculto por defecto, puedes añadir: 
+
 ```js
   "teiHeader": null,
 ```
 to your behaviors object. You will want to add CSS styles or behaviors to cope with the header contents if you do so. 
 
+a tus objetos de comportamiento. Si haces esto, puede que desees agregar estilos de CSS o comportamientos para elegir la forma en la que se visualizará el contenido del TEI Header en el navegador.
+
 We will not work through all of the possibilites for our source document in this tutorial. You should experiment and decide how you want to represent the source's markup. A more fully worked out example is available in the [example/](example) folder, and the original HTML version and TEI P4 source may be found at <https://docsouth.unc.edu/fpn/washington/menu.html>.
 
-
-
-
-
-
-
+En este tutorial no agotamos todas las posibilidades de trabajo con nuestro documento fuente. Te recomendamos que experimentes por tu cuenta en las diferentes formas en las que un marcado de TEI puede visualizarse en un navegador usando CETEICean. Puedes encontrar un ejemplo más acabado en la carpeta [example/](example), y la versión HTML y la fuente TEI P4 están disponibles en <https://docsouth.unc.edu/fpn/washington/menu.html>. 

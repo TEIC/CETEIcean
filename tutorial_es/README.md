@@ -1,15 +1,11 @@
 # Getting Started with CETEIcean
 # Introducción a la publicación de archivos TEI con CETEIcean
 
-This tutorial will walk you through the steps to publish a TEI file online using CETEIcean. We will start with a simple (though quite large) file in TEI P5 form, `fpn-washington.xml`, which we want to display in a web browser.
+Nota: para comprender este tutorial, debes saber que es el lenguaje de marcado [XML-TEI ] (https://tei-c.org/) y cuál es su función como lenguaje estándar en la edición digital académica de textos de Ciencias Sociales y Humanidades.
 
-Este tutorial te guiará a través de los pasos necesarios para publicar un archivo TEI en línea utilizando CETEIcean. Comenzaremos con un archivo simple (aunque un tanto extenso) en el formato de TEI P5, `fpn-washington.xml`, que queremos hacer visible en un navegador web.
+Este tutorial te guiará a través de los pasos necesarios para publicar un archivo TEI en línea utilizando CETEIcean. Comenzaremos con un archivo simple (aunque un tanto extenso) en formato TEI P5, `fpn-washington.xml`, que queremos hacer visible en un navegador web.
 
-First, a note about viewing the results of your work: CETEIcean's default method for displaying TEI relies on loading a TEI file from another location. Not all browsers will allow you to do this when you view an HTML file directly on your file system. You should try it, but if it doesn't work, then you will have to run a web server, put your files on a web server, or use a text editor with preview capabilities. [Atom](https://atom.io), with the `atom-html-preview` plugin is the example we will use for this tutorial, but there are many other options. You should download and install Atom, or an equivalent text editor, before starting this tutorial. A text editor is different from other programs you may already use for editing 'text', such as LibreOffice or Word, in that it edits only plain text files.
-
-En primer lugar, una aclaración sobre la visualización de tu trabajo: El método por defecto de CETEIcean para mostrar archivos TEI consiste en cargar los archivos desde otra ubicación. No todos los navegadores te permitirán hacer esto cuando abras un archivo HTML directamente en el explorador de archivos de tu ordenador. Puedes hacer el intento, pero si eso no funciona, tendrás que generar un servidor local, colocar los archivos en un servidor en línea, o utilizar un editor de texto con funciones de previsualización. El editor de texto [Atom](https://atom.io), con el plugin `atom-html-preview` es el ejemplo que utilizaremos para este tutorial, pero existen varias opciones. Debes descargar e instalar Atom, o algún editor de texto equivalente, antes de comenzar este tutorial. Un editor de texto es diferente de otros procesadores de texto usuales, como LibreOffice o Word, ya que editan solo archivos de texto plano.
-
-We will start by setting up a directory structure for our files. You may simply want to copy the structure of this tutorial, which looks like:
+En primer lugar, una aclaración sobre la visualización de tu trabajo: El método por defecto de CETEIcean para mostrar archivos TEI consiste en cargar los archivos desde otra ubicación. No todos los navegadores te permitirán hacer esto cuando abras un archivo HTML directamente en el explorador de archivos de tu computadora. Puedes hacer el intento, pero si eso no funciona, tendrás que generar un servidor local, colocar los archivos en un servidor en línea, o utilizar un editor de texto con funciones de previsualización. El editor de texto [Atom](https://atom.io), con el plugin `atom-html-preview` es el ejemplo que utilizaremos para este tutorial, pero existen otras opciones. Debes descargar e instalar Atom, o algún editor de texto equivalente, antes de comenzar este tutorial. Un editor de texto es diferente de otros procesadores de texto usuales, como LibreOffice o Word, ya que, a diferencia de los segundos, los primeros editan solo archivos de texto plano.
 
 Comenzaremos por establecer una estructura de directorios para nuestros archivos. Puedes copiar la estructura de este tutorial, que se ve de la siguiente forma:
 
@@ -28,7 +24,6 @@ Comenzaremos por establecer una estructura de directorios para nuestros archivos
        --- README.md (the file you are reading)
 ```
 
-Inside the root folder, create an `index.html` file, with the content:
 
 En el directorio raíz crea un archivo `index.html`, con el siguiente contenido:
 
@@ -47,25 +42,21 @@ En el directorio raíz crea un archivo `index.html`, con el siguiente contenido:
 </html>
 ```
 
-This will serve as a shell into which we will put the instructions that will display our TEI file. Like TEI, HTML files have a header, named `head`, and a `body`. We will put links to our CSS (Cascading Style Sheets) and JavaScript files and write a bit of JavaScript to get CETEIcean running. In the first empty line in the `<head>`, type:
-
 Este archivo servirá como una estructura en la cual pondremos las instrucciones para mostrar nuestro archivo TEI. Al igual que en TEI, los archivos HTML tienen un encabezado, llamado `head` y un cuerpo de texto, llamado `body`.  Agregaremos enlaces a nuestra CSS (Cascading Style Sheets) y a archivos de JavaScript, y escribiremos un poco de JavaScript para hacer que CETEIcean funcione. En la primera línea vacía del `<head>`, escribe:
 
 ```html
   <link rel="stylesheet" href="css/tei.css">
 ```
-This will link our CSS file to our HTML page, giving it access to the styling directives inside (there are only a few—we'll add more). Next, we'll link in the CETEIcean library by adding this line after the stylesheet link:
 
-Esto conectará nuestro archivo CSS con nuestra página HTML, dándole acceso a las directivas de estilo que este contiene (solo hay unas pocas, pero añadiremos más). A continuación, incluiremos la librería de CETEIcean añadiendo la siguiente línea luego del enlace a la hoja de estilo:
+
+Esto conectará nuestro archivo CSS con nuestra página HTML, dándole acceso a las directivas de estilo que este contiene (solo hay unas pocas, pero añadiremos más). A continuación, incluiremos la librería de CETEIcean, añadiendo la siguiente línea luego del enlace a la hoja de estilo:
 
 ```html
   <script src="js/CETEI.js"></script>
 ```
-Now we are ready to load our file. Add another `<script></script>` element to your `index.html` file, this time without a `@src` attribute (because we're going to put the script inside it).
 
-Ahora ya estamos listos para cargar tu archivo. Añade otro elemento `<script></script>` a tu archivo `index.html`, esta vez sin el atributo `@src` (porque vamos a poner el script dentro de él). 
 
-Inside your new script element, add the lines:
+Ahora ya estamos listos para cargar el archivo. Añade otro elemento `<script></script>` a tu archivo `index.html`, esta vez sin el atributo `@src` (porque vamos a poner el script dentro de él). 
 
 En el interior de tu nuevo elemento 'script', añade estas líneas:
 
@@ -76,13 +67,9 @@ En el interior de tu nuevo elemento 'script', añade estas líneas:
   });
 ```
 
-You don't need to be a JavaScript expert to use CETEIcean, but learning how the basics work will be helpful. If you want advanced behaviors, you will have to know JavaScript. An excellent guide is available from the [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide) (MDN) in many languages. The lines of code above are doing a few things: first, a variable, `c` is defined as a new CETEI object. This will do the work of loading and styling our source file for us. Next, we tell `c` to load the source file and turn it into HTML Custom Elements, and we're also giving it a function that will take the results and put them into the `<body>` of our index.html file. `document.getElementsByTagName('body')` calls a function available on the built-in `document` object (`document` is the HTML document loaded into the browser) that finds all the body elements and returns them in an Array (a list whose members can be accessed by index number). There is only one body element, so we're getting the first item in the Array, at index 0. To that item, an HTML Element, we are appending as a child the TEI document we just loaded.
+No necesitas ser un experto en JavaScript para usar CETEIcean, pero aprender su funcionamiento básico puede ser de utilidad. Si deseas incluir funciones avanzadas, tendrás que aprender JavaScript. En la red para desarrolladores de Mozilla puede encontrarse una excelente [guía de JavaScript](https://developer.mozilla.org/es/docs/Web/JavaScript/Guide) en varias lenguas, incluido el español. Las líneas de código que añadimos hacen varias cosas: en primer lugar, una variable, `c` es definida como un nuevo objeto CETEI. Esto hará el trabajo de cargar y darle estilo a nuestro archivo fuente. A continuación, le indicaremos a `c` que cargue el archivo fuente y lo convierta en HTML (Custom Elements), y también le daremos una función que tomará los resultados y los pondrá en el `<body>`de nuestro archivo index.html. `document.getElementsByTagName('body')` llama a una función disponible en objeto `document` (`document` es el documento HTML cargado en el navegador) que busca todos los elementos 'body' y los devuelve en la forma de una lista ordenada (una lista a través de la cual se puede acceder a los miembros que la componen a través de su número índice). Solo hay un elemento 'body', por lo que obtendremos una sola entrada en nuestra lista, con el índice 0. Este ítem, que es un elemento HTML, queda adjunto como un hijo del documento TEI que acabamos de cargar. 
 
-No necesitas ser un experto en JavaScript para usar CETEIcean, pero aprender su funcionamiento básico puede ser de utilidad. Si deseas incluir funciones avanzadas, tendrás que aprender JavaScript. En la red para desarrolladores de Mozilla puede encontrarse una excelente [guía de JavaScript](https://developer.mozilla.org/es/docs/Web/JavaScript/Guide) en varios lenguajes, incluido el español. Las líneas de código que añadimos están haciendo varias cosas: en primer lugar, una variable, `c` es definida como un nuevo objeto CETEI. Esto hará el trabajo de cargar y darle estilo a nuestro archivo fuente. A continuación, le indicaremos a `c` que cargue el archivo fuente y lo convierta en HTML (Custom Elements), y también le daremos una función que tomará los resultados y los pondrá en el `<body>`de nuestro archivo index.html. `document.getElementsByTagName('body')` llama a una función disponible en objeto `document` (`document` es el documento HTML cargado en el navegador) que busca todos los elementos 'body' y los devuelve como una lista ordenada (en la que se puede acceder a los miembros que la componen a través de su número índice). Solo hay un elemento 'body', por lo que obtendremos una sola entrada en nuestra lista, con el índice 0. Anexaremos este ítem, un elemento HTML, como un hijo del documento TEI que acabamos de cargar. 
-
-At this point, if you're using Atom, you should be able to run HTML Preview from the Packages menu and see your document. If you aren't using Atom, you can try putting your documents on a web server. If you're familiar with using GitHub, you can use GitHub Pages ([tutorial](https://guides.github.com/features/pages/)—you can skip the themes step and just use a repository with the tutorial you're reading in it). If you have Python installed on your computer, you can run a simple web server in the tutorial directory with the command:
-
-En este punto, si estás usando Atom, deberías poder ejecutar una previsualización del HTML desde el menú “Packages” y así ver tu documento. Si no estás usando Atom, puedes hacer esto colocando tus archivos en un servidor web. Si conoces el funcionamiento de GitHub, puedes utilizar GitHub Pages (aquí tienes un [tutorial](https://guides.github.com/features/pages/) en inglés, puedes saltearte los pasos referidos al tema y solo usar un repositorio para cargar el tutorial que estás leyendo). Si tienes instalado Python en tu computadora, puedes ejecutar in servidor web simple en el directorio de este tutorial con el comando: 
+En este punto, si estás usando Atom, deberías poder ejecutar una previsualización del HTML desde el menú *Packages* y así ver tu documento. Si no estás usando Atom, puedes hacer esto colocando tus archivos en un servidor web. Si conoces el funcionamiento de GitHub, puedes utilizar GitHub Pages (aquí tienes un [tutorial](https://guides.github.com/features/pages/) en inglés) y crear un repositorio. Si tienes instalado Python en tu computadora, puedes ejecutar un servidor web simple en el directorio de este tutorial con el comando: 
 
 ```bash
 python -m SimpleHTTPServer

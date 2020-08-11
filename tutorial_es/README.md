@@ -1,9 +1,9 @@
 # Getting Started with CETEIcean
 # Introducción a la publicación de archivos TEI con CETEIcean
 
-Nota: para comprender este tutorial, debes saber que es el lenguaje de marcado [XML-TEI ] (https://tei-c.org/) y cuál es su función como lenguaje estándar en la edición digital académica de textos de Ciencias Sociales y Humanidades.
+Nota: para comprender este tutorial, debes saber qué es el lenguaje de marcado XML-TEI desarrollado por la [Text Encoding Initiative o TEI] (https://tei-c.org/) y cuál es su función como lenguaje estándar en la edición digital académica de textos de Ciencias Sociales y Humanidades. Algunos recursos en español sobre la TEI en [TTHub] (https://tthub.io/).
 
-Este tutorial te guiará a través de los pasos necesarios para publicar un archivo TEI en línea utilizando CETEIcean. Comenzaremos con un archivo simple (aunque un tanto extenso) en formato TEI P5, `fpn-washington.xml`, que queremos hacer visible en un navegador web.
+Este tutorial te guiará a través de los pasos necesarios para publicar un archivo TEI en línea utilizando [CETEIcean] (https://github.com/TEIC/CETEIcean), una librería de Javascript que permite que los documentos TEI se muestren en un navegador web sin transformarlos primero a HTML. CETEIcean funciona cargando el archivo TEI dinámicamente, cambiando el nombre de los elementos para seguir las convenciones de elementos personalizados y registrándolos con el navegador. Comenzaremos con un archivo simple (aunque un tanto extenso) en formato TEI P5, `fpn-washington.xml`, que queremos hacer visible en un navegador web.
 
 En primer lugar, una aclaración sobre la visualización de tu trabajo: El método por defecto de CETEIcean para mostrar archivos TEI consiste en cargar los archivos desde otra ubicación. No todos los navegadores te permitirán hacer esto cuando abras un archivo HTML directamente en el explorador de archivos de tu computadora. Puedes hacer el intento, pero si eso no funciona, tendrás que generar un servidor local, colocar los archivos en un servidor en línea, o utilizar un editor de texto con funciones de previsualización. El editor de texto [Atom](https://atom.io), con el plugin `atom-html-preview` es el ejemplo que utilizaremos para este tutorial, pero existen otras opciones. Debes descargar e instalar Atom, o algún editor de texto equivalente, antes de comenzar este tutorial. Un editor de texto es diferente de otros procesadores de texto usuales, como LibreOffice o Word, ya que, a diferencia de los segundos, los primeros editan solo archivos de texto plano.
 
@@ -42,7 +42,7 @@ En el directorio raíz crea un archivo `index.html`, con el siguiente contenido:
 </html>
 ```
 
-Este archivo servirá como una estructura en la cual pondremos las instrucciones para mostrar nuestro archivo TEI. Al igual que en TEI, los archivos HTML tienen un encabezado, llamado `head` y un cuerpo de texto, llamado `body`.  Agregaremos enlaces a nuestra CSS (Cascading Style Sheets) y a archivos de JavaScript, y escribiremos un poco de JavaScript para hacer que CETEIcean funcione. En la primera línea vacía del `<head>`, escribe:
+Este archivo servirá como una estructura en la cual pondremos las instrucciones para mostrar nuestro archivo TEI. Al igual que en TEI, los archivos HTML tienen un encabezado, llamado `head` y un cuerpo de texto, llamado `body`.  Agregaremos enlaces a nuestra [CSS] (Cascading Style Sheets, en español, hoja de estilo u hoja de estilos en cascada) (https://es.wikipedia.org/wiki/Hoja_de_estilos_en_cascada) y a archivos de [JavaScript] (https://es.wikipedia.org/wiki/JavaScript), y escribiremos un poco de JavaScript para hacer que CETEIcean funcione. En la primera línea vacía del `<head>`, escribe:
 
 ```html
   <link rel="stylesheet" href="css/tei.css">
@@ -74,13 +74,10 @@ En este punto, si estás usando Atom, deberías poder ejecutar una previsualizac
 ```bash
 python -m SimpleHTTPServer
 ```
-Your computer may also come with web serving capabilites built in, or you can install [MAMP](https://www.mamp.info) or something similar.
 
 También es posible que tu computadora ya tenga los programas necesarios para ejecutar un servidor web, o puedes instalar [MAMP](https://www.mamp.info) o algún otro programa similar.
 
-Your preview will have various things wrong with it that we will want to fix. We'll do this first by adding CSS to handle the TEI elements in our file, and then later we'll add some CETEIcean behaviors to do more sophisticated things. If you haven't already taken a look at the XML source file, you might want to do so now, to see what things CETEIcean is doing already, and what it isn't. You'll notice that figures with graphics are getting loaded properly (as long as you're online, because the pictures are hosted on a web site). The `teiHeader`'s content isn't being displayed. Page beginnings and line beginnings are being ignored, but `div`s and `p` elements are being formatted as blocks. A bit of investigation will tell you that there are 19 kinds of element in the body of our source document: 
-
-Esta primera visualización tendrá varios errores que desearemos arreglar. Comenzaremos por añadir CSS para manipular los elementos de TEI en nuestro archivo y luego añadiremos funciones de CETEIcean para hacer modificaciones más complejas. Si todavía no le haz echado un vistazo al archivo fuente XML, es un buen momento para hacerlo, para ver lo que CETEIcean ya está haciendo y lo que no. Notarás que las imágenes con gráficos están siendo cargadas correctamente (siempre que estés en línea, ya que las imágenes están alojadas en un sitio web). El contenido del `teiHeader` no está siendo mostrado. Los comienzos de página y comienzos de línea están siendo ignorados, pero los elementos `div` y `p` están siendo formateados como bloques. Con un poco de investigación verás que hay 19 tipos de elementos en el 'body' de nuestro documento fuente:  
+Esta primera visualización tendrá varios errores que deberemos arreglar. Comenzaremos por añadir una hoja de estilo o CSS para manipular los elementos de TEI en nuestro archivo y luego añadiremos funciones de CETEIcean para hacer modificaciones más complejas. Si todavía no le has echado un vistazo al archivo fuente XML, es un buen momento para hacerlo, para ver lo que CETEIcean ya está haciendo y lo que no. Notarás que las imágenes con gráficos están siendo cargadas correctamente (siempre que estés en línea, ya que las imágenes están alojadas en un sitio web). Podemos ver que el contenido del `teiHeader` no está siendo mostrado, y tampoco los comienzos de página y comienzos de línea, pero los elementos `div` y `p` están siendo formateados como bloques. Con un poco de investigación sobre las posibilidades de codificación de la TEI, verás que hay 19 tipos de elementos TEI en el 'body' de nuestro documento fuente:  
 
  * div
  * head
@@ -102,12 +99,9 @@ Esta primera visualización tendrá varios errores que desearemos arreglar. Come
  * foreign
  * name. 
  
-Some of these may not need any special styling or behaviors, but others definitely will.
 
-Take a look at the `tei.css` file in the `css/` folder. As you can see, it only has a couple of rules so far:
-
-Algunos de estos elementos pueden no necesitar estilos o comportamientos especiales, pero otros definitivamente lo harán.
-Hecha un vistazo al archivo `tei.css` de la carpeta `css/`. Como puedes ver, por ahora tiene unas pocas reglas:
+Algunos de estos elementos pueden no necesitar estilos o comportamientos especiales, pero otros definitivamente lo necesitarán.
+Echa un vistazo al archivo `tei.css` de la carpeta `css/`. Como puedes ver, por ahora tiene unas pocas reglas:
 
 ```css
 tei-div {
@@ -119,7 +113,7 @@ tei-p {
   margin-bottom: .5em;
 }
 ```
-Some things to notice: the element names in our CSS selectors are prefixed with "tei-", which is what CETEIcean does to turn TEI elements into HTML Custom Elements. These rules mean divs are displayed as blocks (they start on a new line and are followed by a break at the end), as are paragraphs, and the latter also have some spacing before and after. Deciding what styles to apply to the currently unstyled elements may not always be easy, but we can begin by picking some simple cases. The source document uses lists for its table of contents and indices, always with `@type="simple"`. We can use CSS to format these as lists. Add the following to the `tei.css` file:
+
 
 Algunas cosas para tener en cuenta: los nombres de los elementos en nuestros selectores CSS tienen el prefijo “tei-”, esto es necesario para que CETEIcean pueda convertir los elementos de TEI en elementos personalizados (Custom Elements) de HTML. Estas reglas establecen que los elementos div se visualicen como bloques (empiezan en una nueva línea y terminan con un corte), lo mismo sucede con los párrafos, que también tienen un espaciado superior y posterior. Decidir qué estilos aplicar a los elementos que todavía no tienen reglas de estilo puede no resultar sencillo, pero podemos comenzar eligiendo algunos de los casos más simples. El documento fuente utiliza listas para la tabla de contenido y los índices, siempre con el atributo `@type="simple"`. Podemos usar CSS para darle formato a esas listas. Añade lo siguiente en el archivo `tei.css`:
 

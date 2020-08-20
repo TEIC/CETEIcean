@@ -132,7 +132,7 @@ tei-hi[rend=italics] {
   font-style: italic;
 }
 ```
-Line beginnings are a little trickier, and require a CSS "pseudo-selector":
+
 
 Los comienzos de línea son un poco más complicados y requieren un “pseudo-selector” CSS:
 

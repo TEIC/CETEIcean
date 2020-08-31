@@ -254,7 +254,7 @@ append(fn, elt) {
 }
 
 appendBasic(elt, content) {
-  utilities.hideContent(elt);
+  utilities.hideContent(elt, true);
   elt.appendChild(content);
 }
 

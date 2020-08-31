@@ -1,3 +1,16 @@
+export function getOrdinality(elt, name) {
+  let pos = 1;
+  let e = elt;
+  while (e && e.previousElementSibling !== null && (name?e.previousElementSibling.localName == name:true)) {
+    pos++;
+    e = e.previousElementSibling;
+    if (!e.previousElementSibling) {
+      break;
+    }
+  }
+  return pos;
+}
+
 /* 
   Performs a deep copy operation of the input node while stripping
   out child elements introduced by CETEIcean.

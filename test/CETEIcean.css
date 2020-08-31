@@ -835,6 +835,11 @@ tei-table {
   font-size: 12pt;
 }
 tei-table > tei-head {
+  border-bottom: thin solid black;
+  border-right: thin solid black;
+  font-size: 120%;
+  font-weight: bold;
+  padding: 2px;
   text-align: center;
 }
 tei-teiheader {

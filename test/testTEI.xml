@@ -31,6 +31,38 @@
     And here is a <ref target="https://github.com/TEIC">ref</ref>. But
     <ref target="addBehaviorTest.html">here</ref> is a relative link.</p>
     <p><egXML xmlns="http://www.tei-c.org/ns/Examples"><fuzzbuckets>egXML test</fuzzbuckets></egXML></p>
+    <table rows="4" cols="4">
+      <head>Poor Man's Lodgings in Norfolk (Mayhew, 1843)</head>
+      <row role="label">
+        <cell/>
+        <cell>Dossing Cribs or Lodging Houses</cell>
+        <cell>Beds</cell>
+        <cell>Needys or Nightly Lodgers</cell>
+      </row>
+      <row>
+        <cell role="label">Bury St Edmund's</cell>
+        <cell>5</cell>
+        <cell>8</cell>
+        <cell>128</cell>
+      </row>
+      <row>
+        <cell role="label">Thetford</cell>
+        <cell>3</cell>
+        <cell>6</cell>
+        <cell>36</cell>
+      </row>
+      <row>
+        <cell role="label" cols="2">Attleboro'<note place="end">The borough of Attle.</note></cell>
+        <cell>5</cell>
+        <cell>20</cell>
+      </row>
+      <row>
+        <cell role="label">Wymondham</cell>
+        <cell>1</cell>
+        <cell>11</cell>
+        <cell>22</cell>
+      </row>
+      </table>
     </body>
   </text>
 </TEI>

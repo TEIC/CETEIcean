@@ -9,7 +9,7 @@ En primer lugar, una aclaración sobre la visualización de tu trabajo: El méto
 Comenzaremos por establecer una estructura de directorios para nuestros archivos. Puedes copiar la estructura de este tutorial, que se ve de la siguiente forma:
 
 ```
-  tutorial/
+  tutorial_es/
       |
        --- css/
             |
@@ -19,10 +19,9 @@ Comenzaremos por establecer una estructura de directorios para nuestros archivos
             |
              --- CETEI.js
       |
-       --- fpn-washington.xml
-       --- README.md (the file you are reading)
+       --- Ruy_Diaz-La_Argentina_Manuscrita.xml
+       --- README.md (el archivo que estas leyendo)
 ```
-
 
 En el directorio raíz crea un archivo `index.html`, con el siguiente contenido:
 
@@ -61,7 +60,7 @@ En el interior de tu nuevo elemento 'script', añade estas líneas:
 
 ```js
   let c = new CETEI();
-  c.getHTML5('fpn-washington.xml', function(data) {
+  c.getHTML5('Ruy_Diaz-La_Argentina_Manuscrita.xml', function(data) {
     document.getElementsByTagName("body")[0].appendChild(data);
   });
 ```
@@ -77,29 +76,16 @@ python -m SimpleHTTPServer
 
 También es posible que tu computadora ya tenga los programas necesarios para ejecutar un servidor web, o puedes instalar [MAMP](https://www.mamp.info) o algún otro programa similar.
 
-Pero volvamos a nuestro trabajo en Atom. Esta primera visualización tendrá varios errores que deberemos arreglar. Comenzaremos por añadir una hoja de estilo para manipular los elementos de TEI en nuestro archivo y luego añadiremos funciones de CETEIcean para hacer modificaciones más complejas. Si todavía no le has echado un vistazo al archivo fuente XML, es un buen momento para hacerlo, para ver lo que CETEIcean ya está haciendo y lo que no. Notarás que las imágenes con gráficos están siendo cargadas correctamente (siempre que estés en línea, ya que las imágenes están alojadas en un sitio web). Podemos ver que el contenido del `teiHeader` no está siendo mostrado, y tampoco los comienzos de página y comienzos de línea, pero los elementos `div` y `p` están siendo formateados como bloques. Con un poco de investigación sobre las posibilidades de codificación de la TEI, verás que hay 19 tipos de elementos TEI en el 'body' de nuestro documento fuente:  
+Pero volvamos a nuestro trabajo en Atom. Esta primera visualización tendrá varios errores que deberemos arreglar. Comenzaremos por añadir una hoja de estilo para manipular los elementos de TEI en nuestro archivo y luego añadiremos funciones de CETEIcean para hacer modificaciones más complejas. Si todavía no le has echado un vistazo al archivo fuente XML, es un buen momento para hacerlo, para ver lo que CETEIcean ya está haciendo y lo que no. Notarás que las imágenes con gráficos están siendo cargadas correctamente (siempre que estés en línea, ya que las imágenes están alojadas en un sitio web). Podemos ver que el contenido del `teiHeader` no está siendo mostrado, y tampoco los comienzos de página y comienzos de línea, pero los elementos `div` y `p` están siendo formateados como bloques. Con un poco de investigación sobre las posibilidades de codificación de la TEI, verás que hay 7 tipos de elementos TEI en el 'body' de nuestro documento fuente:  
 
  * div
  * head
+ * note
  * p
- * pb
- * hi
- * figure
- * graphic
- * lb
- * sic
- * opener
- * dateline
- * closer
- * salute
- * signed
- * emph
- * lg
- * l
- * foreign
- * name. 
+ * persName
+ * placeName
+ * rs
  
-
 Algunos de estos elementos pueden no necesitar estilos o comportamientos especiales, pero otros definitivamente lo necesitarán.
 Echa un vistazo al archivo `tei.css` de la carpeta `css/`. Como puedes ver, por ahora tiene unas pocas reglas:
 
@@ -115,84 +101,41 @@ tei-p {
 ```
 
 
-Algunas cosas para tener en cuenta: los nombres de los elementos en nuestros selectores CSS tienen el prefijo “tei-”, esto es necesario para que CETEIcean pueda convertir los elementos de TEI en elementos personalizados (Custom Elements) de HTML. Estas reglas establecen que los elementos div se visualicen como bloques (empiezan en una nueva línea y terminan con un corte), lo mismo sucede con los párrafos, que también tienen un espaciado superior y posterior. Decidir qué estilos aplicar a los elementos que todavía no tienen reglas de estilo puede no resultar sencillo, pero podemos comenzar eligiendo algunos de los casos más simples. El documento fuente utiliza listas para la tabla de contenido y los índices, siempre con el atributo `@type="simple"`. Podemos usar la hoja de estilos(CSS) para darle formato a esas listas. Añade lo siguiente en el archivo `tei.css`:
-
+Algunas cosas para tener en cuenta: los nombres de los elementos en nuestros selectores CSS tienen el prefijo “tei-”, esto es necesario para que CETEIcean pueda convertir los elementos de TEI en elementos personalizados (Custom Elements) de HTML. Estas reglas establecen que los elementos div se visualicen como bloques (empiezan en una nueva línea y terminan con un corte), lo mismo sucede con los párrafos, que también tienen un espaciado superior y posterior. Decidir qué estilos aplicar a los elementos que todavía no tienen reglas de estilo puede no resultar sencillo, pero podemos comenzar eligiendo algunos de los casos más simples. ***The source document marks chapter and section headings with `<head>`. We probably want these to stand out from the regular paragraphs in the document. We could use CSS to style them. Add the following to the `tei.css` file:
 ```css
-tei-list[type=simple] {
-  list-style-type: none;
-}
-tei-list[type=simple]>tei-item {
-  display: list-item;
+tei-head {
+  font-size: 2em;
+  font-weight: bold;
 }
 ```
-
-El primer selector encuentra los elementos `<tei-list type="simple">` y especifica que los ítems de la lista no deben estar decorados con viñetas ni números. El segundo identifica los elementos `<tei-item>` como ítems de lista (como `<li>` en HTML). Si recargas la visualización de tu archivo en el navegador luego de realizar estos cambios, verás que el contenido de las tablas ahora tiene el formato de una lista. Puedes experimentar añadiendo márgenes y otras reglas de estilo para hacer que la presentación del archivo se vea mejor. También puedes darle formato al elemento `<hi rend="italics">`fácilmente: 
-
-```css
-tei-hi[rend=italics] {
-  font-style: italic;
-}
-```
-
-
-Los comienzos de línea son un poco más complicados y requieren un “pseudo-selector” CSS:
-
-```css
-tei-lb:before {
-  white-space: pre;
-  content: "\A";
-}
-```
-
-Esto le indica al navegador que inserte un carácter de nueva línea ("\A") por cada `<tei-lb>` y que lo trate como texto sin formato (como lo harías con una sección de código, por ejemplo). Tenemos que hacer esto porque en HTML las nuevas líneas son normalmente ignoradas a los propósitos del formato. Hay más cosas que se pueden hacer con CSS, pero este es un buen punto para ver en qué casos también podemos utilizar los comportamientos (behaviors) de CETEIcean para dar formato. HTML tiene un elemento equivalente a `<lb/>`, el elemento `<br>` ¿Por qué no simplemente colocar un `<br>` en nuestro `<tei-lb>`? Podemos hacer esto añadiendo algunos comportamientos. En tu archivo index.html añade lo siguiente entre la primera y la segunda línea del código que se encuentra entre las etiquetas `<script></script>`:
+You'll notice though, that this isn't a perfect solution. We have multiple levels of `<div>` elements, and so it would be nice if the headers at different levels were appropriately sized. Because the `<div>` elements in our TEI file don't signal what level they belong to, this might be hard to do in CSS***, pero este es un buen punto para ver en qué casos también podemos utilizar los comportamientos (behaviors) de CETEIcean para dar formato. 
+En HTML, la convención es representar los diferentes niveles de encabezados con los elementos `h1`, `h2`, `h3`, etc. (hasta `h6`). Podemos lograr esto utilizando un comportamiento. En tu archivo index.html añade lo siguiente entre la primera y la segunda línea del código que se encuentra entre las etiquetas <script></script>:
 
 ```js
-  let behaviors = {
-    "tei": {
-      "lb": ["<br>"],
-    }
-  };
-  c.addBehaviors(behaviors);
-```
-
-Esto creará un objeto Javascript y le asignará la variable `behaviors`, que luego enlazaremos con el objeto `CETEI` que creamos antes, usando el método `addBehaviors`. En el interior de ese objeto tenemos una sección etiquetada como “tei” (que es el prefijo para todos nuestros elementos personalizados), y dentro de esta se definen los comportamientos para los elementos. Cuando CETEIcean encuentra una coincidencia para el nombre de un elemento, como “lb” (ten en cuenta que se utiliza el nombre de TEI sin el prefijo), aplica los comportamientos que encuentra. Para “lb”, por ejmplo, encuentra un vector (Array) con otro elemento, `<br>`, por lo que insertará la etiqueta `<br>` antes de contenido de cualquier elemento `<tei-lb>` que encuentre. `<tei-lb>` es un elemento vacío de cualquier forma, por lo que el resultado final para el navegador será:
-
-```html
-<tei-lb><br></tei-lb>
-```
-
-
-El navegador no sabrá qué hacer con el elmento `<tei-lb>`, así que lo ignorará, pero sí sabe cómo interpretar el elemento `<br>` y lo mostrará como una nueva línea. Ten en cuenta que si utilizas este comportamiento, no debes añadir una regla CSS para `tei-lb`, o terminarás obteniendo dos líneas nuevas por cada una en tu documento fuente.
-
-Los comportamientos pueden ser más complejos. Quizás hayas notado que nuestro documento fuente tiene elementos `<div>` que contienen otros `<div>` y pueden tener elementos `<head>`. En HTML, la convención es representar los diferentes niveles de encabezados con los elementos `h1`, `h2`, `h3`, etc. (hasta `h6`). Podemos lograr esto utilizando un comportamiento más complejo:
-
-```js
-  let behaviors = {
+  let comportamientos = {
     "tei": {
       "head": function(e) {
-        let level = document.evaluate("count(ancestor::tei-div)", e, null, XPathResult.NUMBER_TYPE, null);
-        let result = document.createElement("h" + level.numberValue);
+        let nivel = document.evaluate("count(ancestor::tei-div)", e, null, XPathResult.NUMBER_TYPE, null);
+        let resultado = document.createElement("h" + nivel.numberValue);
         for (let n of Array.from(e.childNodes)) {
-          result.appendChild(n.cloneNode());
+          resultado.appendChild(n.cloneNode());
         }
-        return result;
-      },
-      "lb": ["<br>"],
+        return resultado;
+      }    
     }
   };
-  c.addBehaviors(behaviors);
+  c.addBehaviors(comportamientos);
 ```
 
+Esto creará un objeto Javascript y le asignará la variable `comportamientos`, que luego enlazaremos con el objeto `CETEI` que creamos antes, usando el método `addBehaviors`. En el interior de ese objeto tenemos una sección etiquetada como “tei” (que es el prefijo para todos nuestros elementos personalizados), y dentro de esta se definen los comportamientos para los elementos. Cuando CETEIcean encuentra una coincidencia para el nombre de un elemento, como “head” (ten en cuenta que se utiliza el nombre de TEI sin el prefijo), aplica los comportamientos que encuentra.
+Este nuevo comportamiento toma una función de JavaScript. Lo que hace que el elemento sea procesado como un parámetro (el `e`). Esto crea la variable `nivel`, que contiene el nivel de encabezamiento de la `<tei-div>` que contiene el `<tei-head>`, crea un elemento `<h[nivel]>` con el nivel correspondiente, y copia el contenido del elemento original en el nuevo elemento de encabezado. CETEIcean esconderá el contenido de `<tei-head>` y, en cambio, mostrará el contenido del nuevo elemento de encabezado. Te en cuenta que este código tiene un problema potencial: un documento con muchas divisiones anidadas unas dentro de otras podría llegar a producir un elemento de encabezado superior al límite admitido por HTML (por ejemplo un elemento `<h7>`). Nuestro documento fuente no tiene más de dos niveles de anidamiento, pero para utilizarlo en otras fuentes sería prudente revisar que el anidamiento no supere el nivel del elemento `<h6>`.
 
-Este nuevo comportamiento para encabezados está haciendo algo diferente. Toma una función de JavaScript en lugar de un vector. Lo que hace que el elemento sea procesado como un parámetro (el `e`). Esto crea la variable `level`, que contiene el nivel de encabezamiento de la `<tei-div>` que contiene el `<tei-head>`, crea un elemento `<h[nivel]>` con el nivel correspondiente, y copia el contenido del elemento original en el nuevo elemento de encabezado. CETEIcean esconderá el contenido de `<tei-head>` y, en cambio, mostrará el contenido del nuevo elemento de encabezado. Te en cuenta que este código tiene un problema potencial: un documento con muchas divisiones anidadas unas dentro de otras podría llegar a producir un elemento de encabezado superior al límite admitido por HTML (por ejemplo un elemento `<h7>`). Nuestro documento fuente no tiene más de tres niveles de anidamiento, pero para utilizarlo en otras fuentes sería prudente revisar que el anidamiento no supere el nivel del elemento `<h6>`.
-
-CETEIcean posee una cantidad de comportamientos integrados, esto le permite procesar los elementos `<graphic>` de TEI, por ejemplo, sin necesidad de ninguna modificación de nuestra parte. Puedes reemplazar o desactivar estos comportamientos integrados añadiéndoles valores. Si deseas mostrar el contenido del TEI Header, que está oculto por defecto, puedes añadir: 
+CETEIcean posee una cantidad de comportamientos integrados. Puedes reemplazar o desactivar estos comportamientos integrados añadiéndoles valores. Si deseas mostrar el contenido del TEI Header, que está oculto por defecto, puedes añadir: 
 
 ```js
   "teiHeader": null,
 ```
 
-
 Si haces esto, puede que desees agregar estilos de CSS o comportamientos para elegir la forma en la que se visualizará el contenido del TEI Header en el navegador.
 
-En este tutorial no agotamos todas las posibilidades de trabajo con nuestro documento fuente. Te recomendamos que experimentes por tu cuenta en las diferentes formas en las que un marcado de TEI puede visualizarse en un navegador usando CETEICean. Puedes encontrar un ejemplo más acabado en la carpeta [example/](example), y la versión HTML y la fuente TEI P4 están disponibles en <https://docsouth.unc.edu/fpn/washington/menu.html>. 
+En este tutorial no agotamos todas las posibilidades de trabajo con nuestro documento fuente. Te recomendamos que experimentes por tu cuenta en las diferentes formas en las que un marcado de TEI puede visualizarse en un navegador usando CETEICean. Puedes encontrar un ejemplo más acabado en la carpeta [example/](example). 

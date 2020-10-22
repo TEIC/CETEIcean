@@ -1,98 +1,32 @@
-p.break {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 80%;
-  border-top: thin solid silver;
-  color: gray;
+body {
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-size: 120%;
 }
-tei-byline {
-  display: block;
-  text-align: center;
-}
-tei-closer {
-  display: block;
-}
-tei-closer>tei-salute {
-  display: block;
-}
-tei-closer>tei-signed {
-  display: block;
-  text-align: right;
+sup {
+  font-size: 70%;
+  vertical-align: baseline;
+  position: relative;
+  top: -0.4em;
 }
 tei-div {
   display: block;
-}
-tei-div[type=dedication]>tei-lg {
-  margin: auto;
-  text-align: center;
-}
-tei-docauthor {
-  display: block;
-  text-align: center;
-}
-tei-docauthor>tei-name {
-  display: block;
-  font-size: 2em;
-}
-tei-docimprint {
-  display: block;
-  margin-top: 10em;
-  text-align: center;
-}
-tei-doctitle>tei-titlepart {
-  display: block;
-  text-align: center;
-}
-tei-doctitle>tei-titlepart[type=main] {
-  font-size: 3em;
-}
-tei-doctitle>tei-titlepart[type=subtitle] {
-  font-size: 2em;
-}
-tei-emph[rend=bold] {
-  font-weight: bold;
-}
-tei-figure {
-  display: block;
-  margin-top: 1em;
-  margin-bottom: 1em;
-  text-align: center;
-}
-tei-figure>tei-p {
-  font-size: 80%;
-  font-family: Arial, Helvetica, sans-serif;
-  text-align: center;
-}
-tei-hi[rend=italics] {
-  font-style: italic;
-}
-tei-l {
-  display: block;
-}
-tei-lg {
-  display: block;
-  margin-left: 5em;
-}
-tei-list[type=simple] {
-  list-style-type: none;
-}
-tei-list[type=simple]>tei-item {
-  display: list-item;
+  margin-top: .5em;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
 }
 tei-p {
   display: block;
   margin-top: .5em;
-  margin-bottom: .5em;
   text-align: justify;
+  line-height: 1.5em;
 }
-tei-tei {
-  font-family: Georgia, 'Times New Roman', Times, serif;
+tei-standoff {
+  display: none;
 }
-tei-text {
-  display: block;
-  width: 750px;
-  margin: auto;
+.notes {
+  margin-top: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
 }
-tei-titlepage {
-  display: block;
-}
-

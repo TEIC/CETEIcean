@@ -145,6 +145,13 @@ class CETEI {
       if (el.childNodes.length == 0) {
         newElement.setAttribute("data-empty", "");
       }
+      // <head> elements need to know their level
+      if (el.localName == "head") {
+        let level = XML_dom.evaluate("count(ancestor::*[tei:head])", el, function(ns) {
+          if (ns == "tei") return "http://www.tei-c.org/ns/1.0";
+        }, XPathResult.NUMBER_TYPE, null);
+        newElement.setAttribute("data-level", level.numberValue);
+      }
       // Turn <rendition scheme="css"> elements into HTML styles
       if (el.localName == "tagsDecl") {
         let style = document.createElement("style");

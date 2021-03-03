@@ -14,3 +14,7 @@ export function learnElementNames(XML_dom, namespaces) {
   els.add(qname(root));
   return els
 }
+
+export function learnCustomElementNames(HTML_dom) {
+  return Array.from(HTML_dom.querySelectorAll("*[data-origname]"), e => e.localName.replace(/(\w+)-.+/,"$1:") + e.getAttribute("data-origname"));
+}

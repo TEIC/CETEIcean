@@ -116,8 +116,8 @@
   
   <xsl:template mode="style" match="t:rendition">
     <xsl:choose>
-      <xsl:when test="@xml:id" xml:space="preserve">
-#<xsl:value-of select="@xml:id"/> {
+      <xsl:when test="@xml:id and @scheme = 'css' and not(@selector)" xml:space="preserve">
+.<xsl:value-of select="@xml:id"/> {
   <xsl:value-of select="."/>       
 }
       </xsl:when>

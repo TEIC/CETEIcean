@@ -19,7 +19,7 @@
        * is an HTML element. The function names must match the name of the
        * element they will be applied to.
        ***********************************/
-      c.addBehaviors({"handlers":{
+      c.addBehaviors({"tei":{
         // Overrides the default ptr behavior, displaying a short link
         "ptr": function(elt) {
           var link = document.createElement("a");
@@ -34,7 +34,7 @@
             return b;
         },
         // Inserts the first array element before tei:add, and the second, after.
-        "add": ["`","´"]
+        "add": ["<b>`","´</b>"]
       }});
       c.getHTML5('testTEI.xml', function(data) {
         document.getElementById("TEI").innerHTML = "";

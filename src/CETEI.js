@@ -1,7 +1,7 @@
 import defaultBehaviors from './defaultBehaviors';
 import * as utilities from './utilities';
 import {addBehaviors, addBehavior, applyBehaviors, removeBehavior} from './behaviors';
-import {learnElementNames} from './dom';
+import {learnElementNames, learnCustomElementNames} from './dom';
 
 class CETEI {
   constructor(options){
@@ -215,6 +215,17 @@ class CETEI {
     }
   }
 
+  /*
+    Convenience method for HTML pages containing pre-processed CETEIcean Custom 
+    Elements. Usage:
+      const c = new CETEI();
+      c.processPage();
+  */
+  processPage() {
+    this.els = learnCustomElementNames(document);
+    this.applyBehaviors();
+  }
+
   /* 
     To change a namespace -> prefix mapping, the namespace must first be 
     unset. Takes a namespace URI. In order to process a TEI P4 document, e.g.,
@@ -358,10 +369,7 @@ insert(elt, strings) {
   // If we have before and after tags have them parsed by
   // .innerHTML and then add the content to the resulting child
   if (strings[0].match("<[^>]+>") && strings[1] && strings[1].match("<[^>]+>")) { 
-    span.innerHTML = strings[0] + (strings[1]?strings[1]:"");
-    for (let node of Array.from(elt.childNodes)) {
-      span.firstElementChild.appendChild(node.cloneNode(true));
-    }
+    span.innerHTML = strings[0] + elt.innerHTML + (strings[1]?strings[1]:"");
   } else {
     span.innerHTML = strings[0];
     span.setAttribute("data-before", strings[0].replace(/<[^>]+>/g,"").length);

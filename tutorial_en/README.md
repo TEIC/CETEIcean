@@ -1,4 +1,4 @@
-# Getting Started with CETEIcean
+# Getting Started with CETEIcean and TEI Publishing
 
 [CETEIcean](https://github.com/TEIC/CETEIcean) is a JavaScript program that makes it easy to publish (Text Encoding Initiative XML)[https://tei-c.org/release/doc/tei-p5-doc/en/html/index.html] files on the web. You will need some background in TEI and its uses in order to understand what CETEIcean is doing. Introductory materials can be found at [TEI by Example](https://teibyexample.org/).
 

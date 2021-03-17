@@ -1,5 +1,7 @@
 # Getting Started with CETEIcean
 
+[CETEIcean](https://github.com/TEIC/CETEIcean) is a JavaScript program that makes it easy to publish (Text Encoding Initiative XML)[https://tei-c.org/release/doc/tei-p5-doc/en/html/index.html] files on the web. You will need some background in TEI and its uses in order to understand what CETEIcean is doing. Introductory materials can be found at [TEI by Example](https://teibyexample.org/).
+
 This tutorial will walk you through the steps to publish a TEI file online using CETEIcean. We will start with a simple (though quite large) file in TEI P5 form, `fpn-washington.xml`, which we want to display in a web browser.
 
 First, a note about viewing the results of your work: CETEIcean's default method for displaying TEI relies on loading a TEI file from another location. Not all browsers will allow you to do this when you view an HTML file directly on your file system. You should try it, but if it doesn't work, then you will have to run a web server, put your files on a web server, or use a text editor with preview capabilities. [Atom](https://atom.io), with the `atom-html-preview` plugin is the example we will use for this tutorial, but there are many other options. You should download and install Atom, or an equivalent text editor, before starting this tutorial. A text editor is different from other programs you may already use for editing 'text', such as LibreOffice or Word, in that it edits only plain text files.

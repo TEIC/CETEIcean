@@ -142,7 +142,7 @@ Este nuevo comportamiento toma una función de JavaScript. Lo que hace que el el
 
 Finalmente, el resultado que obtendremos si previsualizamos nuestro HTML en Atom será el siguiente:
 
-![screenshots/ejemplofinal.png]
+!(https://github.com/TEIC/CETEIcean/blob/master/tutorial_es/screenshots/ejemplofinal.png)
 
 CETEIcean posee una cantidad de comportamientos integrados. Puedes reemplazar o desactivar estos comportamientos integrados añadiéndoles valores. Si deseas mostrar el contenido del TEI Header, que está oculto por defecto, puedes añadir: 
 

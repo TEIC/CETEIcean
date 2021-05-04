@@ -6,7 +6,7 @@ Para quienes se inician en el uso de TEI, uno de los escollos más comunes es qu
 
 Este tutorial te guiará a través de los pasos necesarios para publicar un archivo TEI en línea utilizando CETEIcean, una librería abierta escrita en el lenguaje de programación [JavaScript](https://www.javascript.com/). CETEIcean permite que los documentos TEI se muestren en un navegador web sin transformarlos primero a [HTML](https://es.wikipedia.org/wiki/HTML). CETEIcean carga el archivo TEI dinámicamente en el navegador y cambia el nombre de los elementos de TEI por otros en HTML, de tal forma que estos nos permitan visualizar los fenómenos textuales que marcamos usando TEI en nuestros archivos en nuestro navegador web. Comenzaremos con un archivo simple (aunque un tanto extenso) en formato TEI P5, [`Ruy_Diaz-La_Argentina_Manuscrita.xml`](http://hdlab.space/La-Argentina-Manuscrita/assets/Ruy_Diaz-La_argentina_manuscrita.tei.xml) (para descargar el archivo haz click derecho sobre el enlace de descarga y selecciona la opción 'Save Link As...'), que queremos hacer visible en un navegador web.
 
-En primer lugar, una aclaración sobre la visualización de tu trabajo: El método por defecto de CETEIcean para mostrar archivos TEI consiste en cargar los archivos desde otra ubicación en línea. No todos los navegadores te permitirán hacer esto cuando abras un archivo HTML directamente en el explorador de archivos de tu computadora. Puedes hacer el intento, pero si eso no funciona, tendrás que generar un servidor local, colocar los archivos en un servidor en línea, o utilizar un editor de texto con funciones de previsualización. El editor de texto [Atom](https://atom.io), con el plugin `atom-html-preview` es el ejemplo que utilizaremos para este tutorial, pero existen otras opciones libres para editar archivos TEI, como [Jedit](http://www.jedit.org/), y versiones propietarias como [Oxygen](https://www.oxygenxml.com/). Debes descargar e instalar [Atom](https://atom.io), o algún editor de texto equivalente, antes de comenzar este tutorial. Un editor de texto es diferente de otros procesadores de texto usuales, como LibreOffice o Word, ya que, a diferencia de los segundos, los primeros editan solo archivos de texto plano.
+En primer lugar, una aclaración sobre la visualización de tu trabajo: El método por defecto de CETEIcean para mostrar archivos TEI consiste en cargar los archivos desde otra ubicación. Sin embargo, no todos los navegadores te permitirán cargar los archivos si estos se encuentran almacenados en tu computadora. Puedes hacer el intento, pero si eso no funciona, tendrás que generar un servidor local, colocar los archivos en un servidor en línea, o utilizar un editor de código con funciones de previsualización. El editor [Atom](https://atom.io), con el plugin `atom-html-preview` es el ejemplo que utilizaremos para este tutorial, pero existen otras opciones libres para editar archivos TEI, como [Jedit](http://www.jedit.org/), y versiones propietarias como [Oxygen](https://www.oxygenxml.com/). Debes descargar e instalar [Atom](https://atom.io), o algún editor de texto equivalente, antes de continaur con este tutorial. Un editor de código es diferente de otros procesadores de texto usuales, como LibreOffice o Word, ya que, a diferencia de los segundos, los primeros editan solo archivos de texto plano y ofrecen varias funciones útiles para trabajar con códigos informáticos.
 
 Comenzaremos por establecer una estructura de directorios para nuestros archivos, es decir, una carpeta contenedora con el nombre 'tutorial_es' con las subcarpetas y archivos que te indicaremos a continuación. Puedes descargar el directorio completo de [CETEIcean en Github](https://github.com/TEIC/CETEIcean) y trabajar en la carpeta 'tutorial_es', o puedes reproducir la estructura de esa carpeta en tu computadora para guardar los archivos. El resultado debería tener la siguiente forma:
 
@@ -25,7 +25,7 @@ Comenzaremos por establecer una estructura de directorios para nuestros archivos
        --- README.md (el archivo que estas leyendo)
 ```
 
-El primer paso será crear un archivo nuevo en Atom con el siguiente contenido y guardarlo en el directorio raíz (en nuestro caso la carpeta 'tutorial_es') con el nombre `index.html`:
+El primer paso será crear un archivo nuevo en Atom, en el que debes copiar y pegar el siguiente contenido: 
 
 ```html
 <!DOCTYPE html>
@@ -42,7 +42,7 @@ El primer paso será crear un archivo nuevo en Atom con el siguiente contenido y
 </html>
 ```
 
-Este archivo servirá como una estructura en la cual pondremos las instrucciones para mostrar nuestro archivo TEI. Al igual que en TEI, los archivos HTML tienen un encabezado, llamado `head` y un cuerpo de texto, llamado `body`.  Agregaremos enlaces a nuestra CSS (Cascading Style Sheets,o, en español, hoja de estilo u [hoja de estilos en cascada](https://es.wikipedia.org/wiki/Hoja_de_estilos_en_cascada))  y a archivos de JavaScript, y escribiremos un poco de JavaScript para hacer que CETEIcean funcione. En la primera línea vacía del `<head>`, escribe:
+A continuación debes guardar este archivo en el directorio raíz (en nuestro caso la carpeta 'tutorial_es') con el nombre `index.html`. Este archivo servirá como una estructura en la cual pondremos las instrucciones para mostrar nuestros archivos TEI. Al igual que en TEI, los archivos HTML tienen un encabezado, llamado `head` y un cuerpo de texto, llamado `body`.  A lo largo de este tutorial usaremos este archivo para agregar enlaces a nuestra CSS (Cascading Style Sheets,o, en español, hoja de estilo u [hoja de estilos en cascada](https://es.wikipedia.org/wiki/Hoja_de_estilos_en_cascada))  y a archivos de JavaScript, y escribiremos un poco de JavaScript para lograr una visualización de nuestro documento TEI que refleje los aspectos del marcado que nos interesa destacar. En la primera línea vacía del `<head>`, escribe:
 
 ```html
   <link rel="stylesheet" href="css/tei.css">
@@ -56,15 +56,15 @@ Esto conectará nuestro archivo CSS con nuestra página HTML, dándole acceso a 
 ```
 
 
-Ahora ya estamos listos para cargar el archivo. Añade otro elemento `<script></script>` a tu archivo `index.html` (el que creamos al comienzo), esta vez sin el atributo `@src` (porque vamos a poner el script dentro de él). 
+Ahora ya estamos listos para cargar el archivo TEI. Para eso, debemos añadir en la siguiente línea un secuencia de comandos informáticos ([script](https://es.wikipedia.org/wiki/Script)) que nos permitirá recuperar el documento TEI de La Argentina manuscrita en nuestro archivo HTML (el que estamos editando en este momento): 
 
-En el interior de tu nuevo elemento 'script', añade estas líneas:
-
-```js
-  let c = new CETEI();
-  c.getHTML5('Ruy_Diaz-La_Argentina_Manuscrita.xml', function(data) {
-    document.getElementsByTagName("body")[0].appendChild(data);
-  });
+```
+<script>
+let c = new CETEI();
+ c.getHTML5('Ruy_Diaz-La_Argentina_Manuscrita.xml', function(data) {
+   document.getElementsByTagName("body")[0].appendChild(data);
+ });
+</script>
 ```
 
 No necesitas ser un experto en [JavaScript](https://www.javascript.com/) para usar CETEIcean, pero aprender su funcionamiento básico puede ser de utilidad. Si deseas incluir funciones avanzadas, tendrás que aprender JavaScript. En la red para desarrolladores de Mozilla encuentras una excelente [guía de JavaScript](https://developer.mozilla.org/es/docs/Web/JavaScript/Guide) en varias lenguas, incluido el español. Las líneas de código que añadimos hacen varias cosas: en primer lugar, una variable, `c` es definida como un nuevo objeto CETEI. Esto hará el trabajo de cargar y darle estilo a nuestro archivo fuente. A continuación, le indicaremos a `c` que cargue el archivo fuente y lo convierta en HTML ([Custom Elements](https://lenguajejs.com/webcomponents/nativos/bases-custom-elements/)), y también le daremos una función que tomará los resultados y los pondrá en el `<body>`de nuestro archivo index.html, en la línea document `document.getElementsByTagName('body')`, que puedes ver en la imagen superior, llama a una función disponible en objeto `document` (`document` es el documento HTML cargado en el navegador) que busca todos los elementos `<body>` y los devuelve en la forma de una lista ordenada (una lista a través de la cual se puede acceder a los miembros que la componen a través de su número índice). Solo hay un elemento <body>, por lo que obtendremos una sola entrada en nuestra lista, con el índice 0. Este ítem, que es un elemento HTML, queda adjunto como un hijo del documento TEI que acabamos de cargar. 

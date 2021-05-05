@@ -58,7 +58,7 @@ Esto conectará nuestro archivo CSS con nuestra página HTML, dándole acceso a 
 
 Ahora ya estamos listos para cargar el archivo TEI. Para eso, debemos añadir en la siguiente línea un secuencia de comandos informáticos ([script](https://es.wikipedia.org/wiki/Script)) que nos permitirá recuperar el documento TEI de La Argentina manuscrita en nuestro archivo HTML (el que estamos editando en este momento): 
 
-```
+```html
 <script>
 let c = new CETEI();
  c.getHTML5('Ruy_Diaz-La_Argentina_Manuscrita.xml', function(data) {
@@ -71,11 +71,13 @@ No necesitas ser un experto en [JavaScript](https://www.javascript.com/) para us
 
 En este punto, si estás usando Atom, deberías poder ejecutar una previsualización del HTML desde el menú *Packages* y así ver tu documento. Para eso, en primer lugar debes instalar el plug-in `atom-html-preview` que podrás encontrar abriendo el menú de opciones de Atom (file/settings o cntrl+,). En la pantalla de Settings ve a la pestaña "Install" y en el cuadro de diálogo introudce `atom-html-preview`. Cuando aparezca el plug-in que estamos buscando en la lista de resultado debes hacer clic en el botón azul que dice "Install": 
 
-![instalación plug-in](https://github.com/TEIC/CETEIcean/blob/master/tutorial_es/screenshots/plug-inhtmlprev.png)
+![instalación plug-in](https://github.com/TEIC/CETEIcean/blob/master/tutorial_es/screenshots/ceteicean_es1.png)
 
 Ahora que ya tienes instalado este plug-in, para previsualizar nuestro archivo html debes ir a la pestaña packages del menú superior y del menú que se despliega elegir la última opción "Preview HTML / Enable preview":
 
-![previsualización html](https://github.com/TEIC/CETEIcean/blob/master/tutorial_es/screenshots/plug-inhtmlprev2.png)
+![previsualización html opciones](https://github.com/TEIC/CETEIcean/blob/master/tutorial_es/screenshots/ceteicean_es2.png)
+
+![previsualización html resultado](https://github.com/TEIC/CETEIcean/blob/master/tutorial_es/screenshots/ceteicean_es3.png)
 
 Si no estás usando Atom, como decíamos más arriba, puedes hacer esto colocando tus archivos en un servidor web. Si conoces el funcionamiento de GitHub, puedes utilizar GitHub Pages (aquí tienes un [tutorial](https://guides.github.com/features/pages/) en inglés), y crear un repositorio. Si tienes instalado Python en tu computadora, puedes ejecutar un servidor web simple en el directorio de este tutorial (en nuestro caso la carpeta 'tutorial_es'). Con este fin debes abrir la consola de comandos y comprobar que te encuentres en la carpeta deseada (en caso contrario puedes navegar hasta esa carpeta con el comando `cd + url del archivo` ) e ingresar el comando: 
 
@@ -87,7 +89,7 @@ También es posible que tu computadora ya tenga los programas necesarios para ej
 
 El objetivo de crear este servidor es vusalizar nuestros archivos TEI en el navegador como si estos se trataran de un contenido online.
 
-Esta primera visualización tendrá varios errores que deberemos arreglar. Para eso volveremos a nuestro trabajo en Atom. Comenzaremos por añadir una hoja de estilo para manipular los elementos de TEI en nuestro archivo y luego añadiremos funciones de CETEIcean para hacer modificaciones más complejas. Si todavía no le has echado un vistazo al archivo fuente XML, es un buen momento para hacerlo, para ver lo que CETEIcean ya está haciendo y lo que no. Notarás que las imágenes con gráficos están siendo cargadas correctamente (siempre que estés en línea, ya que las imágenes están alojadas en un sitio web). Podemos ver que el contenido del `teiHeader` no está siendo mostrado, y tampoco los comienzos de página y comienzos de línea, pero los elementos `div` y `p` están siendo formateados como bloques. Con un poco de investigación sobre las posibilidades de codificación de la TEI, verás que hay 7 tipos de elementos TEI en el `body` de nuestro documento fuente:  
+Esta primera visualización tendrá varios errores que deberemos arreglar. Para eso volveremos a nuestro trabajo en Atom. Comenzaremos por añadir una hoja de estilo para manipular los elementos de TEI en nuestro archivo y luego añadiremos funciones de CETEIcean para hacer modificaciones más complejas. Si todavía no le has echado un vistazo al archivo fuente XML, es un buen momento para hacerlo, para ver lo que CETEIcean ya está haciendo y lo que no. Podemos ver que el contenido del `teiHeader` no está siendo mostrado, y tampoco los comienzos de página y comienzos de línea, pero los elementos `div` y `p` están siendo formateados como bloques; también notarás que las notas aparecen en el cuerpo del texto entre paréntesis. Con un poco de investigación sobre las posibilidades de codificación de la TEI, verás que hay 7 tipos de elementos TEI en el `body` de nuestro documento fuente:  
 
  * div
  * head
@@ -112,7 +114,7 @@ tei-p {
 ```
 
 
-Algunas cosas para tener en cuenta: los nombres de los elementos en nuestros selectores CSS tienen el prefijo “tei-”, esto es necesario para que CETEIcean pueda convertir los elementos de TEI en elementos personalizados (Custom Elements) de HTML. Estas reglas establecen que los elementos `<div>` se visualicen como bloques (empiezan en una nueva línea y terminan con un corte), lo mismo sucede con los párrafos, que también tienen un espaciado superior y posterior. Decidir qué estilos aplicar a los elementos que todavía no tienen reglas de estilo puede no resultar sencillo, pero podemos comenzar eligiendo algunos de los casos más simples. En nuestro documento fuente se señalan los encabezados de los capítulos y de las diferentes secciones mediante el elemnto`<head>`. Probablemente desearemos que estos encabezados se destaquen del cuerpo del texto, para lograrlo podemos utilizar CSS para darles un estilo diferente. Añade lo siguiente en el archivo `tei.css`: 
+Algunas cosas para tener en cuenta: los nombres de los elementos en nuestros selectores CSS tienen el prefijo “tei-”, esto es necesario para que CETEIcean pueda convertir los elementos de TEI en elementos personalizados ([Custom Elements](https://lenguajejs.com/webcomponents/nativos/bases-custom-elements/)) de HTML. Estas reglas establecen que los elementos `<div>` se visualicen como bloques (empiezan en una nueva línea y terminan con un corte), lo mismo sucede con los párrafos, que también tienen un espaciado superior y posterior. Decidir qué estilos aplicar a los elementos que todavía no tienen reglas de estilo puede no resultar sencillo, pero podemos comenzar eligiendo algunos de los casos más simples. En nuestro documento fuente se señalan los encabezados de los capítulos y de las diferentes secciones mediante el elemnto`<head>`. Probablemente desearemos que estos encabezados se destaquen del cuerpo del texto, para lograrlo podemos utilizar CSS para darles un estilo diferente. Ahora debes abrir el archivo `tei.css` (que encontrarás en la carpeta "css") en Atom y al final del documento agregar las siguientes líneas: 
 
 ```css
 tei-head {
@@ -122,7 +124,7 @@ tei-head {
 ```
 
 Verás que esta no es una solución perfecta, ya que tenemos diferentes niveles de elementos `<div>`, y sería apropiado que los encabezados de diferentes niveles tuvieran diferentes tamaños para identificarlos. Debido a que los elementos `<div>` de nuestro archivo TEI no indican a qué nivel pertenecen, esto puede resultar difícil de lograr con CSS.  Sin embargo, también podemos utilizar los comportamientos (behaviors) de CETEIcean para dar formato. 
-En HTML, la convención es representar los diferentes niveles de encabezados con los elementos `h1`, `h2`, `h3`, etc. (hasta `h6`). Podemos lograr esto utilizando un comportamiento. En tu archivo index.html añade lo siguiente entre la primera y la segunda línea del código que se encuentra entre las etiquetas <script></script>:
+En HTML, la convención es representar los diferentes niveles de encabezados con los elementos `h1`, `h2`, `h3`, etc. (hasta `h6`). Podemos lograr esto utilizando un comportamiento. En tu archivo index.html añade lo siguiente entre la primera y la segunda línea del código que se encuentra entre las etiquetas <script></script> (Es decir, entre `"let c = new CETEI();"` y `"c.getHTML5('Ruy_Diaz-La_Argentina_Manuscrita.xml'…"`):
 
 ```js
   let comportamientos = {
@@ -143,11 +145,49 @@ En HTML, la convención es representar los diferentes niveles de encabezados con
 Esto creará un objeto Javascript y le asignará la variable `comportamientos`, que luego enlazaremos con el objeto `CETEI` que creamos antes, usando el método `addBehaviors`. En el interior de ese objeto tenemos una sección etiquetada como “tei” (que es el prefijo para todos nuestros elementos personalizados), y dentro de esta se definen los comportamientos para los elementos. Cuando CETEIcean encuentra una coincidencia para el nombre de un elemento, como “head” (ten en cuenta que se utiliza el nombre de TEI sin el prefijo), aplica los comportamientos que encuentra.
 Este nuevo comportamiento toma una función de JavaScript. Lo que hace que el elemento sea procesado como un parámetro (el `e`). Esto crea la variable `nivel`, que contiene el nivel de encabezamiento de la `<tei-div>` que contiene el `<tei-head>`, crea un elemento `<h[nivel]>` con el nivel correspondiente, y copia el contenido del elemento original en el nuevo elemento de encabezado. CETEIcean esconderá el contenido de `<tei-head>` y, en cambio, mostrará el contenido del nuevo elemento de encabezado. Te en cuenta que este código tiene un problema potencial: un documento con muchas divisiones anidadas unas dentro de otras podría llegar a producir un elemento de encabezado superior al límite admitido por HTML (por ejemplo un elemento `<h7>`). Nuestro documento fuente no tiene más de dos niveles de anidamiento, pero para utilizarlo en otras fuentes sería prudente revisar que el anidamiento no supere el nivel del elemento `<h6>`.
 
-Finalmente, el resultado que obtendremos si previsualizamos nuestro HTML en Atom será el siguiente:
+Si en este punto previsualizamos nuestro HTML en Atom, obtendremos será el siguiente el resultado:
 
-![ejemplo final](https://github.com/TEIC/CETEIcean/blob/master/tutorial_es/screenshots/ejemplofinal.png)
+![ejemplo previo](https://github.com/TEIC/CETEIcean/blob/master/tutorial_es/screenshots/ceteicean_es4.png)
 
-CETEIcean posee una cantidad de comportamientos integrados. Puedes reemplazar o desactivar estos comportamientos integrados añadiéndoles valores. Si deseas mostrar el contenido del TEI Header, que está oculto por defecto, puedes añadir: 
+Con esta previsualización hemos mejorado notablemente la presentación de nuestro documento, pero las notas de la edición todavía dificultan la lectura del texto. Para solucionar este problema agregaremos un comportamiento más a nuestro script. Sin embargo, para lograr este objetivo, tendremos que usar una secuencia de comandos un tanto más extensa y compleja que la anterior. Copia y pega el siguiente texto entre las líneas `"tei": {` y `"head": function(e) {` que se encuentran en el segundo elemento `<script>` de nuestro documento `index.html`:
+
+
+```js
+    "note": function(e){
+    if (!this.noteIndex){
+      this["noteIndex"] = 1;
+    } else {
+      this.noteIndex++;
+    }
+    let id = "note" + this.noteIndex;
+    let link = document.createElement("a");
+    link.setAttribute("id", "src" + id);
+    link.setAttribute("href", "#" + id);
+    link.innerHTML = this.noteIndex;
+    let content = document.createElement("sup");
+    if (e.previousSibling.localName == "tei-note") {
+      content.appendChild(document.createTextNode(","));
+    }
+    content.appendChild(link);
+    let notes = this.dom.querySelector("ol.notes");
+    if (!notes) {
+      notes = document.createElement("ol");
+      notes.setAttribute("class", "notes");
+      this.dom.appendChild(notes);
+    }
+    let note = document.createElement("li");
+    note.id = id;
+    note.innerHTML = "<a href=\"#src" + id + "\">^</a> " + e.innerHTML
+    notes.appendChild(note);
+    return content;
+  }, 
+```
+
+A los fines de completar este tutorial no es necesario entender el funcionamiento de cada línea de este comportamiento, pero si observas el resultado de la previsualización, notarás que al incluirlo las notas aparecen al final del texto, hipervinculadas con sus respectivas referencias:
+
+![ejemplo final](https://github.com/TEIC/CETEIcean/blob/master/tutorial_es/screenshots/ceteicean_es5.png)
+
+CETEIcean posee una cantidad de comportamientos integrados. Puedes reemplazar o desactivar estos comportamientos integrados añadiéndoles valores. Si deseas mostrar el contenido del TEI Header, que está oculto por defecto, puedes añadir la siguiente líneaa nuestro `<script>` debajo de `"tei": {`: 
 
 ```js
   "teiHeader": null,

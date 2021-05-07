@@ -6,7 +6,21 @@
     <script src="https://cdn.polyfill.io/v1/polyfill.js?features=modernizr:promises&unknown=polyfill" charset="utf-8"></script>
     <script src="../dist/CETEI.js" charset="utf-8"></script>
     <script type="text/javascript">
-      (new CETEI).getHTML5('https://raw.githubusercontent.com/TEIC/Documentation/master/TCW/tcw22.xml?new=' + Date.now(), function(data) {
+      let ct = new CETEI();
+      let b = {
+        "tei": {
+          "title": [
+            ["tei-titlestmt>tei-title", function(e) {
+              let head = document.createElement("tei-head");
+              head.innerHTML = e.innerHTML;
+              let body = this.dom.querySelector("tei-body");
+              body.insertBefore(head, body.firstElementChild);
+            }]
+          ]
+        }
+      }
+      ct.addBehaviors(b);
+      ct.getHTML5('https://raw.githubusercontent.com/TEIC/Documentation/master/TCW/tcw22.xml?new=' + Date.now(), function(data) {
         document.getElementsByTagName("body")[0].appendChild(data);
       });
     </script>

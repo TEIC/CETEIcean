@@ -193,6 +193,8 @@ A los fines de completar este tutorial no es necesario entender el funcionamient
 
 ![ejemplo final](https://github.com/TEIC/CETEIcean/blob/master/tutorial_es/screenshots/ceteicean_es5.png)
 
+## Paso 4: Para seguir trabajando con CETEIcean
+
 CETEIcean posee una cantidad de comportamientos integrados. Puedes reemplazar o desactivar estos comportamientos integrados añadiéndoles valores. Si, por ejemplo, deseas mostrar el contenido del TEI Header, que está oculto por defecto, puedes añadir la siguiente línea a nuestro `<script>` debajo de `"tei": {`: 
 
 ```js

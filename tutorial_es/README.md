@@ -201,17 +201,20 @@ CETEIcean posee una cantidad de comportamientos integrados. Puedes reemplazar o 
 
 Si haces esto, puede que desees agregar estilos de CSS o comportamientos para elegir la forma en la que se visualizará el contenido del TEI Header en el navegador.
 
-En este tutorial no agotamos todas las posibilidades de trabajo con nuestro documento fuente. Te invitamos a que continúes experimentando por tu cuenta en las diferentes formas en las que un marcado de TEI puede visualizarse en un navegador usando CETEICean. Puedes encontrar más información en [CETEIcean](http://teic.github.io/CETEIcean/).
+En este tutorial no agotamos todas las posibilidades para la presentación de nuestro documento fuente. Te invitamos a que continúes experimentando por tu cuenta en las diferentes formas en las que un marcado de TEI puede visualizarse en un navegador usando CETEICean. Puedes encontrar más información en [CETEIcean](http://teic.github.io/CETEIcean/).
   
 ## Referencias
 
 Allés Torrent, Susanna; del Rio Riande, Gimena, y Calarco, Gabriel. 2018-. TTHub. Text Technologies Hub. Recursos sobre tecnologías del texto y edición digital. Accesible desde: https://tthub.io/.
+
 Atom. A hackable text editor for the 21st Century. Accesible desde: https://atom.io.
+
 Cayless, Hugh y Viglianti, Raffaele. CETEIcean. Accesible desde: http://teic.github.io/CETEIcean/.
+
 del Rio Riande, Gimena; De León, Romina, y Hernández, Nidia. 2019. Historia de la conquista del Río de la Plata o La Argentina manuscrita. Accesible desde: http://hdlab.space/La-Argentina-Manuscrita/
+
 Jedit. Programmer's text editor.  Stable Version: 5.6.0. Accesible desde: http://www.jedit.org/
+
 Oxygen. XML Editor. Accesible desde: https://www.oxygenxml.com/
+
 Visual Studio Code. Accesible desde: https://code.visualstudio.com/
-  
-
-

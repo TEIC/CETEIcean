@@ -9,17 +9,17 @@ Este tutorial te guiará a través de los pasos necesarios para publicar un arch
 
 En primer lugar, una aclaración sobre la visualización de tu trabajo: El método por defecto de CETEIcean para mostrar archivos TEI consiste en cargar los archivos desde otra ubicación. Sin embargo, no todos los navegadores te permitirán cargar los archivos si estos se encuentran almacenados en tu computadora. Puedes hacer el intento, pero si eso no funciona, tendrás que generar un servidor local, colocar los archivos en un servidor en línea, o utilizar un editor de código con funciones de previsualización. Para el caso de este tutorial, seguiremos esta última opción, ya que usaremos el editor [Atom](https://atom.io), con el plugin `atom-html-preview`. 
 
-Deberás entonces descargar e instalar [Atom](https://atom.io) antes de continuar con este tutorial. Luego, instala el plug-in `atom-html-preview` que podrás encontrar abriendo el menú de opciones de Atom (file/settings o cntrl+). En la pantalla de Settings ve a la pestaña "Install" y en el cuadro de diálogo introudce `atom-html-preview`. Cuando aparezca el plug-in que estamos buscando en la lista de resultado debes hacer clic en el botón azul que dice "Install": 
+Deberás entonces descargar e instalar [Atom](https://atom.io) antes de continuar con este tutorial. Luego, instala el plug-in `atom-html-preview` que podrás encontrar abriendo el menú de opciones de Atom (file > settings o cntrl+). En la pantalla de Settings ve a la pestaña "Install" y en el cuadro de diálogo introudce `atom-html-preview`. Cuando aparezca el plug-in que estamos buscando en la lista de resultado debes hacer clic en el botón azul que dice "Install": 
 
 ![instalación plug-in](https://github.com/TEIC/CETEIcean/blob/master/tutorial_es/screenshots/ceteicean_es1.png)
 
-No obstante, existen otras opciones libres para editar archivos TEI, como [Jedit](http://www.jedit.org/) o [Visual Studio Code](https://code.visualstudio.com/), y versiones propietarias como [Oxygen](https://www.oxygenxml.com/). 
+No obstante, existen otras opciones libres para editar archivos TEI y generar previsualizaciones de HTML, como [Jedit](http://www.jedit.org/) o [Visual Studio Code](https://code.visualstudio.com/), y versiones propietarias como [Oxygen](https://www.oxygenxml.com/). 
 
 
-Usaremos como texto de prueba la crónica conocida como *La Argentina Manuscrita*, del hispano-guaraní Ruy Díaz de Guzmán. Este texto del siglo XVII hace uso del topónimo Argentina por primera vez, para referirse a los extensos territorios del Cono Sur que componían el Río de la Plata y sus adyacencias, es decir, territorios de la actual Argentina, Paraguay, Uruguay, sur de Brasil y Bolivia. Encuentras una edición digital completa del texto en: [http://hdlab.space/La-Argentina-Manuscrita](http://hdlab.space/La-Argentina-Manuscrita). Comenzaremos con un archivo simple (aunque un tanto extenso) en formato TEI P5,que queremos hacer visible en un navegador web: [`Ruy_Diaz-La_Argentina_Manuscrita.xml`](http://hdlab.space/La-Argentina-Manuscrita/assets/Ruy_Diaz-La_argentina_manuscrita.tei.xml). Para descargar el archivo haz click derecho sobre el enlace de descarga y selecciona la opción 'Save Link As...'.
+Usaremos como texto de prueba la crónica conocida como *La Argentina Manuscrita*, del hispano-guaraní Ruy Díaz de Guzmán. Este texto del siglo XVII hace uso del topónimo Argentina por primera vez, para referirse a los extensos territorios del Cono Sur que componían el Río de la Plata y sus adyacencias, es decir, territorios de la actual Argentina, Paraguay, Uruguay, sur de Brasil y Bolivia. Puedes encontrar una edición digital completa del texto en: [http://hdlab.space/La-Argentina-Manuscrita](http://hdlab.space/La-Argentina-Manuscrita). Comenzaremos con un archivo simple (aunque un tanto extenso) en formato TEI P5, que queremos hacer visible en un navegador web: [`Ruy_Diaz-La_Argentina_Manuscrita.xml`](http://hdlab.space/La-Argentina-Manuscrita/assets/Ruy_Diaz-La_argentina_manuscrita.tei.xml). Para descargar el archivo haz click derecho sobre el enlace de descarga y selecciona la opción 'Save Link As...'.
 
 ## Paso 1: Crear una estructura para nuestros archivos
-Comenzaremos por establecer una estructura para nuestros archivos, es decir, una carpeta contenedora con el nombre 'tutorial_es' con las subcarpetas y archivos que te indicaremos a continuación. Puedes descargar el directorio completo de [CETEIcean en GitHub](https://github.com/TEIC/CETEIcean) y trabajar en la carpeta 'tutorial_es', o puedes descargar los archivos, siempre y cuando mantengan la misma estructura que en GitHub, que es la siguiente:
+Comenzaremos por establecer una estructura para nuestros archivos, es decir, una carpeta contenedora con el nombre 'tutorial_es' con las subcarpetas y archivos que te indicaremos a continuación. Puedes descargar el directorio completo de [CETEIcean en GitHub](https://github.com/TEIC/CETEIcean) y trabajar en la carpeta 'tutorial_es', o puedes descargar los archivos individualmente, siempre y cuando mantengan la misma estructura que en GitHub, que es la siguiente:
 
 ```
   tutorial_es/
@@ -36,7 +36,7 @@ Comenzaremos por establecer una estructura para nuestros archivos, es decir, una
        --- README.md (el archivo que estas leyendo)
 ```
 
-El primer paso será crear un archivo nuevo en Atom. Para ello puede ir a File > New o utilizar  el atajo Ctrl + N ( Cmd + N en Mac). En este documento deberás copiar y pegar el siguiente contenido: 
+El siguiente paso será crear un archivo nuevo en Atom. Para ello puede ir a File > New o utilizar  el atajo Ctrl + N ( Cmd + N en Mac). En este documento deberás copiar y pegar el siguiente contenido: 
 
 ```html
 <!DOCTYPE html>
@@ -67,7 +67,7 @@ Esto conectará nuestro archivo CSS con nuestra página HTML, dándole acceso a 
 ```
 
 ## Paso 2: Cargar y previsualizar el archivo TEI 
-Ahora ya estamos listos para cargar el archivo TEI. Para eso, debemos añadir en la siguiente línea o secuencia de comandos informáticos también conocida por sus siglas en inglés *script* ([script](https://es.wikipedia.org/wiki/Script), que nos permitirá recuperar el documento TEI de La Argentina manuscrita en nuestro archivo HTML (el que estamos editando en este momento): 
+Ahora ya estamos listos para cargar el archivo TEI. Para eso, debemos añadir en la siguiente línea o secuencia de comandos informáticos también conocida por sus siglas en inglés [*script*](https://es.wikipedia.org/wiki/Script), que nos permitirá recuperar el documento TEI de La Argentina manuscrita en nuestro archivo HTML (el que estamos editando en este momento): 
 
 ```html
 <script>

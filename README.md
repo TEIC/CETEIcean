@@ -44,6 +44,14 @@ CETEIcean.getHTML5("URL_TO_YOUR_TEI.xml", function(data) {
 })
 ```
 
+By default, CETEIcean saves and restores the scroll position for a document via a URL fragment. To turn this behavior off, particularly when using CETEIcean for Server Side Rendering, you can set the `ignoreFragmentId` option to `true`:
+
+```js
+new CETEI({
+  ignoreFragmentId: true
+})
+```
+
 ### Other methods
 
 #### getHTML5( url, callback, perElementFn )

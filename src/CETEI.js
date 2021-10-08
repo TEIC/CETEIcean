@@ -30,6 +30,7 @@ class CETEI {
     this.hasStyle = false;
     this.prefixDefs = [];
     this.debug = this.options.debug === true ? true : false;
+    this.discardContent = this.options.discardContent === true ? true : false;
 
     if (this.options.base) {
       this.base = this.options.base;
@@ -50,6 +51,7 @@ class CETEI {
         window.removeEventListener("ceteiceanload", CETEI.restorePosition);
       }
     }
+    
   }
 
   /* 
@@ -95,8 +97,8 @@ class CETEI {
   */
   makeHTML5(XML, callback, perElementFn){
     // XML is assumed to be a string
-    let XML_dom = ( new DOMParser() ).parseFromString(XML, "text/xml");
-    return this.domToHTML5(XML_dom, callback, perElementFn);
+    this.XML_dom = ( new DOMParser() ).parseFromString(XML, "text/xml");
+    return this.domToHTML5(this.XML_dom, callback, perElementFn);
   }
 
   /* 
@@ -272,7 +274,11 @@ append(fn, elt) {
 }
 
 appendBasic(elt, content) {
-  utilities.hideContent(elt, true);
+  if (this.discardContent) {
+    elt.innerHTML = "";
+  } else {
+    utilities.hideContent(elt, true);
+  }
   elt.appendChild(content);
 }
 

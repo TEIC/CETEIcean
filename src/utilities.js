@@ -71,6 +71,12 @@ export function hideContent(elt, rewriteIds = true) {
     hidden.setAttribute("data-original", "");
     for (let node of Array.from(elt.childNodes)) {
       if (node !== hidden) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          node.setAttribute("data-processed", "");
+          for (let e of node.querySelectorAll("*")) {
+            e.setAttribute("data-processed", "");
+          }
+        }
         hidden.appendChild(elt.removeChild(node));
       }
     }

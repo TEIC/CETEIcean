@@ -19,6 +19,11 @@ export function addBehaviors(bhvs) {
       }
     }
   }
+  if (bhvs["functions"]) {
+    for (let fn of Object.keys(bhvs["functions"])) {
+      this.utilities[fn] = bhvs["functions"][fn];
+    }
+  }
   if (bhvs["handlers"]) {
     console.log("Behavior handlers are no longer used.")
   }

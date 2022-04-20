@@ -208,7 +208,6 @@ export function serialize(el, stripElt, ws) {
   return str;
 }
 
-
 export function unEscapeEntities(str) {
   return str.replace(/&gt;/, ">")
             .replace(/&quot;/, "\"")

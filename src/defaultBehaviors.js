@@ -84,11 +84,6 @@ export default {
         document.querySelector("head").appendChild(title);
       }]
     ],
-    "cell": [
-      ["[cols]", function(elt) {
-        elt.setAttribute("style", "grid-column: " + this.getOrdinality(elt) + " / span " + elt.getAttribute("cols") + ";");
-      }]
-    ]
   },
   "teieg": {
     "egXML": function(elt) {

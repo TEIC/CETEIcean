@@ -24,7 +24,7 @@
     "onchange": "^6.1.1",
     "rollup": "^2.57.0",
     "rollup-plugin-terser": "1.0.1",
-    "terser": "^3.17.0"
+    "terser": "^4.8.1"
   },
   "scripts": {
     "build": "rollup -c rollup.config.js",

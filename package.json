@@ -23,8 +23,8 @@
     "http-server": "^14.1.1",
     "onchange": "^6.1.1",
     "rollup": "^2.57.0",
-    "rollup-plugin-terser": "1.0.1",
-    "terser": "^3.17.0"
+    "rollup-plugin-terser": "^7.0.2",
+    "terser": "^5.14.2"
   },
   "scripts": {
     "build": "rollup -c rollup.config.js",

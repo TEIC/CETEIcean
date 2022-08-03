@@ -1,6 +1,6 @@
 import defaultBehaviors from './defaultBehaviors';
 import * as utilities from './utilities';
-import {addBehaviors, addBehavior, applyBehaviors, removeBehavior} from './behaviors';
+import {addBehaviors, addBehavior, removeBehavior} from './behaviors';
 import {learnElementNames, learnCustomElementNames} from './dom';
 
 class CETEI {
@@ -10,7 +10,6 @@ class CETEI {
     // Bind methods
     this.addBehaviors = addBehaviors.bind(this);
     this.addBehavior = addBehavior.bind(this);
-    this.applyBehaviors = applyBehaviors.bind(this);
     this.removeBehavior = removeBehavior.bind(this);
 
     // Bind selected utilities
@@ -438,6 +437,15 @@ template(str, elt) {
   return result;
 }
 
+// Define or apply behaviors for the document
+applyBehaviors() {
+  if (window.customElements) {
+    this.define.call(this, this.els);
+  } else {
+    this.fallback.call(this, this.els);
+  }
+}
+
 /* 
   Registers the list of elements provided with the browser.
   Called by makeHTML5(), but can be called independently if, for example,
@@ -446,7 +454,7 @@ template(str, elt) {
 define(names) {
   for (let name of names) {
     try {
-      let fn = this.getHandler(this.behaviors, name);
+      const fn = this.getHandler(this.behaviors, name);
       window.customElements.define(this.tagName(name), class extends HTMLElement {
         constructor() {
           super(); 
@@ -472,7 +480,7 @@ define(names) {
       // When using the same CETEIcean instance for multiple TEI files, this error becomes very common. 
       // It's muted by default unless the debug option is set.
       if (this.debug) {
-          console.log(tagName(name) + " couldn't be registered or is already registered.");
+          console.log(this.tagName(name) + " couldn't be registered or is already registered.");
           console.log(error);
       }
     }

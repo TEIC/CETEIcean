@@ -71,12 +71,3 @@ export function removeBehavior(ns, element) {
   }
   delete this.behaviors[`${p}:${element}`];
 }
-
-// Define or apply behaviors for the document
-export function applyBehaviors() {
-  if (window.customElements) {
-    this.define.call(this, this.els);
-  } else {
-    this.fallback.call(this, this.els);
-  }
-}

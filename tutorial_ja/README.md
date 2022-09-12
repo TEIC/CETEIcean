@@ -27,7 +27,7 @@ First, a note about viewing the results of your work: CETEIcean's default method
        --- README.md (the file you are reading)
 ```
 
-Inside the root folder, create an `index.html` file, with the content:
+ルートのディレクトリ（フォルダ）に`index.html` というファイルを作成して、内容を以下のようにしてみてください：
 
 ```html
 <!DOCTYPE html>
@@ -44,18 +44,17 @@ Inside the root folder, create an `index.html` file, with the content:
 </html>
 ```
 
-This will serve as a shell into which we will put the instructions that will display our TEI file. Like TEI, HTML files have a header, named `head`, and a `body`. We will put links to our CSS (Cascading Style Sheets) and JavaScript files and write a bit of JavaScript to get CETEIcean running. In the first empty line in the `<head>`, type:
-
+これは、TEIファイルを表示するための命令を入れるシェルとして機能します。TEIと同様に、HTMLファイルには`head`と呼ばれるヘッダーと`body`があります。CSS (Cascading Style Sheets)とJavaScriptファイルへのリンクを置き、CETEIceanを動かすためのJavaScriptを少し書きます。では、`<head>`以下の最初の空白行に以下のように記述してください：
 ```html
   <link rel="stylesheet" href="css/tei.css">
 ```
-This will link our CSS file to our HTML page, giving it access to the styling directives inside (there are only a few—we'll add more). Next, we'll link in the CETEIcean library by adding this line after the stylesheet link:
+これはCSSファイルをHTMLページにリンクし、そこに用意されたスタイル命令にアクセスできるようにします（まだ少ししかありませんが、これから追加していきます）。次に、スタイルシートのリンクの後に次の行を追加して、CETEIceanライブラリをリンクします：
 ```html
   <script src="js/CETEI.js"></script>
 ```
-Now we are ready to load our file. Add another `<script></script>` element to your `index.html` file, this time without a `@src` attribute (because we're going to put the script inside it).
+これでファイルを読み込む準備ができました。index.html` ファイルにもう一つ `<script></script>` 要素を追加します。ただし、今回は `@src` 属性は付けません (この中にスクリプトを入れるからです)。
 
-Inside your new script element, add the lines:
+今回作成した`<script>`エレメントの内側に、以下の行を追記してください：
 
 ```js
   let c = new CETEI();
@@ -64,15 +63,21 @@ Inside your new script element, add the lines:
   });
 ```
 
-You don't need to be a JavaScript expert to use CETEIcean, but learning how the basics work will be helpful. If you want advanced behaviors, you will have to know JavaScript. An excellent guide is available from the [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide) (MDN) in many languages. The lines of code above are doing a few things: first, a variable, `c` is defined as a new CETEI object. This will do the work of loading and styling our source file for us. Next, we tell `c` to load the source file and turn it into HTML Custom Elements, and we're also giving it a function that will take the results and put them into the `<body>` of our index.html file. `document.getElementsByTagName('body')` calls a function available on the built-in `document` object (`document` is the HTML document loaded into the browser) that finds all the body elements and returns them in an Array (a list whose members can be accessed by index number). There is only one body element, so we're getting the first item in the Array, at index 0. To that item, an HTML Element, we are appending as a child the TEI document we just loaded.
+CETEIceanを使うにあたっては、JavaScriptの専門家である必要はありませんが、基本的な動作を学んでおくことは有用です。もし、高度な動作をさせたいのであれば、JavaScriptの知識が必要でしょう。優れたガイドが[Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide) (MDN)から多くの言語で提供されています。
 
-At this point, if you're using Atom, you should be able to run HTML Preview from the Packages menu and see your document. If you aren't using Atom, you can try putting your documents on a web server. If you're familiar with using GitHub, you can use GitHub Pages ([tutorial](https://guides.github.com/features/pages/)—you can skip the themes step and just use a repository with the tutorial you're reading in it). If you have Python installed on your computer, you can run a simple web server in the tutorial directory with the command:
+では、上のコードの行を簡単に解説しておきましょう。上の行はいくつかのことを行っています：まず、変数 `c` が新しいCETEIオブジェクトとして定義されています。このオブジェクトはソースファイルの読み込みとスタイル指定を行なってくれます。次に、`c`にソースファイルを読み込んでHTMLカスタム要素に変換するように指示し、その結果を受け取ってindex.htmlファイルの`<body>`に配置する関数も与えています。`document.getElementsByTagName('body')` は組み込みの `document` オブジェクト (`document` はブラウザに読み込まれた HTML ドキュメント) で利用できる関数を呼び出して、すべての body 要素を見つけて Array (インデックス番号でアクセスできるリスト。Pythonで言うリストとほぼ同じ。) で返しています。body 要素はひとつだけなので、Array の1つ目（0から数えるので0番）にある項目を取得します。その項目であるHTML要素に、先ほど読み込んだTEIドキュメントを子要素として追加しています。
+
+
+＜TEI/XMLファイルをindex.htmlのJavscriptに読み込む＞
+
+この時点で、Atomを使用している場合は、パッケージメニューからHTMLプレビューを実行し、文書を見ることができるようになっているはずです。Atom を使っていない場合は、ドキュメントをウェブサーバーに置いてみるとよいでしょう。GitHub の使用に慣れているなら、GitHub Pages ([tutorial](https://guides.github.com/features/pages/)-テーマのステップをスキップして、読んでいるチュートリアルが入っているリポジトリだけを使うことができます) を使用することができます。Pythonがインストールされていれば、tutorialディレクトリで簡単なWebサーバをコマンドで実行することができます。
+
 ```bash
 python -m SimpleHTTPServer
 ```
-Your computer may also come with web serving capabilites built in, or you can install [MAMP](https://www.mamp.info) or something similar.
+また、お使いのコンピュータにウェブサーバー機能が組み込まれている場合もありますし、[MAMP](https://www.mamp.info)などをインストールすることもできます。
 
-Your preview will have various things wrong with it that we will want to fix. We'll do this first by adding CSS to handle the TEI elements in our file, and then later we'll add some CETEIcean behaviors to do more sophisticated things. If you haven't already taken a look at the XML source file, you might want to do so now, to see what things CETEIcean is doing already, and what it isn't. You'll notice that figures with graphics are getting loaded properly (as long as you're online, because the pictures are hosted on a web site). The `teiHeader`'s content isn't being displayed. Page beginnings and line beginnings are being ignored, but `div`s and `p` elements are being formatted as blocks. A bit of investigation will tell you that there are 19 kinds of element in the body of our source document: 
+現時点でのプレビューには様々な不具合があり、それを修正する必要があります。まず、CSSを追加してファイル内のTEI要素を処理することから始め、その後、CETEIceanの動作を追加してより洗練されたことを行うことにしましょう。もしまだXMLソースファイルをご覧になっていなければ、今すぐご覧になって、CETEIceanがすでに行っていることと、行っていないことを確認されるとよいでしょう。そうするとまず、画像付きの図が適切に読み込まれていることに気づくでしょう（画像がウェブサイトにホストされているため、オンラインの場合の話ですが）。teiHeader` のコンテンツは表示されないはずです。ページの始まりや行の始まりは無視されますが、`div`要素や`p`要素はブロックとしてフォーマットされます。少し調べると、ソースファイルの本文には19種類の要素があることがわかります：
 
  * div
  * head
@@ -94,9 +99,9 @@ Your preview will have various things wrong with it that we will want to fix. We
  * foreign
  * name. 
  
-Some of these may not need any special styling or behaviors, but others definitely will.
+これらの中には、特別なスタイルや動作が必要ないものと、絶対に必要なものがあります：
 
-Take a look at the `tei.css` file in the `css/` folder. As you can see, it only has a couple of rules so far:
+css/` フォルダにある `tei.css` ファイルを見てみましょう。ご覧のように、今のところ2つのルールしかありません：
 
 ```css
 tei-div {
@@ -108,7 +113,8 @@ tei-p {
   margin-bottom: .5em;
 }
 ```
-Some things to notice: the element names in our CSS selectors are prefixed with "tei-", which is what CETEIcean does to turn TEI elements into HTML Custom Elements. These rules mean divs are displayed as blocks (they start on a new line and are followed by a break at the end), as are paragraphs, and the latter also have some spacing before and after. Deciding what styles to apply to the currently unstyled elements may not always be easy, but we can begin by picking some simple cases. The source document uses lists for its table of contents and indices, always with `@type="simple"`. We can use CSS to format these as lists. Add the following to the `tei.css` file:
+CSSセレクタの要素名には "tei "が付いていますが、これはCETEIceanがTEI要素をHTMLカスタム要素に変換するために行っていることです。これらのルールは、divがブロックとして表示され（新しい行で始まり、最後に改行される）、段落と同様に、後者も前後に多少のスペースを持つことを意味します。現在スタイルが設定されていない要素にどのようなスタイルを適用するかを決めるのは必ずしも容易ではありませんが、まずは簡単なケースをいくつか挙げてみましょう。ソースのXML文書では、目次と索引にリストを使っており、それらには常に `@type="simple"` が付いています。CSSを使って、これらをリストとしてフォーマットすることができます。以下を `tei.css` ファイルに追加してください：
+
 ```css
 tei-list[type=simple] {
   list-style-type: none;
@@ -117,20 +123,26 @@ tei-list[type=simple]>tei-item {
   display: list-item;
 }
 ```
-The first selector will match `<tei-list type="simple">` elements and specifies that list items should not be decorated with bullets or numbers. The second identifies `<tei-list>` elements as list items (like `<li>` in HTML). If you make this change and reload your preview, you will see that the table of contents is now formatted as a list. You can experiment with adding margins and other styles to make it look better. The `<hi rend="italics">` elements can be dealt with easily too:
+
+上記のCSSの最初のセレクタ（tei-list[type=simple]の部分）は `<tei-list type="simple">` 要素にマッチし、リストアイテムが箇条書きや数字で装飾されてはならないことを「list-style-type: none」で指定しています。2 番目のセレクタ（tei-list[type=simple]>tei-itemの部分）は `<tei-list>` 要素をリストアイテムとして識別します (HTML の `<li>` と同じです)。この変更を行ってからプレビューを再読み込みすると、目次がリストとしてフォーマットされているのがわかると思います。余白や別のスタイルを追加して、見栄えをよくするために実験することもできます。また、`<hi rend="italics">` の要素も同様にして簡単に扱うことができます：
 ```css
 tei-hi[rend=italics] {
   font-style: italic;
 }
 ```
+
+改行（Line beginning）はちょっとややこしく、CSSの「擬似セレクタ」が必要です。
 Line beginnings are a little trickier, and require a CSS "pseudo-selector":
+
 ```css
 tei-lb:before {
   white-space: pre;
   content: "\A";
 }
 ```
-This tells the browser to insert a new-line character (the "\A") before each `<tei-lb>` and to treat it as preformatted text (as you would a block of code, for example). We have to do this because in HTML new lines are normally ignored for formatting purposes. There's more we can do with CSS, but this is a good point to look at where you might use CETEIcean behaviors for formatting instead. HTML has an element equivalent to `<lb/>`, the `<br>` element. What if we just put a `<br>` inside our `<tei-lb>`? We can do that by adding some behaviors. In your index.html, add the following after between the first and second lines of the code in the `<script></script>` tags:
+
+上記のものは、各 `<tei-lb>` の前に改行文字 (「 \A 」) を挿入し、(例えばコードのブロックのように) 整形されたテキストとして扱うようにブラウザに指示するものです。HTMLでは通常、改行は書式設定のために無視されるため、このようにしなければなりません。CSSでできることは他にもありますが、これはCETEIceanの振る舞い（behaviors）を書式設定のために使うことができるかどうかを検討する良いポイントになります。HTMLには`<lb/>`に相当する要素、`<br>`があります。もし、`<tei-lb>`の中に`<br>`を入れたらどうでしょうか？それは、いくつかの behaviors を追加することで可能です。index.html の `<script></script>` タグ内のコードの1行目と2行目の間に、次のように追加します：
+
 ```js
   let behaviors = {
     "tei": {
@@ -139,13 +151,16 @@ This tells the browser to insert a new-line character (the "\A") before each `<t
   };
   c.addBehaviors(behaviors);
 ```
-What this will do is create a Javascript object and assign it to a variable, `behaviors`, which we then pass to the `CETEI` object we created earlier, using the `addBehaviors` method. Inside that behaviors object, we have a section labeled "tei" (which is the prefix for all of our Custom Elements), and inside that, we define behaviors for elements. When CETEIcean sees a match for an element name, like "lb" (note that it uses the un-prefixed TEI name), it applies what it finds. For "lb", it sees an Array with one element, `<br>`, so it will insert that `<br>` tag before the content of any `<tei-lb>` element it finds. `<tei-lb>` is an empty element anyway, so the final result as seen by the browser will be
+
+上記のものは、Javascriptオブジェクトを作成し、変数 `behaviors` に代入しています。そして、 `addBehaviors` メソッドを使用して、先ほど作成した `CETEI` オブジェクト（つまり、変数 `c` ）にそれを渡します。behaviorsオブジェクトの中に、"tei"（すべてのカスタム要素のプレフィックス）というラベルの付いたセクションがあり、その中で要素のbehaviorsを定義しています。CETEIceanは "lb "のような要素名（接頭辞のないTEI名を使用していることに注意）にマッチするものを見つけると、それを適用します。`<lb/>`の場合には、1つの `<br>` 要素を含むリストを探し、そして、見つかった `<tei-lb>` 要素のコンテンツの前に `<br>` タグを挿入します。そして、ブラウザから見た最終的な結果は次のようになります：
+
 ```html
 <tei-lb><br></tei-lb>
 ```
-The browser will not know what to do with `<tei-lb>` and so will ignore it, but it will know what to do with `<br>`, and will display it as a new line. Note that if you use the behavior, you won't want the CSS rule for `tei-lb`, or you'll get two line breaks for every one in your source.
+ブラウザは `<tei-lb>` が何をするものかわからないので無視しますが、`<br>` は何をするのかわかるので、改行として表示します。この挙動を利用する場合、`tei-lb`に対するCSSルールは必要ないことと、ソースファイルの中のすべての改行に対して2つの改行が付いてしまうことに注意してください。
 
-Behaviors can get more complex than this. You may have noticed that our source document has `<div>` elements, which nest, and which may have `<head>` elements. In HTML, the convention is to represent different levels of header with `h1`, `h2`, `h3`, and so on (up to `h6`). We can do this using a more sophisticated behavior:
+Behaviors はこれよりもっと複雑にすることもできます。ソースファイルには `<div>` 要素があり、それらは入れ子になっていて、さらに `<head>` 要素を持つ場合があることにお気づきでしょう。HTML では、異なるレベルのヘッダーを `h1`、`h2`、`h3` などで表現します（最大で `h6` まで）。これをより洗練された動作で行うことができます。
+
 ```js
   let behaviors = {
     "tei": {
@@ -162,18 +177,15 @@ Behaviors can get more complex than this. You may have noticed that our source d
   };
   c.addBehaviors(behaviors);
 ```
-This new "head" behavior is doing something different. It takes a JavaScript function instead of an Array, which gets the element being processed as a parameter (the `e`). It creates a `level` variable, which contains the depth of the `<tei-div>` containing the `<tei-head>`, creates an `<h[level]>` element corresponding to the level, copies the content of the current element into it, and returns the new header element. CETEIcean will hide the content of the `<tei-head>` and show the heading element instead. Note that the code shown here has a potential bug: a very deeply nested document might produce, e.g. an `<h7>` element, which is not valid HTML. Our current source doesn't go more than three levels deep, but we might want to add a check ensure we don't go beyond `<h6>`.
 
-CETEIcean has a number of built-in behaviors, which is why it was able to deal with TEI `<graphic>`s, for example, without any work on our part. You can replace or switch off built-in behaviors by adding matches for them. If you want to display the contents of the TEI Header, which is hidden by default, you can add:
+上記の新しい「head」behaviorsは何か異なることをしています。Array の代わりに JavaScript の関数を使用し、パラメータとして処理される要素（`e`）を取得します。それは `<tei-head>` を含む `<tei-div>` の深さを含む `level` 変数を作り、そのレベルに対応する `<h[level]>` 要素を作り、現在の要素の内容をそこにコピーし、新しい header 要素を返します。CETEIceanは `<tei-head>` の内容を隠し、代わりにheading要素を表示します。ここで示したコードには潜在的なバグがあることに注意してください：非常に深くネストされたドキュメントでは、例えば `<h7>` 要素が生成されるかもしれませんが、それは有効なHTMLではありません。現在のソースは3階層以上にはなりませんが、`<h6>` 以上にならないようにするためのチェックを追加するとよいでしょう。
+
+CETEIceanは多くのビルトイン動作を備えており、例えばTEIの`<graphic>`は、我々の側で何もしなくても処理されます。ビルトインされた動作にマッチを追加することで、ビルトインされた動作を置き換えたり、オフにしたりすることができます。もし、デフォルトでは隠されているTEI Headerの内容を表示したいのであれば、次の…
+
 ```js
   "teiHeader": null,
 ```
-to your behaviors object. You will want to add CSS styles or behaviors to cope with the header contents if you do so. 
 
-We will not work through all of the possibilites for our source document in this tutorial. You should experiment and decide how you want to represent the source's markup. A more fully worked out example is available in the [example/](example) folder, and the original HTML version and TEI P4 source may be found at <https://docsouth.unc.edu/fpn/washington/menu.html>.
+…をbehaviorsオブジェクトに追加してください。その際、ヘッダーの内容に対応するCSSスタイルやbehaviorsを追加しておくとよいでしょう。
 
-
-
-
-
-
+このチュートリアルでは、ソースファイルに関するすべての可能性を検討するわけではありません。ソースのマークアップをどのように表現するかは、実験して決めてください。より完全な例は [example/](example) フォルダーにあります。また、オリジナルの HTML バージョンと TEI P4 ソースは <https://docsouth.unc.edu/fpn/washington/menu.html> で見ることができます。

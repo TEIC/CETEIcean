@@ -7,7 +7,9 @@
 
 First, a note about viewing the results of your work: CETEIcean's default method for displaying TEI relies on loading a TEI file from another location. Not all browsers will allow you to do this when you view an HTML file directly on your file system. You should try it, but if it doesn't work, then you will have to run a web server, put your files on a web server, or use a text editor with preview capabilities. [Atom](https://atom.io), with the `atom-html-preview` plugin is the example we will use for this tutorial, but there are many other options. You should download and install Atom, or an equivalent text editor, before starting this tutorial. A text editor is different from other programs you may already use for editing 'text', such as LibreOffice or Word, in that it edits only plain text files.
 
-We will start by setting up a directory structure for our files. You may simply want to copy the structure of this tutorial, which looks like:
+はじめに、作業結果の表示に関して留意していただきたい点があります。CETEIceanのデフォルトのTEI表示方法は、別の場所からTEIファイルを読み込むことに依存しています。この場合、ローカルのファイルシステム上のHTMLファイルを直接表示することになりますので、ブラウザによっては許可しない場合があります。まずは試してみていただくとよいのですが、うまくいかない場合は、Webサーバーを動かすか、ファイルをWebサーバーに置くか、プレビュー機能のあるテキストエディタを使うことになります。このチュートリアルでは、[Atom](https://atom.io)の `atom-html-preview` プラグインを使用しますが、他にも多くの選択肢があります。このチュートリアルを始める前に、Atomまたは同等のテキストエディタをダウンロードし、インストールしておく必要があります。（あるいはPythonのような簡易HTTPサーバを稼働できるプログラミング言語でもよいです。）テキストエディタは、LibreOfficeやWordのような「テキスト」を編集するためのプログラムとは異なり、プレーンテキストファイルのみを編集するものです。
+
+まず、今回のファイルのためのディレクトリ構造を設定することから始めましょう。このチュートリアルの構造をコピーして、次のようにするとよいでしょう。
 
 ```
   tutorial/
@@ -21,6 +23,7 @@ We will start by setting up a directory structure for our files. You may simply 
              --- CETEI.js
       |
        --- fpn-washington.xml
+       --- meros.xml       
        --- README.md (the file you are reading)
 ```
 

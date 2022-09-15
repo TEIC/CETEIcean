@@ -4,7 +4,7 @@
 
 This tutorial will walk you through the steps to publish a TEI file online using CETEIcean. We will start with a simple (though quite large) file in TEI P5 form, `fpn-washington.xml`, which we want to display in a web browser.
 
-First, a note about viewing the results of your work: CETEIcean's default method for displaying TEI relies on loading a TEI file from another location. Not all browsers will allow you to do this when you view an HTML file directly on your file system. You should try it, but if it doesn't work, then you will have to run a web server, put your files on a web server, or use a text editor with preview capabilities. [Atom](https://atom.io), with the `atom-html-preview` plugin is the example we will use for this tutorial, but there are many other options. You should download and install Atom, or an equivalent text editor, before starting this tutorial. A text editor is different from other programs you may already use for editing 'text', such as LibreOffice or Word, in that it edits only plain text files.
+First, a note about viewing the results of your work: CETEIcean's default method for displaying TEI relies on loading a TEI file from another location. Not all browsers will allow you to do this when you view an HTML file directly on your file system. You should try it, but if it doesn't work, then you will have to run a web server, put your files on a web server, or use a text editor with preview capabilities. [Visual Studio Codo](https://code.visualstudio.com/), with the `Html Preview` plugin is the example we will use for this tutorial, but there are many other options. You should download and install Visual Studio Code, or an equivalent text editor, before starting this tutorial. A text editor is different from other programs you may already use for editing 'text', such as LibreOffice or Word, in that it edits only plain text files.
 
 We will start by setting up a directory structure for our files. You may simply want to copy the structure of this tutorial, which looks like:
 
@@ -62,9 +62,13 @@ Inside your new script element, add the lines:
 
 You don't need to be a JavaScript expert to use CETEIcean, but learning how the basics work will be helpful. If you want advanced behaviors, you will have to know JavaScript. An excellent guide is available from the [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide) (MDN) in many languages. The lines of code above are doing a few things: first, a variable, `c` is defined as a new CETEI object. This will do the work of loading and styling our source file for us. Next, we tell `c` to load the source file and turn it into HTML Custom Elements, and we're also giving it a function that will take the results and put them into the `<body>` of our index.html file. `document.getElementsByTagName('body')` calls a function available on the built-in `document` object (`document` is the HTML document loaded into the browser) that finds all the body elements and returns them in an Array (a list whose members can be accessed by index number). There is only one body element, so we're getting the first item in the Array, at index 0. To that item, an HTML Element, we are appending as a child the TEI document we just loaded.
 
-At this point, if you're using Atom, you should be able to run HTML Preview from the Packages menu and see your document. If you aren't using Atom, you can try putting your documents on a web server. If you're familiar with using GitHub, you can use GitHub Pages ([tutorial](https://guides.github.com/features/pages/)—you can skip the themes step and just use a repository with the tutorial you're reading in it). If you have Python installed on your computer, you can run a simple web server in the tutorial directory with the command:
+At this point, if you're using Visual Studio Code, you should be able to run HTML Preview with ctrl+shift+v or cmd+shift+v and see your document. You may need to disable security settings when prompted in order for this to work. If you aren't using VIsual Studio Code, you can try putting your documents on a web server. If you're familiar with using GitHub, you can use GitHub Pages ([tutorial](https://docs.github.com/en/pages/quickstart)—you can skip the themes step and just use a repository with the tutorial you're reading in it). If you have Python 3 installed on your computer, you can run a simple web server in the tutorial directory with the command:
 ```bash
-python -m SimpleHTTPServer
+python3 -m http.server
+```
+If you have NodeJS installed, you can use:
+```bash
+npx serve
 ```
 Your computer may also come with web serving capabilites built in, or you can install [MAMP](https://www.mamp.info) or something similar.
 

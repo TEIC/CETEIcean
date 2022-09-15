@@ -66,13 +66,9 @@ At this point, if you're using Visual Studio Code, you should be able to run HTM
 ```bash
 python3 -m http.server
 ```
-or if you are running previous versions of Python:
-```bash
-python -m SimpleHTTPServer
-```
 If you have NodeJS installed, you can use:
 ```bash
-npm serve
+npx serve
 ```
 Your computer may also come with web serving capabilites built in, or you can install [MAMP](https://www.mamp.info) or something similar.
 

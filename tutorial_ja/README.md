@@ -4,9 +4,6 @@
 
 このチュートリアルでは、CETEIceanを用いてTEIファイルを公開するための一連のステップを解説します。TEI P5の形式の（大きいですが）単純なファイル、`fpn-washington.xml`を用いて解説を始めます。我々はこのファイルをWebブラウザに表示することを目指します。
 
-
-First, a note about viewing the results of your work: CETEIcean's default method for displaying TEI relies on loading a TEI file from another location. Not all browsers will allow you to do this when you view an HTML file directly on your file system. You should try it, but if it doesn't work, then you will have to run a web server, put your files on a web server, or use a text editor with preview capabilities. [Atom](https://atom.io), with the `atom-html-preview` plugin is the example we will use for this tutorial, but there are many other options. You should download and install Atom, or an equivalent text editor, before starting this tutorial. A text editor is different from other programs you may already use for editing 'text', such as LibreOffice or Word, in that it edits only plain text files.
-
 はじめに、作業結果の表示に関して留意していただきたい点があります。CETEIceanのデフォルトのTEI表示方法は、別の場所からTEIファイルを読み込むことに依存しています。この場合、ローカルのファイルシステム上のHTMLファイルを直接表示することになりますので、ブラウザによっては許可しない場合があります。まずは試してみていただくとよいのですが、うまくいかない場合は、Webサーバーを動かすか、ファイルをWebサーバーに置くか、プレビュー機能のあるテキストエディタを使うことになります。このチュートリアルでは、[Atom](https://atom.io)の `atom-html-preview` プラグインを使用しますが、他にも多くの選択肢があります。このチュートリアルを始める前に、Atomまたは同等のテキストエディタをダウンロードし、インストールしておく必要があります。（あるいはPythonのような簡易HTTPサーバを稼働できるプログラミング言語でもよいです。）テキストエディタは、LibreOfficeやWordのような「テキスト」を編集するためのプログラムとは異なり、プレーンテキストファイルのみを編集するものです。
 
 まず、今回のファイルのためのディレクトリ構造を設定することから始めましょう。このチュートリアルの構造をコピーして、次のようにするとよいでしょう。
@@ -45,13 +42,17 @@ First, a note about viewing the results of your work: CETEIcean's default method
 ```
 
 これは、TEIファイルを表示するための命令を入れるシェルとして機能します。TEIと同様に、HTMLファイルには`head`と呼ばれるヘッダーと`body`があります。CSS (Cascading Style Sheets)とJavaScriptファイルへのリンクを置き、CETEIceanを動かすためのJavaScriptを少し書きます。では、`<head>`以下の最初の空白行に以下のように記述してください：
+
 ```html
   <link rel="stylesheet" href="css/tei.css">
 ```
+
 これはCSSファイルをHTMLページにリンクし、そこに用意されたスタイル命令にアクセスできるようにします（まだ少ししかありませんが、これから追加していきます）。次に、スタイルシートのリンクの後に次の行を追加して、CETEIceanライブラリをリンクします：
+
 ```html
   <script src="js/CETEI.js"></script>
 ```
+
 これでファイルを読み込む準備ができました。index.html` ファイルにもう一つ `<script></script>` 要素を追加します。ただし、今回は `@src` 属性は付けません (この中にスクリプトを入れるからです)。
 
 今回作成した`<script>`エレメントの内側に、以下の行を追記してください：
@@ -67,8 +68,7 @@ CETEIceanを使うにあたっては、JavaScriptの専門家である必要は�
 
 では、上のコードの行を簡単に解説しておきましょう。上の行はいくつかのことを行っています：まず、変数 `c` が新しいCETEIオブジェクトとして定義されています。このオブジェクトはソースファイルの読み込みとスタイル指定を行なってくれます。次に、`c`にソースファイルを読み込んでHTMLカスタム要素に変換するように指示し、その結果を受け取ってindex.htmlファイルの`<body>`に配置する関数も与えています。`document.getElementsByTagName('body')` は組み込みの `document` オブジェクト (`document` はブラウザに読み込まれた HTML ドキュメント) で利用できる関数を呼び出して、すべての body 要素を見つけて Array (インデックス番号でアクセスできるリスト。Pythonで言うリストとほぼ同じ。) で返しています。body 要素はひとつだけなので、Array の1つ目（0から数えるので0番）にある項目を取得します。その項目であるHTML要素に、先ほど読み込んだTEIドキュメントを子要素として追加しています。
 
-
-＜TEI/XMLファイルをindex.htmlのJavscriptに読み込む＞
+## TEI/XMLファイルをindex.htmlのJavscriptに読み込む
 
 この時点で、Atomを使用している場合は、パッケージメニューからHTMLプレビューを実行し、文書を見ることができるようになっているはずです。Atom を使っていない場合は、ドキュメントをウェブサーバーに置いてみるとよいでしょう。GitHub の使用に慣れているなら、GitHub Pages ([tutorial](https://guides.github.com/features/pages/)-テーマのステップをスキップして、読んでいるチュートリアルが入っているリポジトリだけを使うことができます) を使用することができます。Pythonがインストールされていれば、tutorialディレクトリで簡単なWebサーバをコマンドで実行することができます。
 
@@ -131,8 +131,7 @@ tei-hi[rend=italics] {
 }
 ```
 
-改行（Line beginning）はちょっとややこしく、CSSの「擬似セレクタ」が必要です。
-Line beginnings are a little trickier, and require a CSS "pseudo-selector":
+改行（Line beginning）はちょっとややこしく、CSSの「擬似セレクタ」が必要です：
 
 ```css
 tei-lb:before {

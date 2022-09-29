@@ -411,7 +411,7 @@ processElement(elt) {
 // Given a qualified name (e.g. tei:text), return the element name
 tagName(name) {
   if (name.includes(":"), 1) {
-    return name.replace(/:/,"-").toLowerCase();;
+    return name.replace(/:/,"-").toLowerCase();
   } else {
     return "ceteicean-" + name.toLowerCase();
   }

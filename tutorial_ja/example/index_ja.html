@@ -27,12 +27,16 @@
     c.addBehaviors(behaviors);
     c.getHTML5('../meros.xml', function(data){
       document.getElementsByTagName('body')[0].appendChild(data);
-      let rb = document.querySelectorAll('rb,rt')
-      rb.forEach(function(e){
-        let ruby = e.closest('ruby')
-        if (ruby != undefined){
-          ruby.append(e);
-        }
+      let ruby = document.querySelectorAll('tei-ruby')
+      ruby.forEach(function(e1){
+        let rbt = e1.querySelectorAll('tei-rb,tei-rt')
+        let ruby = document.createElement('ruby');
+        rbt.forEach(function(e2){
+          let rbt = document.createElement(e2.tagName.replace(/TEI-/,''));
+          rbt.textContent = e2.textContent;
+          ruby.append(rbt);
+        });
+        e1.replaceWith(ruby);
       });
     });
   </script>

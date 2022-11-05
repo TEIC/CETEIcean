@@ -86,7 +86,7 @@
                         >シラクスの市</placeName>で、 <roleName>石工</roleName>をしている。
                         その友を、これから訪ねてみるつもりなのだ。久しく逢わなかったのだから、 訪ねて行くのが楽しみである。 </p>
                   <p> 歩いているうちに<persName corresp="#メロス">メロス</persName>は、まちの様子を怪しく思った。
-                        ひっそりしている。もう既に日も落ちて、まちの暗いのは当りまえだが、けれども、 なんだか、夜のせいばかりでは無く、<placeName
+                        ひっそりしている。もう既に<time when-custom="初日の夜">日も落ちて</time>、まちの暗いのは当りまえだが、けれども、 なんだか、夜のせいばかりでは無く、<placeName
                               type="real" corresp="#市">市</placeName>全体が、やけに寂しい。のんきな<persName corresp="#メロス"
                               >メロス</persName>も、
                         だんだん不安になって来た。<placeName type="real" corresp="#路">路</placeName>で逢った<persName>若い衆</persName>をつかまえて、何かあったのか、 二年まえに此の<placeName
@@ -237,7 +237,7 @@
                               <rb>地団駄</rb>
                               <rt>じだんだ</rt>
                         </ruby>踏んだ。ものも言いたくなくなった。 </p>
-                  <p> 竹馬の友、<persName corresp="#セリヌンティウス">セリヌンティウス</persName>は、深夜、<placeName
+                  <p> 竹馬の友、<persName corresp="#セリヌンティウス">セリヌンティウス</persName>は、<time when-custom="初日の深夜">深夜</time>、<placeName
                               type="real" corresp="#王城">王城</placeName>に召された。 <persName corresp="#ディオニス"
                               >暴君ディオニス</persName>の面前で、<persName corresp="#セリヌンティウス #メロス"><ruby>
                                     <rb>佳</rb>
@@ -253,10 +253,10 @@
                               corresp="#メロス">メロス</persName>は、すぐに出発した。初夏、満天の星である。</p>
                   <p>
                         <persName corresp="#メロス">メロス</persName>はその夜、一睡もせず<placeName type="real" corresp="#十里の路">十里の路</placeName>を急ぎに急いで、<placeName
-                              type="real" corresp="#村">村</placeName>へ到着したのは、 <ruby>
+                              type="real" corresp="#村">村</placeName>へ到着したのは、 <time when-custom="二日目の午前"><ruby>
                               <rb>翌</rb>
                               <rt>あく</rt>
-                        </ruby>る日の午前、 陽は既に高く昇って、<persName>村人たち</persName>は<placeName type="real" corresp="#野">野</placeName>に出て仕事をはじめていた。<persName
+                        </ruby>る日の午前</time>、 陽は既に高く昇って、<persName>村人たち</persName>は<placeName type="real" corresp="#野">野</placeName>に出て仕事をはじめていた。<persName
                               corresp="#メロス">メロス</persName>の<persName corresp="#メロスの妹"
                               >十六の妹</persName>も、 きょうは<persName corresp="#メロス"
                               >兄</persName>の代りに<roleName>羊群の番</roleName>をしていた。よろめいて歩いて来る<persName
@@ -275,7 +275,7 @@
                               </ruby>な衣裳も買って来た。さあ、これから行って、<persName>村の人たち</persName>に知らせて来い。結婚式は、あすだと。」</said>
                         <persName corresp="#メロス">メロス</persName>は、また、よろよろと歩き出し、<placeName type="real" corresp="#家"
                               >家</placeName>へ帰って神々の祭壇を飾り、祝宴の席を調え、 間もなく床に倒れ伏し、呼吸もせぬくらいの深い眠りに落ちてしまった。
-                              眼が覚めたのは夜だった。<persName corresp="#メロス">メロス</persName>は起きてすぐ、<placeName
+                              眼が覚めたのは<time when-custom="二日目の夜">夜</time>だった。<persName corresp="#メロス">メロス</persName>は起きてすぐ、<placeName
                               type="real" corresp="#花婿の家">花婿の家</placeName>を訪れた。そうして、
                               少し事情があるから、結婚式を明日にしてくれ、と頼んだ。<persName corresp="#メロスの妹の婿">婿の
                                     <roleName>牧人</roleName></persName>は驚き、 それはいけない、こちらには未だ何の仕度も出来ていない、<ruby>
@@ -284,9 +284,9 @@
                         </ruby>の季節まで待ってくれ、 と答えた。<persName corresp="#メロス"
                         >メロス</persName>は、待つことは出来ぬ、どうか明日にしてくれ給え、と更に押してたのんだ。 <persName
                               corresp="#メロスの妹の婿"
-                        >婿の<roleName>牧人</roleName></persName>も頑強であった。なかなか承諾してくれない。夜明けまで議論をつづけて、やっと、
+                        >婿の<roleName>牧人</roleName></persName>も頑強であった。なかなか承諾してくれない。<time when-custom="三日目の夜明け">夜明け</time>まで議論をつづけて、やっと、
                         どうにか<persName corresp="#メロスの妹の婿">婿</persName>をなだめ、すかして、説き伏せた。</p>
-                  <p>結婚式は、真昼に行われた。 <persName corresp="#メロスの妹の婿">新郎</persName><persName
+                  <p>結婚式は、<time when-custom="三日目の昼">真昼</time>に行われた。 <persName corresp="#メロスの妹の婿">新郎</persName><persName
                               corresp="#メロスの妹">新婦</persName>の、
                         神々への宣誓が済んだころ、黒雲が空を覆い、ぽつりぽつり雨が降り出し、やがて車軸を流すような
                         大雨となった。祝宴に列席していた<persName>村人</persName>たちは、何か不吉なものを感じたが、それでも、 めいめい気持を引きたて、狭い<placeName
@@ -300,7 +300,7 @@
                               <rb>湛</rb>
                               <rt>たた</rt>
                         </ruby>え、しばらくは、 <persName corresp="#ディオニス"
-                        >王</persName>とのあの約束をさえ忘れていた。祝宴は、夜に入っていよいよ乱れ華やかになり、人々は、
+                        >王</persName>とのあの約束をさえ忘れていた。祝宴は、<time when-custom="三日目の夜">夜</time>に入っていよいよ乱れ華やかになり、人々は、
                               外の豪雨を全く気にしなくなった。<persName corresp="#メロス"
                         >メロス</persName>は、一生このままここにいたい、と思った。
                         この佳い人たちと生涯暮して行きたいと願ったが、いまは、自分のからだで、自分のものでは無い。 ままならぬ事である。<persName
@@ -339,7 +339,7 @@
                               <rt>えしゃく</rt>
                         </ruby> して、宴席から立ち去り、<placeName type="real" corresp="#羊小屋"
                         >羊小屋</placeName>にもぐり込んで、死んだように深く眠った。</p>
-                  <p> 眼が覚めたのは翌る日の薄明の頃である。<persName corresp="#メロス"
+                  <p> 眼が覚めたのは<time when-custom="四日目の朝">翌る日の薄明の頃</time>である。<persName corresp="#メロス"
                         >メロス</persName>は跳ね起き、南無三、寝過したか、いや、まだまだ大丈夫、
                               これからすぐに出発すれば、約束の刻限までには十分間に合う。きょうは是非とも、あの<persName corresp="#ディオニス"
                               >王</persName>に、人の信実の存する ところを見せてやろう。そうして笑って<placeName type="unreal" corresp="#磔台"
@@ -359,7 +359,7 @@
                               >隣村</placeName>に着いた頃には、 雨も<ruby>
                               <rb>止</rb>
                               <rt>や</rt>
-                        </ruby>み 、日は高く昇って、そろそろ暑くなって来た。<persName corresp="#メロス">メロス</persName>は<ruby>
+                        </ruby>み 、<time when-custom="四日目の昼">日は高く昇って</time>、そろそろ暑くなって来た。<persName corresp="#メロス">メロス</persName>は<ruby>
                               <rb>額</rb>
                               <rt>ひたい</rt>
                         </ruby>の汗をこぶしで払い、ここまで来れば大丈夫、 もはや故郷への未練は無い。<persName
@@ -398,7 +398,7 @@
                               >ゼウス</persName>に手を挙げて哀願した。 <said who="#メロス">「ああ、<ruby>
                                     <rb>鎮</rb>
                                     <rt>しず</rt>
-                              </ruby>めたまえ、荒れ狂う流れを！ 時は刻々に過ぎて行きます。太陽も既に真昼時です。あれが沈んでしまわぬうちに、 <placeName
+                              </ruby>めたまえ、荒れ狂う流れを！ 時は刻々に過ぎて行きます。太陽も既に<time when-custom="四日目の昼">真昼時</time>です。あれが沈んでしまわぬうちに、 <placeName
                                     type="unreal" corresp="#王城">王城</placeName>に行き着くことが出来 なかったら、あの<persName
                                     corresp="#セリヌンティウス">佳い友達</persName>が、<rs corresp="#メロス">私</rs>のために死ぬのです。」</said>
                               濁流は、<persName corresp="#メロス"
@@ -417,7 +417,7 @@
                         </ruby>を垂れてくれた。押し流されつつも、 見事、<placeName type="real" corresp="#対岸"
                               >対岸</placeName>の樹木の幹に、すがりつく事が出来たのである。ありがたい。<persName corresp="#メロス"
                               >メロス</persName>は馬のように大きな胴震いを一つして、
-                        すぐにまた先きを急いだ。一刻といえども、むだには出来ない。陽は既に西に傾きかけている。 </p>
+                        すぐにまた先きを急いだ。一刻といえども、むだには出来ない。<time when-custom="四日目の午後">陽は既に西に傾きかけている</time>。 </p>
                   <p>ぜいぜい荒い呼吸をしながら<placeName type="real" corresp="#峠"
                               >峠</placeName>をのぼり、のぼり切って、ほっとした時、突然、目の前に一隊の<roleName>山賊</roleName>が躍り出た。
                               <said>「待て。」</said>
@@ -439,7 +439,7 @@
                   <p>一気に<placeName type="real" corresp="#峠">峠</placeName>を駈け降りたが、<ruby>
                               <rb>流石</rb>
                               <rt>さすが</rt>
-                        </ruby>に疲労し、 折から午後の<ruby>
+                        </ruby>に疲労し、 折から<time when-custom="四日目の午後">午後</time>の<ruby>
                               <rb>灼熱</rb>
                               <rt>しゃくねつ</rt>
                         </ruby>の太陽がまともに、かっと照って来て、<persName corresp="#メロス">メロス</persName>は幾度となく<ruby>
@@ -542,7 +542,7 @@
                         </ruby>って、一くち飲んだ。ほうと長い溜息が出て、 夢から覚めたような気がした。歩ける。行こう。肉体の疲労<ruby>
                               <rb>恢復</rb>
                               <rt>かいふく</rt>
-                        </ruby>と共に、わずかながら希望が生れた。 義務遂行の希望である。わが身を殺して、名誉を守る希望である。斜陽は赤い光を、樹々の葉に投じ、
+                        </ruby>と共に、わずかながら希望が生れた。 義務遂行の希望である。わが身を殺して、名誉を守る希望である。<time when-custom="四日目の夕方">斜陽</time>は赤い光を、樹々の葉に投じ、
                         葉も枝も燃えるばかりに輝いている。日没までには、まだ間がある。<rs corresp="#メロス">私</rs>を、待っている人があるのだ。
                         少しも疑わず、静かに期待してくれている人があるのだ。<rs corresp="#メロス">私</rs>は、信じられている。<rs corresp="#メロス">私</rs>の命なぞは、
                         問題ではない。死んでお詫び、などと気のいい事は言って居られぬ。私は、信頼に報いなければならぬ。 いまはただその一事だ。走れ！ <persName
@@ -576,7 +576,7 @@
                               corresp="#メロス">メロス</persName>は、いまは、ほとんど全裸体であった。
                         呼吸も出来ず、二度、三度、口から血が噴き出た。見える。はるか向うに小さく、<placeName type="real" corresp="#塔楼"
                               >シラクスの市の塔楼</placeName>が見える。 <placeName type="real" corresp="#塔楼"
-                        >塔楼</placeName>は、夕陽を受けてきらきら光っている。</p>
+                        >塔楼</placeName>は、<time when-custom="四日目の夕方">夕陽</time>を受けてきらきら光っている。</p>
                   <p>
                         <said>「ああ、<persName corresp="#メロス">メロス</persName>様。」</said>うめくような声が、風と共に聞えた。
                               <said who="#メロス">「誰だ。」</said><persName corresp="#メロス"
@@ -604,7 +604,7 @@
                               間に合わぬものでもない。走るがいい。」</said> 言うにや及ぶ。まだ陽は沈まぬ。最後の死力を尽して、<persName
                               corresp="#メロス">メロス</persName> は走った。<persName corresp="#メロス"
                               >メロス</persName>の頭は、からっぽだ。何一つ考えていない。 ただ、わけのわからぬ大きな力にひきずられて走った。 </p>
-                  <p>陽は、ゆらゆら地平線に没し、 まさに最後の一片の残光も、消えようとした時、<persName corresp="#メロス">メロス</persName>は疾風の如く<placeName type="real" corresp="#刑場"
+                  <p><time when-custom="四日目の日没直前">陽は、ゆらゆら地平線に没し、 まさに最後の一片の残光も、消えようとした時</time>、<persName corresp="#メロス">メロス</persName>は疾風の如く<placeName type="real" corresp="#刑場"
                               >刑場</placeName>に突入した。間に合った。 <said who="#メロス">「待て。<rs corresp="#セリヌンティウス">その人</rs>を殺してはならぬ。<persName
                                     corresp="#メロス">メロス</persName>が帰って来た。
                               約束のとおり、いま、帰って来た。」</said>と大声で<placeName corresp="#刑場">刑場</placeName>の<persName>群衆</persName>にむかって叫んだつもりであったが、 <ruby>

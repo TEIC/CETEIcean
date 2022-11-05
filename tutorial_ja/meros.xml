@@ -706,6 +706,7 @@
                         </person>
                         <person xml:id="メロスの妹の婿">
                               <persName>メロスの妹の婿</persName>
+                              <occupation>牧人</occupation>
                         </person>
                         <person xml:id="ディオニスの妹婿">
                               <persName>妹婿さま</persName>
@@ -728,6 +729,7 @@
                         </person>
                         <person xml:id="フィロストラトス">
                               <persName>フィロストラトス</persName>
+                              <occupation>石工</occupation>
                         </person>
                   </listPerson>
 

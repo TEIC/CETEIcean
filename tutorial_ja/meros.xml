@@ -354,7 +354,7 @@
                         </ruby> 邪智を打ち破る為に走るのだ。走らなければならぬ。そうして、<rs corresp="#メロス"
                         >私</rs>は殺される。若い時から名誉を守れ。 さらば、ふるさと。若い<persName corresp="#メロス"
                         >メロス</persName>は、つらかった。幾度か、立ちどまりそうになった。 えい、えいと大声挙げて自身を叱りながら走った。<placeName
-                              type="real" corresp="#村">村</placeName>を出て、<placeName type="real">野</placeName>
+                              type="real" corresp="#村">村</placeName>を出て、<placeName type="real" corresp="#野2">野</placeName>
                               を横切り、<placeName type="real" corresp="#森">森</placeName>をくぐり抜け、<placeName type="real" corresp="#隣村"
                               >隣村</placeName>に着いた頃には、 雨も<ruby>
                               <rb>止</rb>
@@ -733,32 +733,37 @@
                         </person>
                   </listPerson>
 <listPlace>
-      <place xml:id="村"><placeName>村</placeName></place>
-      <place xml:id="シラクス"><placeName>シラクス</placeName></place>
-      <place xml:id="市"><placeName>市</placeName></place>
-      <place xml:id="都の大路"><placeName>都の大路</placeName></place>
-      <place xml:id="路"><placeName>路</placeName></place>
-      <place xml:id="王城"><placeName>王城</placeName></place>
-      <place xml:id="十里の路"><placeName>十里の路</placeName></place>
-      <place xml:id="野"><placeName>野</placeName><note>村内の野？</note></place>
-      <place xml:id="家"><placeName>家</placeName></place>
-      <place xml:id="花婿の家"><placeName>花婿の家</placeName></place>
-      <place xml:id="羊小屋"><placeName>羊小屋</placeName></place>
-      <place xml:id="磔台"><placeName>磔の台</placeName></place>
-      <place xml:id="野2"><placeName>野</placeName><note>村外の野？</note></place>
-      <place xml:id="森"><placeName>森</placeName></place>
-      <place xml:id="隣村"><placeName>隣村</placeName></place>
-      <place xml:id="川"><placeName>川</placeName></place>
-      <place xml:id="山の水源地"><placeName>山の水源地</placeName></place>
-      <place xml:id="橋"><placeName>橋</placeName></place>
-      <place xml:id="川岸"><placeName>川岸</placeName></place>
-      <place xml:id="対岸"><placeName>対岸</placeName></place>
-      <place xml:id="峠"><placeName>峠</placeName></place>
-      <place xml:id="岩の裂目"><placeName>岩の裂目</placeName></place>
-      <place xml:id="野原"><placeName>野原</placeName></place>
-      <place xml:id="小川"><placeName>小川</placeName></place>
-      <place xml:id="塔楼"><placeName>塔楼</placeName></place>
-      <place xml:id="刑場"><placeName>刑場</placeName></place>
+      <place xml:id="村"><placeName>村</placeName>
+            <place xml:id="野"><placeName>野</placeName><note>村内の野？</note></place>
+            <place xml:id="家"><placeName>家</placeName></place>
+            <place xml:id="花婿の家"><placeName>花婿の家</placeName></place>
+            <place xml:id="羊小屋"><placeName>羊小屋</placeName></place>
+      </place>
+      <place xml:id="シラクス"><placeName>シラクス</placeName>
+            <place xml:id="市"><placeName>市</placeName></place>
+            <place xml:id="都の大路"><placeName>都の大路</placeName></place>
+            <place xml:id="路"><placeName>路</placeName></place>
+            <place xml:id="王城"><placeName>王城</placeName></place> 
+            <place xml:id="磔台"><placeName>磔の台</placeName></place>
+            <place xml:id="塔楼"><placeName>塔楼</placeName></place>
+            <place xml:id="刑場"><placeName>刑場</placeName></place>
+      </place>
+      <place xml:id="十里の路">
+            <placeName>十里の路</placeName>
+            <place xml:id="森"><placeName>森</placeName></place>
+            <place xml:id="隣村"><placeName>隣村</placeName></place>
+            <place xml:id="野2"><placeName>野</placeName><note>村外の野？</note></place>
+            <place xml:id="川"><placeName>川</placeName>
+                  <place xml:id="橋"><placeName>橋</placeName></place>
+                  <place xml:id="川岸"><placeName>川岸</placeName></place>
+                  <place xml:id="対岸"><placeName>対岸</placeName></place>
+            </place>
+            <place xml:id="山の水源地"><placeName>山の水源地</placeName></place>
+            <place xml:id="峠"><placeName>峠</placeName></place>
+            <place xml:id="岩の裂目"><placeName>岩の裂目</placeName></place>
+            <place xml:id="野原"><placeName>野原</placeName></place>
+            <place xml:id="小川"><placeName>小川</placeName></place>
+      </place>
 </listPlace>
             </back>
       </text>

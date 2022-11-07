@@ -465,7 +465,7 @@
                         </ruby>えて、もはや <ruby>
                               <rb>芋虫</rb>
                               <rt>いもむし</rt>
-                        </ruby>ほどにも前進かなわぬ。<placeName type="real"
+                        </ruby>ほどにも前進かなわぬ。<placeName type="real" corresp="#路傍の草原"
                         >路傍の草原</placeName>にごろりと寝ころがった。身体疲労すれば、 精神も共にやられる。もう、どうでもいいという、勇者に不似合いな<ruby>
                               <rb>不貞腐</rb>
                               <rt>ふてくさ</rt>
@@ -754,13 +754,15 @@
             <place xml:id="隣村"><placeName>隣村</placeName></place>
             <place xml:id="野2"><placeName>野</placeName><note>村外の野？</note></place>
             <place xml:id="川"><placeName>川</placeName>
+                  <place xml:id="山の水源地"><placeName>山の水源地</placeName></place>
                   <place xml:id="橋"><placeName>橋</placeName></place>
                   <place xml:id="川岸"><placeName>川岸</placeName></place>
                   <place xml:id="対岸"><placeName>対岸</placeName></place>
             </place>
-            <place xml:id="山の水源地"><placeName>山の水源地</placeName></place>
+            <place xml:id="路傍の草原"><placeName>路傍の草原</placeName>
+                  <place xml:id="岩の裂目"><placeName>岩の裂目</placeName></place>
+            </place>
             <place xml:id="峠"><placeName>峠</placeName></place>
-            <place xml:id="岩の裂目"><placeName>岩の裂目</placeName></place>
             <place xml:id="野原"><placeName>野原</placeName></place>
             <place xml:id="小川"><placeName>小川</placeName></place>
       </place>

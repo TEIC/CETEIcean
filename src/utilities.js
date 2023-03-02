@@ -16,8 +16,11 @@ export function getOrdinality(elt, name) {
   out child elements introduced by CETEIcean.
 */ 
 export function copyAndReset(node) {
+  const doc = node.ownerDocument;
   let clone = (n) => {
-    let result = n.nodeType === Node.ELEMENT_NODE?document.createElement(n.nodeName):n.cloneNode(true);
+    let result = n.nodeType === Node.ELEMENT_NODE
+      ? doc.createElement(n.nodeName)
+      : n.cloneNode(true);
     if (n.attributes) {
       for (let att of Array.from(n.attributes)) {
         if (att.name !== "data-processed") {
@@ -64,8 +67,9 @@ export function first(urls) {
   with display set to "none".
 */
 export function hideContent(elt, rewriteIds = true) {
+  const doc = elt.ownerDocument;
   if (elt.childNodes.length > 0) {
-    let hidden = document.createElement("span");
+    let hidden = doc.createElement("span");
     elt.appendChild(hidden);
     hidden.setAttribute("hidden", "");
     hidden.setAttribute("data-original", "");

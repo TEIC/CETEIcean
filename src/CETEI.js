@@ -7,6 +7,17 @@ class CETEI {
   constructor(options){
     this.options = options ? options : {}
 
+    // Set a local reference to the Document object
+    // Determine document in this order of preference: options, window, global 
+    this.document = this.options.documentObject ? this.options.documentObject : undefined
+    if (this.document === undefined) {
+      if (typeof window !== 'undefined' && window.document) {
+        this.document = window.document
+      } else if (typeof global !== 'undefined' && global.document) {
+        this.document = global.document
+      }
+    }
+
     // Bind methods
     this.addBehaviors = addBehaviors.bind(this);
     this.addBehavior = addBehavior.bind(this);
@@ -114,9 +125,9 @@ class CETEI {
       let newElement;
       if (this.namespaces.has(el.namespaceURI ? el.namespaceURI : "")) {
         let prefix = this.namespaces.get(el.namespaceURI ? el.namespaceURI : "");
-        newElement = document.createElement(`${prefix}-${el.localName}`);
+        newElement = this.document.createElement(`${prefix}-${el.localName}`);
       } else {
-        newElement = document.importNode(el, false);
+        newElement = this.document.importNode(el, false);
       }
       // Copy attributes; @xmlns, @xml:id, @xml:lang, and
       // @rendition get special handling.
@@ -155,7 +166,7 @@ class CETEI {
       }
       // Turn <rendition scheme="css"> elements into HTML styles
       if (el.localName == "tagsDecl") {
-        let style = document.createElement("style");
+        let style = this.document.createElement("style");
         for (let node of Array.from(el.childNodes)){
           if (node.nodeType == Node.ELEMENT_NODE && node.localName == "rendition" && node.getAttribute("scheme") == "css") {
             let rule = "";
@@ -168,7 +179,7 @@ class CETEI {
               rule += node.textContent;
             }
             rule += "\n}\n";
-            style.appendChild(document.createTextNode(rule));
+            style.appendChild(this.document.createTextNode(rule));
           }
         }
         if (style.childNodes.length > 0) {
@@ -223,7 +234,7 @@ class CETEI {
       c.processPage();
   */
   processPage() {
-    this.els = learnCustomElementNames(document);
+    this.els = learnCustomElementNames(this.document);
     this.applyBehaviors();
   }
 
@@ -368,7 +379,7 @@ getHandler(behaviors, fn) {
 }
 
 insert(elt, strings) {
-  let span = document.createElement("span");
+  let span = this.document.createElement("span");
   for (let node of Array.from(elt.childNodes)) {
     if (node.nodeType === Node.ELEMENT_NODE && !node.hasAttribute("data-processed")) {
       this.processElement(node);
@@ -501,7 +512,7 @@ fallback(names) {
       for (let elt of Array.from((
           this.dom && !this.done 
           ? this.dom
-          : document
+          : this.document
         ).getElementsByTagName(tagName(name)))) {
         if (!elt.hasAttribute("data-processed")) {
           append(fn, elt);
@@ -530,7 +541,7 @@ fallback(names) {
       }
     } else {
       setTimeout(function() {
-        let h = document.querySelector(window.decodeURI(window.location.hash));
+        let h = this.document.querySelector(window.decodeURI(window.location.hash));
         if (h) {
           h.scrollIntoView();
         }

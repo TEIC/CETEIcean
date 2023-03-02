@@ -1,7 +1,7 @@
-import defaultBehaviors from './defaultBehaviors';
-import * as utilities from './utilities';
-import {addBehaviors, addBehavior, removeBehavior} from './behaviors';
-import {learnElementNames, learnCustomElementNames} from './dom';
+import defaultBehaviors from './defaultBehaviors.js';
+import * as utilities from './utilities.js';
+import {addBehaviors, addBehavior, removeBehavior} from './behaviors.js';
+import {learnElementNames, learnCustomElementNames} from './dom.js';
 
 class CETEI {
   constructor(options){

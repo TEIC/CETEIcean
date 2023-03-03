@@ -159,9 +159,10 @@ class CETEI {
       }
       // <head> elements need to know their level
       if (el.localName == "head") {
+        // 1 is XPathResult.NUMBER_TYPE
         let level = XML_dom.evaluate("count(ancestor::*[tei:head])", el, function(ns) {
           if (ns == "tei") return "http://www.tei-c.org/ns/1.0";
-        }, XPathResult.NUMBER_TYPE, null);
+        }, 1, null);
         newElement.setAttribute("data-level", level.numberValue);
       }
       // Turn <rendition scheme="css"> elements into HTML styles
@@ -361,7 +362,7 @@ getFallback(behaviors, fn) {
     if (behaviors[fn] instanceof Function) {
       return behaviors[fn];
     } else {
-      return decorator(behaviors[fn]);
+      return this.decorator(behaviors[fn]);
     }
   }
 }
@@ -517,9 +518,9 @@ fallback(names) {
           this.dom && !this.done 
           ? this.dom
           : this.document
-        ).getElementsByTagName(tagName(name)))) {
+        ).getElementsByTagName(this.tagName(name)))) {
         if (!elt.hasAttribute("data-processed")) {
-          append(fn, elt);
+          this.append(fn, elt);
         }
       }
     }

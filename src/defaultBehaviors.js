@@ -30,7 +30,8 @@ export default {
         const doc = elt.ownerDocument;
         let dl = doc.createElement("dl");
         for (let child of Array.from(elt.children)) {
-          if (child.nodeType == Node.ELEMENT_NODE) {
+          // nodeType 1 is Node.ELEMENT_NODE
+          if (child.nodeType == 1) {
             if (child.localName == "tei-label") {
               let dt = doc.createElement("dt");
               dt.innerHTML = child.innerHTML;

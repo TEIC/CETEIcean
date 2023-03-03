@@ -18,7 +18,8 @@ export function getOrdinality(elt, name) {
 export function copyAndReset(node) {
   const doc = node.ownerDocument;
   let clone = (n) => {
-    let result = n.nodeType === Node.ELEMENT_NODE
+    // nodeType 1 is Node.ELEMENT_NODE
+    let result = n.nodeType === 1
       ? doc.createElement(n.nodeName)
       : n.cloneNode(true);
     if (n.attributes) {
@@ -29,12 +30,14 @@ export function copyAndReset(node) {
       }
     }
     for (let nd of Array.from(n.childNodes)){
-      if (nd.nodeType == Node.ELEMENT_NODE) {
+      // nodeType 1 is Node.ELEMENT_NODE
+      if (nd.nodeType == 1) {
         if (!n.hasAttribute("data-empty")) {
           if (nd.hasAttribute("data-original")) {
             for (let childNode of Array.from(nd.childNodes)) {
               let child = result.appendChild(clone(childNode));
-              if (child.nodeType === Node.ELEMENT_NODE && child.hasAttribute("data-origid")) {
+              // nodeType 1 is Node.ELEMENT_NODE
+              if (child.nodeType === 1 && child.hasAttribute("data-origid")) {
                 child.setAttribute("id", child.getAttribute("data-origid"));
                 child.removeAttribute("data-origid");
               }
@@ -75,7 +78,8 @@ export function hideContent(elt, rewriteIds = true) {
     hidden.setAttribute("data-original", "");
     for (let node of Array.from(elt.childNodes)) {
       if (node !== hidden) {
-        if (node.nodeType === Node.ELEMENT_NODE) {
+        // nodeType 1 is Node.ELEMENT_NODE
+        if (node.nodeType === 1) {
           node.setAttribute("data-processed", "");
           for (let e of node.querySelectorAll("*")) {
             e.setAttribute("data-processed", "");
@@ -152,7 +156,8 @@ export function serialize(el, stripElt, ws) {
   let ignorable = (txt) => {
     return !(/[^\t\n\r ]/.test(txt));
   }
-  if (!stripElt && el.nodeType == Node.ELEMENT_NODE) {
+  // nodeType 1 is Node.ELEMENT_NODE
+  if (!stripElt && el.nodeType == 1) {
     if ((typeof ws === "string") && ws !== "") {
       str += "\n" + ws + "<";
     } else  {
@@ -177,18 +182,21 @@ export function serialize(el, stripElt, ws) {
   }
   //TODO: Be smarter about skipping generated content with hidden original
   for (let node of Array.from(el.childNodes)) {
+    // nodeType 1 is Node.ELEMENT_NODE
+    // nodeType 7 is Node.PROCESSING_INSTRUCTION_NODE
+    // nodeType 8 is Node.COMMENT_NODE
     switch (node.nodeType) {
-      case Node.ELEMENT_NODE:
+      case 1:
         if (typeof ws === "string") {
           str += this.serialize(node, false, ws + "  ");
         } else {
           str += this.serialize(node, false, ws);
         }
         break;
-      case Node.PROCESSING_INSTRUCTION_NODE:
+      case 7:
         str += "<?" + node.nodeValue + "?>";
         break;
-      case Node.COMMENT_NODE:
+      case 8:
         str += "<!--" + node.nodeValue + "-->";
         break;
       default:

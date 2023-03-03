@@ -168,7 +168,8 @@ class CETEI {
       if (el.localName == "tagsDecl") {
         let style = this.document.createElement("style");
         for (let node of Array.from(el.childNodes)){
-          if (node.nodeType == Node.ELEMENT_NODE && node.localName == "rendition" && node.getAttribute("scheme") == "css") {
+          // nodeType 1 is Node.ELEMENT_NODE
+          if (node.nodeType == 1 && node.localName == "rendition" && node.getAttribute("scheme") == "css") {
             let rule = "";
             if (node.hasAttribute("selector")) {
               //rewrite element names in selectors
@@ -196,7 +197,8 @@ class CETEI {
         };
       }
       for (let node of Array.from(el.childNodes)) {
-          if (node.nodeType == Node.ELEMENT_NODE) {
+          // Node.ELEMENT_NODE
+          if (node.nodeType == 1 ) {
               newElement.appendChild(convertEl(node));
           }
           else {
@@ -220,7 +222,7 @@ class CETEI {
         window.dispatchEvent(ceteiceanLoad);
       }
     } else {
-      if (window) {
+      if (typeof window !== 'undefined') {
         window.dispatchEvent(ceteiceanLoad);
       }
       return this.dom;
@@ -381,7 +383,8 @@ getHandler(behaviors, fn) {
 insert(elt, strings) {
   let span = this.document.createElement("span");
   for (let node of Array.from(elt.childNodes)) {
-    if (node.nodeType === Node.ELEMENT_NODE && !node.hasAttribute("data-processed")) {
+    // nodeType 1 is Node.ELEMENT_NODE
+    if (node.nodeType === 1 && !node.hasAttribute("data-processed")) {
       this.processElement(node);
     }
   } 
@@ -413,7 +416,8 @@ processElement(elt) {
     }
   }
   for (let node of Array.from(elt.childNodes)) {
-    if (node.nodeType === Node.ELEMENT_NODE) {
+    // nodeType 1 is Node.ELEMENT_NODE
+    if (node.nodeType === 1) {
       this.processElement(node);
     }
   }
@@ -450,7 +454,7 @@ template(str, elt) {
 
 // Define or apply behaviors for the document
 applyBehaviors() {
-  if (window.customElements) {
+  if (typeof window !== 'undefined' && window.customElements) {
     this.define.call(this, this.els);
   } else {
     this.fallback.call(this, this.els);
@@ -507,7 +511,7 @@ define(names) {
 */
 fallback(names) {
   for (let name of names) {
-    let fn = getFallback(this.behaviors, name);
+    let fn = this.getFallback(this.behaviors, name);
     if (fn) {
       for (let elt of Array.from((
           this.dom && !this.done 
@@ -552,7 +556,7 @@ fallback(names) {
 }
 
 try {
-  if (window) {
+  if (typeof window !== 'undefined') {
       window.CETEI = CETEI;
       window.addEventListener("beforeunload", CETEI.savePosition);
       var ceteiceanLoad = new Event("ceteiceanload");

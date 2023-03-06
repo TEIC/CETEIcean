@@ -111,12 +111,7 @@ class CETEI {
     return this.domToHTML5(this.XML_dom, callback, perElementFn);
   }
 
-  /* 
-    Converts the supplied XML DOM into HTML5 Custom Elements. If a callback
-    function is supplied, calls it on the result.
-  */
-  domToHTML5(XML_dom, callback, perElementFn){
-
+  preprocess(XML_dom, callback, perElementFn) {
     this.els = learnElementNames(XML_dom, this.namespaces);
 
     let convertEl = (el) => {
@@ -214,6 +209,27 @@ class CETEI {
 
     this.dom = convertEl(XML_dom.documentElement);
     this.utilities.dom = this.dom;
+
+    if (callback) {
+      callback(this.dom, this);
+      if (window) {
+        window.dispatchEvent(ceteiceanLoad);
+      }
+    } else {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(ceteiceanLoad);
+      }
+      return this.dom;
+    }
+  }
+
+  /* 
+    Converts the supplied XML DOM into HTML5 Custom Elements. If a callback
+    function is supplied, calls it on the result.
+  */
+  domToHTML5(XML_dom, callback, perElementFn){
+
+    this.preprocess(XML_dom, null, perElementFn);
 
     this.applyBehaviors();
     this.done = true;
@@ -424,15 +440,6 @@ processElement(elt) {
   }
 }
 
-// Given a qualified name (e.g. tei:text), return the element name
-tagName(name) {
-  if (name.includes(":"), 1) {
-    return name.replace(/:/,"-").toLowerCase();
-  } else {
-    return "ceteicean-" + name.toLowerCase();
-  }
-}
-
 template(str, elt) {
   let result = str;
   if (str.search(/\$(\w*)(@([a-zA-Z:]+))/ )) {
@@ -469,37 +476,8 @@ applyBehaviors() {
 */
 define(names) {
   for (let name of names) {
-    try {
-      const fn = this.getHandler(this.behaviors, name);
-      window.customElements.define(this.tagName(name), class extends HTMLElement {
-        constructor() {
-          super(); 
-          if (!this.matches(":defined")) { // "Upgraded" undefined elements can have attributes & children; new elements can't
-            if (fn) {
-              fn.call(this);
-            }
-            // We don't want to double-process elements, so add a flag
-            this.setAttribute("data-processed", "");
-          }
-        }
-        // Process new elements when they are connected to the browser DOM
-        connectedCallback() {
-          if (!this.hasAttribute("data-processed")) {
-            if (fn) {
-              fn.call(this);
-            }
-            this.setAttribute("data-processed", "");
-          }
-        };
-      });
-    } catch (error) {
-      // When using the same CETEIcean instance for multiple TEI files, this error becomes very common. 
-      // It's muted by default unless the debug option is set.
-      if (this.debug) {
-          console.log(this.tagName(name) + " couldn't be registered or is already registered.");
-          console.log(error);
-      }
-    }
+    const fn = this.getHandler(this.behaviors, name);
+    utilities.defineCustomElement(name, fn, this.debug);
   }
 }
 
@@ -518,7 +496,7 @@ fallback(names) {
           this.dom && !this.done 
           ? this.dom
           : this.document
-        ).getElementsByTagName(this.tagName(name)))) {
+        ).getElementsByTagName(utilities.tagName(name)))) {
         if (!elt.hasAttribute("data-processed")) {
           this.append(fn, elt);
         }
@@ -567,4 +545,4 @@ try {
   console.log(e);
 }
 
-export default CETEI
+export default CETEI;

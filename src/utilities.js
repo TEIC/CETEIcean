@@ -226,3 +226,50 @@ export function unEscapeEntities(str) {
             .replace(/&apos;/, "'")
             .replace(/&amp;/, "&");
 }
+
+// Given a qualified name (e.g. tei:text), return the element name
+export function tagName(name) {
+  if (name.includes(":"), 1) {
+    return name.replace(/:/,"-").toLowerCase();
+  } else {
+    return "ceteicean-" + name.toLowerCase();
+  }
+}
+
+export function defineCustomElement(name, behavior = null, debug = false) {
+  /* 
+  Registers the list of elements provided with the browser.
+  Called by makeHTML5(), but can be called independently if, for example,
+  you've created Custom Elements via an XSLT transformation instead.
+  */
+  try {
+    window.customElements.define(tagName(name), class extends HTMLElement {
+      constructor() {
+        super(); 
+        if (!this.matches(":defined")) { // "Upgraded" undefined elements can have attributes & children; new elements can't
+          if (behavior) {
+            behavior.call(this);
+          }
+          // We don't want to double-process elements, so add a flag
+          this.setAttribute("data-processed", "");
+        }
+      }
+      // Process new elements when they are connected to the browser DOM
+      connectedCallback() {
+        if (!this.hasAttribute("data-processed")) {
+          if (behavior) {
+            behavior.call(this);
+          }
+          this.setAttribute("data-processed", "");
+        }
+      };
+    });
+  } catch (error) {
+    // When using the same CETEIcean instance for multiple TEI files, this error becomes very common. 
+    // It's muted by default unless the debug option is set.
+    if (debug) {
+        console.log(tagName(name) + " couldn't be registered or is already registered.");
+        console.log(error);
+    }
+  }
+}

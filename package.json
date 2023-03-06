@@ -16,6 +16,7 @@
     "type": "git",
     "url": "https://github.com/TEIC/CETEIcean.git"
   },
+  "exports": "./src/CETEI.js",
   "devDependencies": {
     "@babel/core": "^7.15.5",
     "@babel/preset-env": "7.15.6",

@@ -188,9 +188,9 @@ export function serialize(el, stripElt, ws) {
     switch (node.nodeType) {
       case 1:
         if (typeof ws === "string") {
-          str += this.serialize(node, false, ws + "  ");
+          str += serialize(node, false, ws + "  ");
         } else {
-          str += this.serialize(node, false, ws);
+          str += serialize(node, false, ws);
         }
         break;
       case 7:

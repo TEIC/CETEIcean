@@ -225,6 +225,9 @@ class CETEI {
   processPage() {
     this.els = learnCustomElementNames(document);
     this.applyBehaviors();
+    if (window) {
+      window.dispatchEvent(ceteiceanLoad);
+    }
   }
 
   /* 
@@ -255,16 +258,16 @@ class CETEI {
 */
 append(fn, elt) {
   let self = this;
-  if (elt) {
+  if (elt && !elt.hasAttribute('data-processed')) {
     let content = fn.call(self.utilities, elt);
-    if (content && !self.childExists(elt.firstElementChild, content.nodeName)) {
+    if (content) {
       self.appendBasic(elt, content);
     }
   } else {
     return function() {
       if (!this.hasAttribute("data-processed")) {
         let content = fn.call(self.utilities, this);
-        if (content && !self.childExists(this.firstElementChild, content.nodeName)) {
+        if (content) {
           self.appendBasic(this, content);
         }
       }
@@ -368,7 +371,7 @@ getHandler(behaviors, fn) {
 }
 
 insert(elt, strings) {
-  let span = document.createElement("span");
+  let content = document.createElement("cetei-content");
   for (let node of Array.from(elt.childNodes)) {
     if (node.nodeType === Node.ELEMENT_NODE && !node.hasAttribute("data-processed")) {
       this.processElement(node);
@@ -377,19 +380,23 @@ insert(elt, strings) {
   // If we have before and after tags have them parsed by
   // .innerHTML and then add the content to the resulting child
   if (strings[0].match("<[^>]+>") && strings[1] && strings[1].match("<[^>]+>")) { 
-    span.innerHTML = strings[0] + elt.innerHTML + (strings[1]?strings[1]:"");
+    content.innerHTML = strings[0] + elt.innerHTML + (strings[1]?strings[1]:"");
   } else {
-    span.innerHTML = strings[0];
-    span.setAttribute("data-before", strings[0].replace(/<[^>]+>/g,"").length);
+    content.innerHTML = strings[0];
+    content.setAttribute("data-before", strings[0].replace(/<[^>]+>/g,"").length);
     for (let node of Array.from(elt.childNodes)) {
-      span.appendChild(node.cloneNode(true));
+      content.appendChild(node.cloneNode(true));
     }
     if (strings.length > 1) {
-      span.innerHTML += strings[1];
-      span.setAttribute("data-after", strings[1].replace(/<[^>]+>/g,"").length);
+      content.innerHTML += strings[1];
+      content.setAttribute("data-after", strings[1].replace(/<[^>]+>/g,"").length);
     } 
   }
-  return span;
+  if (content.childNodes.length < 2) {
+    return content.firstChild;
+  } else {
+    return content;
+  }
 }
 
 // Runs behaviors recursively on the supplied element and children
@@ -524,6 +531,7 @@ fallback(names) {
     if (!window.location.hash) {
       let scroll;
       if (scroll = window.sessionStorage.getItem(window.location + "-scroll")) {
+        window.sessionStorage.removeItem(window.location + "-scroll");
         setTimeout(function() {
           window.scrollTo(0, scroll);
         }, 100);

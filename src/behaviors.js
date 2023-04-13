@@ -21,7 +21,7 @@ export function addBehaviors(bhvs) {
   }
   if (bhvs["functions"]) {
     for (let fn of Object.keys(bhvs["functions"])) {
-      this.utilities[fn] = bhvs["functions"][fn];
+      this.utilities[fn] = bhvs["functions"][fn].bind(this.utilities);
     }
   }
   if (bhvs["handlers"]) {

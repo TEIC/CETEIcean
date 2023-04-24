@@ -27,16 +27,18 @@ export default {
     "list": [
       // will only run on a list where @type="gloss"
       ["[type=gloss]", function(elt) {
-        let dl = document.createElement("dl");
+        const doc = elt.ownerDocument;
+        let dl = doc.createElement("dl");
         for (let child of Array.from(elt.children)) {
-          if (child.nodeType == Node.ELEMENT_NODE) {
+          // nodeType 1 is Node.ELEMENT_NODE
+          if (child.nodeType == 1) {
             if (child.localName == "tei-label") {
-              let dt = document.createElement("dt");
+              let dt = doc.createElement("dt");
               dt.innerHTML = child.innerHTML;
               dl.appendChild(dt);
             }
             if (child.localName == "tei-item") {
-              let dd = document.createElement("dd");
+              let dd = doc.createElement("dd");
               dd.innerHTML = child.innerHTML;
               dl.appendChild(dd);
             }
@@ -48,25 +50,26 @@ export default {
     "note": [
       // Make endnotes
       ["[place=end]", function(elt){
+        const doc = elt.ownerDocument;
         if (!this.noteIndex){
           this["noteIndex"] = 1;
         } else {
           this.noteIndex++;
         }
         let id = "_note_" + this.noteIndex;
-        let link = document.createElement("a");
+        let link = doc.createElement("a");
         link.setAttribute("id", "src" + id);
         link.setAttribute("href", "#" + id);
         link.innerHTML = this.noteIndex;
-        let content = document.createElement("sup");
+        let content = doc.createElement("sup");
         content.appendChild(link);
-        let notes = this.dom.querySelector("ol.notes");
+        let notes = doc.querySelector("ol.notes");
         if (!notes) {
-          notes = document.createElement("ol");
+          notes = doc.createElement("ol");
           notes.setAttribute("class", "notes");
           this.dom.appendChild(notes);
         }
-        let note = document.createElement("li");
+        let note = doc.createElement("li");
         note.id = id;
         note.innerHTML = elt.innerHTML
         notes.appendChild(note);
@@ -79,15 +82,17 @@ export default {
     },
     "title": [
       ["tei-titlestmt>tei-title", function(elt) {
-        let title = document.createElement("title");
+        const doc = elt.ownerDocument;
+        let title = doc.createElement("title");
         title.innerHTML = elt.innerText;
-        document.querySelector("head").appendChild(title);
+        doc.querySelector("head").appendChild(title);
       }]
     ],
   },
   "teieg": {
     "egXML": function(elt) {
-      let pre = document.createElement("pre");
+      const doc = elt.ownerDocument;
+      let pre = doc.createElement("pre");
       let content = this.serialize(elt, true).replace(/</g, "&lt;");
       let ws = content.match(/^[\t ]+/);
       if (ws) {

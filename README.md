@@ -52,6 +52,20 @@ new CETEI({
 })
 ```
 
+### Usage with Node
+
+CETEIcean can be used on the server by providing a DOM implementation, such as [JSDOM](https://github.com/jsdom/jsdom). You can pass a document object as an option when instantiating CETEIcean.
+
+```js
+import { JSDOM } from 'jsdom';
+import CETEI from 'CETEIcean';
+
+const jdom = new JSDOM(`<TEI xmlns="http://www.tei-c.org/ns/1.0" />`, {contentType: 'text/xml'});
+new CETEI({
+  documentObject: jdom.window.document
+})
+```
+
 ### Other methods
 
 #### getHTML5( url, callback, perElementFn )

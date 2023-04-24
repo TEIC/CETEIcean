@@ -16,8 +16,12 @@ export function getOrdinality(elt, name) {
   out child elements introduced by CETEIcean.
 */ 
 export function copyAndReset(node) {
+  const doc = node.ownerDocument;
   let clone = (n) => {
-    let result = n.nodeType === Node.ELEMENT_NODE?document.createElement(n.nodeName):n.cloneNode(true);
+    // nodeType 1 is Node.ELEMENT_NODE
+    let result = n.nodeType === 1
+      ? doc.createElement(n.nodeName)
+      : n.cloneNode(true);
     if (n.attributes) {
       for (let att of Array.from(n.attributes)) {
         if (att.name !== "data-processed") {
@@ -26,12 +30,14 @@ export function copyAndReset(node) {
       }
     }
     for (let nd of Array.from(n.childNodes)){
-      if (nd.nodeType == Node.ELEMENT_NODE) {
+      // nodeType 1 is Node.ELEMENT_NODE
+      if (nd.nodeType == 1) {
         if (!n.hasAttribute("data-empty")) {
           if (nd.hasAttribute("data-original")) {
             for (let childNode of Array.from(nd.childNodes)) {
               let child = result.appendChild(clone(childNode));
-              if (child.nodeType === Node.ELEMENT_NODE && child.hasAttribute("data-origid")) {
+              // nodeType 1 is Node.ELEMENT_NODE
+              if (child.nodeType === 1 && child.hasAttribute("data-origid")) {
                 child.setAttribute("id", child.getAttribute("data-origid"));
                 child.removeAttribute("data-origid");
               }
@@ -64,14 +70,16 @@ export function first(urls) {
   with display set to "none".
 */
 export function hideContent(elt, rewriteIds = true) {
+  const doc = elt.ownerDocument;
   if (elt.childNodes.length > 0) {
-    let hidden = document.createElement("span");
+    let hidden = doc.createElement("span");
     elt.appendChild(hidden);
     hidden.setAttribute("hidden", "");
     hidden.setAttribute("data-original", "");
     for (let node of Array.from(elt.childNodes)) {
       if (node !== hidden) {
-        if (node.nodeType === Node.ELEMENT_NODE) {
+        // nodeType 1 is Node.ELEMENT_NODE
+        if (node.nodeType === 1) {
           node.setAttribute("data-processed", "");
           for (let e of node.querySelectorAll("*")) {
             e.setAttribute("data-processed", "");
@@ -148,7 +156,8 @@ export function serialize(el, stripElt, ws) {
   let ignorable = (txt) => {
     return !(/[^\t\n\r ]/.test(txt));
   }
-  if (!stripElt && el.nodeType == Node.ELEMENT_NODE) {
+  // nodeType 1 is Node.ELEMENT_NODE
+  if (!stripElt && el.nodeType == 1) {
     if ((typeof ws === "string") && ws !== "") {
       str += "\n" + ws + "<";
     } else  {
@@ -173,18 +182,21 @@ export function serialize(el, stripElt, ws) {
   }
   //TODO: Be smarter about skipping generated content with hidden original
   for (let node of Array.from(el.childNodes)) {
+    // nodeType 1 is Node.ELEMENT_NODE
+    // nodeType 7 is Node.PROCESSING_INSTRUCTION_NODE
+    // nodeType 8 is Node.COMMENT_NODE
     switch (node.nodeType) {
-      case Node.ELEMENT_NODE:
+      case 1:
         if (typeof ws === "string") {
-          str += this.serialize(node, false, ws + "  ");
+          str += serialize(node, false, ws + "  ");
         } else {
-          str += this.serialize(node, false, ws);
+          str += serialize(node, false, ws);
         }
         break;
-      case Node.PROCESSING_INSTRUCTION_NODE:
+      case 7:
         str += "<?" + node.nodeValue + "?>";
         break;
-      case Node.COMMENT_NODE:
+      case 8:
         str += "<!--" + node.nodeValue + "-->";
         break;
       default:
@@ -213,4 +225,51 @@ export function unEscapeEntities(str) {
             .replace(/&quot;/, "\"")
             .replace(/&apos;/, "'")
             .replace(/&amp;/, "&");
+}
+
+// Given a qualified name (e.g. tei:text), return the element name
+export function tagName(name) {
+  if (name.includes(":"), 1) {
+    return name.replace(/:/,"-").toLowerCase();
+  } else {
+    return "ceteicean-" + name.toLowerCase();
+  }
+}
+
+export function defineCustomElement(name, behavior = null, debug = false) {
+  /* 
+  Registers the list of elements provided with the browser.
+  Called by makeHTML5(), but can be called independently if, for example,
+  you've created Custom Elements via an XSLT transformation instead.
+  */
+  try {
+    window.customElements.define(tagName(name), class extends HTMLElement {
+      constructor() {
+        super(); 
+        if (!this.matches(":defined")) { // "Upgraded" undefined elements can have attributes & children; new elements can't
+          if (behavior) {
+            behavior.call(this);
+          }
+          // We don't want to double-process elements, so add a flag
+          this.setAttribute("data-processed", "");
+        }
+      }
+      // Process new elements when they are connected to the browser DOM
+      connectedCallback() {
+        if (!this.hasAttribute("data-processed")) {
+          if (behavior) {
+            behavior.call(this);
+          }
+          this.setAttribute("data-processed", "");
+        }
+      };
+    });
+  } catch (error) {
+    // When using the same CETEIcean instance for multiple TEI files, this error becomes very common. 
+    // It's muted by default unless the debug option is set.
+    if (debug) {
+        console.log(tagName(name) + " couldn't be registered or is already registered.");
+        console.log(error);
+    }
+  }
 }

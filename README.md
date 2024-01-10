@@ -12,10 +12,7 @@ documents to be displayed in a web browser without first transforming them to
 HTML. It uses the emerging [Web Components](http://webcomponents.org) standards,
 especially [Custom Elements](http://w3c.github.io/webcomponents/spec/custom/). It 
 works by loading the TEI file dynamically, renaming the elements to follow the
-Custom Elements conventions, and registering them with the browser. Browsers
-that support Web Components will use them to add the appropriate display and
-behaviors to the TEI elements; other browsers will use fallback methods to
-achieve the same result.
+Custom Elements conventions, and registering them with the browser.
 
 Because it preserves the full structure and information from your TEI data model,
 CETEIcean allows you to build rich web applications from your source documents

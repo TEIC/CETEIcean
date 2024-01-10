@@ -1,12 +1,15 @@
 import { JSDOM } from 'jsdom';
 import CETEI from '../src/CETEI.js';
+import fs from 'fs';
 
-const jdom = new JSDOM(`<TEI xmlns="http://www.tei-c.org/ns/1.0"><div>test</div></TEI>`, {contentType: 'text/xml'});
+const tei = fs.readFileSync('test/testTEI.xml', 'utf8');
+const jdom = new JSDOM(tei, {contentType: 'text/xml'});
 const teiDoc = jdom.window.document;
 
 const test = () => {
   console.log('Get HTML5 from JSDOM');
-  const processedTEI = (new CETEI({documentObject: teiDoc})).domToHTML5(teiDoc);
+  const c = new CETEI({documentObject: teiDoc});
+  const processedTEI = c.domToHTML5(teiDoc);
   if (processedTEI) {
     console.log(' > pass');
   } else {
@@ -14,7 +17,14 @@ const test = () => {
     return;
   }
   console.log('Check content');
-  if (processedTEI.querySelector("tei-div")) {
+  if (processedTEI.querySelector("tei-p")) {
+    console.log(' > pass');
+  } else {
+    console.log(' > fail');
+  }
+  console.log('Round-trip test');
+  const roundTrip = new JSDOM(c.utilities.resetAndSerialize(processedTEI, false, false), {contentType: 'text/xml'}).window.document;
+  if (teiDoc.querySelectorAll('*').length === roundTrip.querySelectorAll('*').length) {
     console.log(' > pass');
   } else {
     console.log(' > fail');

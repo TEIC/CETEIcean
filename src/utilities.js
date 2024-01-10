@@ -1,7 +1,7 @@
 export function getOrdinality(elt, name) {
   let pos = 1;
   let e = elt;
-  while (e && e.previousElementSibling !== null && (name?e.previousElementSibling.localName == name:true)) {
+  while (e && e.previousElementSibling !== null && (name ? e.previousElementSibling.localName == name : true)) {
     pos++;
     e = e.previousElementSibling;
     if (!e.previousElementSibling) {
@@ -17,11 +17,21 @@ export function getOrdinality(elt, name) {
 */ 
 export function copyAndReset(node) {
   const doc = node.ownerDocument;
-  let clone = (n) => {
-    // nodeType 1 is Node.ELEMENT_NODE
-    let result = n.nodeType === 1
-      ? doc.createElement(n.nodeName)
-      : n.cloneNode(true);
+  let clone = (n) => {    
+    let result;
+    switch (n.nodeType) {
+      case 1: // nodeType 1 is Node.ELEMENT_NODE
+        result = doc.createElement(n.nodeName);
+        break;
+      case 9: // nodeType 9 is Node.DOCUMENT_NODE
+        result = doc.implementation.createDocument();
+        break;
+      case 11: // nodeType 11 is Node.DOCUMENT_FRAGMENT_NODE
+        result = doc.createDocumentFragment();
+        break;
+      default:
+        result = n.cloneNode(true);
+    }
     if (n.attributes) {
       for (let att of Array.from(n.attributes)) {
         if (att.name !== "data-processed") {
@@ -32,23 +42,20 @@ export function copyAndReset(node) {
     for (let nd of Array.from(n.childNodes)){
       // nodeType 1 is Node.ELEMENT_NODE
       if (nd.nodeType == 1) {
-        if (!n.hasAttribute("data-empty")) {
-          if (nd.hasAttribute("data-original")) {
-            for (let childNode of Array.from(nd.childNodes)) {
-              let child = result.appendChild(clone(childNode));
-              // nodeType 1 is Node.ELEMENT_NODE
-              if (child.nodeType === 1 && child.hasAttribute("data-origid")) {
-                child.setAttribute("id", child.getAttribute("data-origid"));
-                child.removeAttribute("data-origid");
-              }
+        if (nd.hasAttribute("data-original")) {
+          for (let childNode of Array.from(nd.childNodes)) {
+            let child = result.appendChild(clone(childNode));
+            // nodeType 1 is Node.ELEMENT_NODE
+            if (child.nodeType === 1 && child.hasAttribute("data-origid")) {
+              child.setAttribute("id", child.getAttribute("data-origid"));
+              child.removeAttribute("data-origid");
             }
-            return result;
-          } else {
-            result.appendChild(clone(nd));
           }
+          return result;
+        } else if (nd.hasAttribute("data-origname")) {
+          result.appendChild(clone(nd));
         }
-      }
-      else {
+      } else {
         result.appendChild(nd.cloneNode());
       }
     }
@@ -66,13 +73,12 @@ export function first(urls) {
 }
 
 /* 
-  Wraps the content of the element parameter in a <span data-original>
-  with display set to "none".
+  Wraps the content of the element parameter in a hidden <cetei-original data-original>
 */
 export function hideContent(elt, rewriteIds = true) {
   const doc = elt.ownerDocument;
   if (elt.childNodes.length > 0) {
-    let hidden = doc.createElement("span");
+    let hidden = doc.createElement("cetei-original");
     elt.appendChild(hidden);
     hidden.setAttribute("hidden", "");
     hidden.setAttribute("data-original", "");
@@ -139,10 +145,18 @@ export function getPrefixDef(prefix) {
 */
 export function rw(url) {
   if (!url.match(/^(?:http|mailto|file|\/|#).*$/)) {
-    return this.base + this.utilities.first(url);
+    return this.base + first(url);
   } else {
     return url;
   }
+}
+
+/*
+  Combines the functionality of copyAndReset() and serialize() to return
+  a "clean" version of the XML markup.
+ */
+export function resetAndSerialize(el, stripElt, ws) {
+  return serialize(copyAndReset(el), stripElt, ws);
 }
 
 /* 
@@ -153,8 +167,11 @@ export function rw(url) {
 */
 export function serialize(el, stripElt, ws) {
   let str = "";
-  let ignorable = (txt) => {
+  const ignorable = (txt) => {
     return !(/[^\t\n\r ]/.test(txt));
+  }
+  if (el.nodeType === 9 || el.nodeType === 11) { // nodeType 9 is Node.DOCUMENT_NODE; nodeType 11 is Node.DOCUMENT_FRAGMENT_NODE
+    str += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
   }
   // nodeType 1 is Node.ELEMENT_NODE
   if (!stripElt && el.nodeType == 1) {
@@ -180,7 +197,6 @@ export function serialize(el, stripElt, ws) {
       str += "/>";
     }
   }
-  //TODO: Be smarter about skipping generated content with hidden original
   for (let node of Array.from(el.childNodes)) {
     // nodeType 1 is Node.ELEMENT_NODE
     // nodeType 7 is Node.PROCESSING_INSTRUCTION_NODE
@@ -194,10 +210,16 @@ export function serialize(el, stripElt, ws) {
         }
         break;
       case 7:
-        str += "<?" + node.nodeValue + "?>";
+        str += `<?${node.nodeName} ${node.nodeValue}?>`;
+        if (el.nodeType === 9 || el.nodeType === 11) {
+          str += "\n";
+        }
         break;
       case 8:
-        str += "<!--" + node.nodeValue + "-->";
+        str += `<!--${node.nodeValue}-->`;
+        if (el.nodeType === 9 || el.nodeType === 11) {
+          str += "\n";
+        }
         break;
       default:
         if (stripElt && ignorable(node.nodeValue)) {
@@ -209,13 +231,16 @@ export function serialize(el, stripElt, ws) {
         str += node.nodeValue;
     }
   }
-  if (!stripElt && el.childNodes.length > 0) {
+  if (!stripElt && el.nodeType == 1 && el.childNodes.length > 0) {
     if (typeof ws === "string") {
       str += "\n" + ws + "</";
     } else  {
       str += "</";
     }
     str += el.getAttribute("data-origname") + ">";
+  }
+  if (el.nodeType === 9 || el.nodeType === 11) {
+    str += "\n";
   }
   return str;
 }
@@ -249,9 +274,9 @@ export function defineCustomElement(name, behavior = null, debug = false) {
         if (!this.matches(":defined")) { // "Upgraded" undefined elements can have attributes & children; new elements can't
           if (behavior) {
             behavior.call(this);
+            // We don't want to double-process elements, so add a flag
+            this.setAttribute("data-processed", "");
           }
-          // We don't want to double-process elements, so add a flag
-          this.setAttribute("data-processed", "");
         }
       }
       // Process new elements when they are connected to the browser DOM
@@ -259,8 +284,8 @@ export function defineCustomElement(name, behavior = null, debug = false) {
         if (!this.hasAttribute("data-processed")) {
           if (behavior) {
             behavior.call(this);
+            this.setAttribute("data-processed", "");
           }
-          this.setAttribute("data-processed", "");
         }
       };
     });

@@ -9,10 +9,12 @@ export default {
     // inserts a link inside <ptr> using the @target; the link in the
     // @href is piped through the rw (rewrite) function before insertion
     "ptr": ["<a href=\"$rw@target\">$@target</a>"],
-    // wraps the content of the <ref> in an HTML link
+    // wraps the content of the <ref> in an HTML link with the @target in 
+    // the @href. If there are multiple @targets, only the first is used.
     "ref": [
       ["[target]", ["<a href=\"$rw@target\">","</a>"]]
     ],
+    // creates an img tag with the @url as the src attribute
     "graphic": function(elt) {
       let content = new Image();
       content.src = this.rw(elt.getAttribute("url"));
@@ -71,15 +73,17 @@ export default {
         }
         let note = doc.createElement("li");
         note.id = id;
-        note.innerHTML = elt.innerHTML
+        note.innerHTML = elt.innerHTML;
         notes.appendChild(note);
         return content;
       }],
       ["_", ["(",")"]]
     ],
+    // Hide the teiHeader by default
     "teiHeader": function(e) {
       this.hideContent(e, false);
     },
+    // Make the title element the HTML title
     "title": [
       ["tei-titlestmt>tei-title", function(elt) {
         const doc = elt.ownerDocument;

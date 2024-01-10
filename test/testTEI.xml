@@ -1,3 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="https://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml"
+schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
   <teiHeader>
     <fileDesc>
@@ -52,7 +56,7 @@
         <cell>36</cell>
       </row>
       <row>
-        <cell role="label" cols="2">Attleboro'<note place="end">The borough of Attle.</note></cell>
+        <cell role="label" cols="2">Attleboro'<note place="end">Takes up 2 columns.</note></cell>
         <cell>5</cell>
         <cell>20</cell>
       </row>

@@ -212,6 +212,9 @@ tei-cell {
   border-bottom: thin solid black;
   padding: 2px;
 }
+tei-cell[cols="2"] {
+  grid-column: span 2;
+}
 /* for cell or row with @role = label */
 tei-cell[data-tei-role=label] {
   font-weight: bold;

@@ -61,7 +61,6 @@ class CETEI {
         window.removeEventListener("ceteiceanload", CETEI.restorePosition);
       }
     }
-    
   }
 
   /* 
@@ -69,36 +68,22 @@ class CETEI {
     provided in the first parameter and then calls the makeHTML5 method
     on the returned document.
   */
-  getHTML5(XML_url, callback, perElementFn){
+  async getHTML5(XML_url, callback, perElementFn){
     if (window && window.location.href.startsWith(this.base) && (XML_url.indexOf("/") >= 0)) {
       this.base = XML_url.replace(/\/[^\/]*$/, "/");
     }
-    // Get XML from XML_url and create a promise
-    let promise = new Promise( function (resolve, reject) {
-      let client = new XMLHttpRequest();
-      client.open('GET', XML_url);
-      client.send();
-      client.onload = function () {
-        if (this.status >= 200 && this.status < 300) {
-          resolve(this.response);
-        } else {
-          reject(this.statusText);
-        }
-      };
-      client.onerror = function () {
-        reject(this.statusText);
-      };
-    })
-    .catch( function(reason) {
-      console.log("Could not get XML file.");
-      if (this.debug) {
-          console.log(reason);
-      }
-    });
-
-    return promise.then((XML) => {
+    try {
+      const response = await fetch(XML_url);
+      if (response.ok) {
+        const XML = await response.text();
         return this.makeHTML5(XML, callback, perElementFn);
-    });
+      } else {
+        console.log(`Could not get XML file ${XML_url}.\nServer returned ${response.status}: ${response.statusText}`);
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
   }
 
   /* 
@@ -120,7 +105,7 @@ class CETEI {
       let newElement;
       if (this.namespaces.has(el.namespaceURI ? el.namespaceURI : "")) {
         let prefix = this.namespaces.get(el.namespaceURI ? el.namespaceURI : "");
-        newElement = this.document.createElement(`${prefix}-${el.localName}`);
+        newElement = this.document.createElement(`${prefix}-${el.localName.toLowerCase()}`);
       } else {
         newElement = this.document.importNode(el, false);
       }
@@ -207,8 +192,23 @@ class CETEI {
       return newElement;
     }
 
-    this.dom = convertEl(XML_dom.documentElement);
-    this.utilities.dom = this.dom;
+    this.dom = this.document.createDocumentFragment();
+    for (let node of Array.from(XML_dom.childNodes)) {
+      // Node.ELEMENT_NODE
+      if (node.nodeType == 1) {
+        this.dom.appendChild(convertEl(node));
+      }
+      // Node.PROCESSING_INSTRUCTION_NODE
+      if (node.nodeType == 7) {
+        this.dom.appendChild(this.document.importNode(node, true));
+      }
+      // Node.COMMENT_NODE
+      if (node.nodeType == 8) {
+        this.dom.appendChild(this.document.importNode(node, true));
+      }
+    }
+    // DocumentFragments don't work in the same ways as other nodes, so use the root element.
+    this.utilities.dom = this.dom.firstElementChild;
 
     if (callback) {
       callback(this.dom, this);
@@ -285,7 +285,7 @@ class CETEI {
   by the provided function.
 
   Called by getHandler() and fallback()
-*/
+  */
 append(fn, elt) {
   let self = this;
   if (elt && !elt.hasAttribute('data-processed')) {
@@ -401,7 +401,7 @@ getHandler(behaviors, fn) {
 }
 
 insert(elt, strings) {
-  let content = document.createElement("cetei-content");
+  let content = this.document.createElement("cetei-content");
   for (let node of Array.from(elt.childNodes)) {
     // nodeType 1 is Node.ELEMENT_NODE
     if (node.nodeType === 1 && !node.hasAttribute("data-processed")) {
@@ -489,7 +489,7 @@ define(names) {
 }
 
 /* 
-  Provides fallback functionality for browsers where Custom Elements
+  Provides fallback functionality for environments where Custom Elements
   are not supported.
 
   Like define(), this is called by makeHTML5(), but can be called
@@ -503,9 +503,10 @@ fallback(names) {
           this.dom && !this.done 
           ? this.dom
           : this.document
-        ).getElementsByTagName(utilities.tagName(name)))) {
+        ).querySelectorAll(utilities.tagName(name)))) {
         if (!elt.hasAttribute("data-processed")) {
           this.append(fn, elt);
+          elt.setAttribute("data-processed", "");
         }
       }
     }

@@ -245,6 +245,78 @@ export function serialize(el, stripElt, ws) {
   return str;
 }
 
+/* 
+  Write out the HTML markup to a string, using HTML conventions.
+ */
+export function serializeHTML(el, stripElt, ws) {
+  const EMPTY_ELEMENTS = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
+  let str = "";
+  const ignorable = (txt) => {
+    return !(/[^\t\n\r ]/.test(txt));
+  }
+  // nodeType 1 is Node.ELEMENT_NODE
+  if (!stripElt && el.nodeType == 1) {
+    if ((typeof ws === "string") && ws !== "") {
+      str += "\n" + ws + "<";
+    } else  {
+      str += "<";
+    }
+    str += el.nodeName;
+    for (let attr of Array.from(el.attributes)) {
+      str += " " + attr.name + "=\"" + attr.value + "\"";
+    }
+    str += ">";
+  }
+  for (let node of Array.from(el.childNodes)) {
+    // nodeType 1 is Node.ELEMENT_NODE
+    // nodeType 7 is Node.PROCESSING_INSTRUCTION_NODE
+    // nodeType 8 is Node.COMMENT_NODE
+    switch (node.nodeType) {
+      case 1:
+        if (typeof ws === "string") {
+          str += serializeHTML(node, false, ws + "  ");
+        } else {
+          str += serializeHTML(node, false, ws);
+        }
+        break;
+      case 7:
+        str += `<?${node.nodeName} ${node.nodeValue}?>`;
+        if (el.nodeType === 9 || el.nodeType === 11) {
+          str += "\n";
+        }
+        break;
+      case 8:
+        str += `<!--${node.nodeValue}-->`;
+        if (el.nodeType === 9 || el.nodeType === 11) {
+          str += "\n";
+        }
+        break;
+      default:
+        if (stripElt && ignorable(node.nodeValue)) {
+          str += node.nodeValue.replace(/^\s*\n/, "");
+        }
+        if ((typeof ws === "string") && ignorable(node.nodeValue)) {
+          break;
+        }
+        str += node.nodeValue;
+    }
+  }
+  if (!EMPTY_ELEMENTS.includes(el.nodeName)) {
+    if (!stripElt && el.nodeType == 1) {
+      if (typeof ws === "string") {
+        str += `\n${ws}</`;
+      } else  {
+        str += "</";
+      }
+      str += `${el.nodeName}>`;
+    }
+  }
+  if (el.nodeType === 9 || el.nodeType === 11) {
+    str += "\n";
+  }
+  return str;
+}
+
 export function unEscapeEntities(str) {
   return str.replace(/&gt;/, ">")
             .replace(/&quot;/, "\"")

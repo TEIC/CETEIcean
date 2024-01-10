@@ -1,6 +1,6 @@
 {
   "name": "CETEIcean",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "JavaScript library to load a TEI XML document and register it as HTML5 custom elements.",
   "main": "src/CETEI.js",
   "type": "module",

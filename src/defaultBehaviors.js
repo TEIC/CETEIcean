@@ -97,12 +97,14 @@ export default {
     "egXML": function(elt) {
       const doc = elt.ownerDocument;
       let pre = doc.createElement("pre");
+      let code = doc.createElement("code");
+      pre.appendChild(code);
       let content = this.serialize(elt, true).replace(/</g, "&lt;");
       let ws = content.match(/^[\t ]+/);
       if (ws) {
         content = content.replace(new RegExp("^" + ws[0], "mg"), "");
       }
-      pre.innerHTML = content;
+      code.innerHTML = content;
       return pre;
     }
   }

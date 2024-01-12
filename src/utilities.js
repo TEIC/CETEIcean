@@ -298,7 +298,7 @@ export function serializeHTML(el, stripElt, ws) {
         if ((typeof ws === "string") && ignorable(node.nodeValue)) {
           break;
         }
-        str += node.nodeValue;
+        str += node.nodeValue.replace(/</g, "&lt;");
     }
   }
   if (!EMPTY_ELEMENTS.includes(el.nodeName)) {

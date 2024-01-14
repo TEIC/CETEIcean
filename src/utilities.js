@@ -144,8 +144,8 @@ export function getPrefixDef(prefix) {
   HTML document
 */
 export function rw(url) {
-  if (!url.match(/^(?:http|mailto|file|\/|#).*$/)) {
-    return this.base + first(url);
+  if (!url.trim().match(/^(?:http|mailto|file|\/|#).*$/)) {
+    return this.base + first(url.trim());
   } else {
     return url;
   }

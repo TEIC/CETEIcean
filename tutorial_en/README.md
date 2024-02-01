@@ -130,7 +130,7 @@ tei-lb:before {
   content: "\A";
 }
 ```
-This tells the browser to insert a new-line character (the "\A") before each `<tei-lb>` and to treat it as preformatted text (as you would a block of code, for example). We have to do this because in HTML new lines are normally ignored for formatting purposes. There's more we can do with CSS, but this is a good point to look at where you might use CETEIcean behaviors for formatting instead. HTML has an element equivalent to `<lb/>`, the `<br>` element. What if we just put a `<br>` inside our `<tei-lb>`? We can do that by adding some behaviors. In your index.html, add the following after between the first and second lines of the code in the `<script></script>` tags:
+This tells the browser to insert a new-line character (the "\A") before each `<tei-lb>` and to treat it as preformatted text (as you would a block of code, for example). We have to do this because in HTML new lines are normally ignored for formatting purposes. There's more we can do with CSS, but this is a good point to look at where you might use CETEIcean behaviors for formatting instead. HTML has an element equivalent to `<lb/>`, the `<br>` element. What if we just put a `<br>` inside our `<tei-lb>`? We can do that by adding some behaviors. In your index.html, add the following after the first line of the code in the `<script></script>` tags:
 ```js
   let behaviors = {
     "tei": {
@@ -139,7 +139,20 @@ This tells the browser to insert a new-line character (the "\A") before each `<t
   };
   c.addBehaviors(behaviors);
 ```
-What this will do is create a Javascript object and assign it to a variable, `behaviors`, which we then pass to the `CETEI` object we created earlier, using the `addBehaviors` method. Inside that behaviors object, we have a section labeled "tei" (which is the prefix for all of our Custom Elements), and inside that, we define behaviors for elements. When CETEIcean sees a match for an element name, like "lb" (note that it uses the un-prefixed TEI name), it applies what it finds. For "lb", it sees an Array with one element, `<br>`, so it will insert that `<br>` tag before the content of any `<tei-lb>` element it finds. `<tei-lb>` is an empty element anyway, so the final result as seen by the browser will be
+The code should now look like this:
+```js
+  let c = new CETEI();
+  let behaviors = {
+    "tei": {
+      "lb": ["<br>"],
+    }
+  };
+  c.addBehaviors(behaviors);
+  c.getHTML5('fpn-washington.xml', function(data) {
+    document.getElementsByTagName("body")[0].appendChild(data);
+  });
+```
+This new code will create a Javascript object and assign it to a variable, `behaviors`, which we then pass to the `CETEI` object we created earlier, using the `addBehaviors` method. Inside that behaviors object, we have a section labeled "tei" (which is the prefix for all of our Custom Elements), and inside that, we define behaviors for elements. When CETEIcean sees a match for an element name, like "lb" (note that it uses the un-prefixed TEI name), it applies what it finds. For "lb", it sees an Array with one element, `<br>`, so it will insert that `<br>` tag before the content of any `<tei-lb>` element it finds. `<tei-lb>` is an empty element anyway, so the final result as seen by the browser will be
 ```html
 <tei-lb><br></tei-lb>
 ```

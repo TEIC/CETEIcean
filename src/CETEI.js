@@ -138,12 +138,25 @@ class CETEI {
         newElement.setAttribute("data-empty", "");
       }
       // <head> elements need to know their level
-      if (el.localName == "head") {
-        // 1 is XPathResult.NUMBER_TYPE
-        let level = XML_dom.evaluate("count(ancestor::*[tei:head])", el, function(ns) {
-          if (ns == "tei") return "http://www.tei-c.org/ns/1.0";
-        }, 1, null);
-        newElement.setAttribute("data-level", level.numberValue);
+      if (el.localName == "head" && el.namespaceURI == "http://www.tei-c.org/ns/1.0") {
+        function getLevel(el) {
+          let count = 0;
+          let ancestor = el.parentElement;
+          while (ancestor) {
+            let children = ancestor.children;
+            let i = 0;            
+            while (i < children.length) {             
+              if (children[i].tagName.toLowerCase() === "head" && children[i].namespaceURI === "http://www.tei-c.org/ns/1.0") {
+                count++;
+                break; // Only count once
+              }
+              i++;
+            }
+            ancestor = ancestor.parentElement; // Move to the next ancestor
+          }
+          return count;
+        }
+        newElement.setAttribute("data-level", getLevel(el));
       }
       // Turn <rendition scheme="css"> elements into HTML styles
       if (el.localName == "tagsDecl") {

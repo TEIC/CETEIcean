@@ -1,6 +1,10 @@
 {
   "name": "CETEIcean",
+<<<<<<< HEAD
   "version": "1.9.3",
+=======
+  "version": "1.9.1",
+>>>>>>> 80150a632829a70233d65fc83c0ceaed42f927b4
   "description": "JavaScript library to load a TEI XML document and register it as HTML5 custom elements.",
   "main": "src/CETEI.js",
   "type": "module",
@@ -21,16 +25,15 @@
     "./utilities.js": "./src/utilities.js"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.5",
-    "@babel/preset-env": "7.15.6",
-    "@rollup/plugin-babel": "^5.3.0",
-    "babel-preset-env": "^1.7.0",
+    "@babel/core": "^7.26.9",
+    "@babel/preset-env": "^7.26.9",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-terser": "^0.4.4",
     "http-server": "^14.1.1",
-    "jsdom": "^21.1.0",
-    "onchange": "^6.1.1",
-    "rollup": "^2.57.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "terser": "^5.14.2"
+    "jsdom": "^26.0.0",
+    "onchange": "^7.1.0",
+    "rollup": "^4.34.8",
+    "terser": "^5.39.0"
   },
   "scripts": {
     "build": "npm test && rollup -c rollup.config.js",

@@ -16,7 +16,7 @@ export default {
     ],
     // creates an img tag with the @url as the src attribute
     "graphic": function(elt) {
-      let content = new Image();
+      let content = elt.ownerDocument.createElement("img");
       content.src = this.rw(elt.getAttribute("url"));
       if (elt.hasAttribute("width")) {
         content.setAttribute("width",elt.getAttribute("width"));

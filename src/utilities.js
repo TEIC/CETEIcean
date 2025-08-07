@@ -82,6 +82,7 @@ export function hideContent(elt, rewriteIds = true) {
     elt.appendChild(hidden);
     hidden.setAttribute("hidden", "");
     hidden.setAttribute("data-original", "");
+    hidden.setAttribute("role", "none");
     for (let node of Array.from(elt.childNodes)) {
       if (node !== hidden) {
         // nodeType 1 is Node.ELEMENT_NODE
@@ -184,11 +185,17 @@ export function serialize(el, stripElt, ws) {
     // HTML5 lowercases all attribute names; @data-origatts contains the original names
     let attrNames = el.hasAttribute("data-origatts") ? el.getAttribute("data-origatts").split(" ") : [];
     for (let attr of Array.from(el.attributes)) {
-      if (!attr.name.startsWith("data-") && !(["id", "lang", "class"].includes(attr.name))) {
+      if (!attr.name.startsWith("data-") 
+        && !attr.name.startsWith("tei-") 
+        && !attr.name.startsWith("aria-")
+        && !(["id", "lang", "class"].includes(attr.name))) {
         str += " " + attrNames.find(function(e) {return e.toLowerCase() == attr.name}) + "=\"" + attr.value + "\"";
       }
       if (attr.name == "data-xmlns") {
         str += " xmlns=\"" + attr.value +"\"";
+      }
+      if (attr.name.startsWith("tei-")) {
+        str += " " + attrNames.find(function(e) {return e.toLowerCase() == attr.name.replace("tei-", "")}) + "=\"" + attr.value + "\"";
       }
     }
     if (el.childNodes.length > 0) {

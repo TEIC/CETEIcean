@@ -116,7 +116,9 @@ class CETEI {
             //Strip default namespaces, but hang on to the values
             newElement.setAttribute("data-xmlns", att.value);
           } else {
-            newElement.setAttribute(att.name, att.value);
+            if (!["role"].includes(att.name) ){
+              newElement.setAttribute(att.name, att.value);
+            }
           }
           if (att.name == "xml:id") {
             newElement.setAttribute("id", att.value);
@@ -126,6 +128,11 @@ class CETEI {
           }
           if (att.name == "rendition") {
             newElement.setAttribute("class", att.value.replace(/#/g, ""));
+          }
+          // @role has a name collision with the HTML5 role attribute, so we
+          // use a TEI-specific attribute instead.
+          if (att.name == "role") {
+            newElement.setAttribute("tei-role", att.value);
           }
       }
       // Preserve element name so we can use it later
@@ -190,6 +197,14 @@ class CETEI {
           "replacementPattern": el.getAttribute("replacementPattern")
         };
       }
+      // Aria roles for landmark elements
+      if (el.localName == "TEI") {
+        newElement.setAttribute("role", "main");
+      }
+      if (["body", "front", "back", "div"].includes(el.localName)) {
+        newElement.setAttribute("role", "region");
+        newElement.setAttribute("aria-label", el.getAttribute("xml:id") || el.getAttribute("n") || el.localName);
+      } 
       for (let node of Array.from(el.childNodes)) {
           // Node.ELEMENT_NODE
           if (node.nodeType == 1 ) {

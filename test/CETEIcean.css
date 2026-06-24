@@ -346,6 +346,10 @@ tei-head {
   font-family: Arvo, sans-serif;
   font-weight: normal;
 }
+tei-head > :is(h1, h2, h3, h4, h5, h6) {
+  font: inherit;
+  margin: 0;
+}
 tei-body > tei-head {
   font-size: 180%;
   text-indent: -0.5em;

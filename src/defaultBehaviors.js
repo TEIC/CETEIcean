@@ -79,6 +79,16 @@ export default {
       }],
       ["_", ["(",")"]]
     ],
+    // Renders <head> as a semantic HTML heading (h1–h6) for accessibility
+    "head": function(elt) {
+      const doc = elt.ownerDocument;
+      const level = Number(elt.getAttribute("data-level")) || 1;
+      let heading = doc.createElement("h" + Math.min(Math.max(level, 1), 6));
+      for (let node of Array.from(elt.childNodes)) {
+        heading.appendChild(node.cloneNode(true));
+      }
+      return heading;
+    },
     // Hide the teiHeader by default
     "teiHeader": function(e) {
       this.hideContent(e, false);

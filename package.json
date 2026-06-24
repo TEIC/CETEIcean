@@ -31,10 +31,14 @@
     "@babel/core": "^7.26.9",
     "@babel/preset-env": "^7.26.9",
     "@rollup/plugin-babel": "^6.0.4",
+<<<<<<< master
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/jsdom": "^27.0.0",
     "@types/node": "^24.10.1",
+=======
+    "@rollup/plugin-terser": "^1.0.0",
+>>>>>>> master
     "http-server": "^14.1.1",
     "jsdom": "^26.0.0",
     "onchange": "^7.1.0",

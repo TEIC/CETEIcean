@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": ["DOM", "DOM.Iterable", "ES2019"],
+    "allowJs": true,
+    "checkJs": false,
+    "strict": false,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationDir": "./dist/types",
+    "emitDeclarationOnly": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "rootDir": "./src",
+    "outDir": "./dist/ts"
+  },
+  "include": [
+    "src/**/*",
+    "test/**/*.ts"
+  ],
+  "exclude": [
+    "tutorial_en",
+    "tutorial_es",
+    "tutorial_ja",
+    "dist",
+    "node_modules"
+  ]
+}

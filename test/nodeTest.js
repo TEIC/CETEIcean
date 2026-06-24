@@ -1,5 +1,5 @@
 import { JSDOM } from 'jsdom';
-import CETEI from '../src/CETEI.js';
+import CETEI from '../src/CETEI.ts';
 import fs from 'fs';
 
 const tei = fs.readFileSync('test/testTEI.xml', 'utf8');

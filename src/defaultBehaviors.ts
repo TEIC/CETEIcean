@@ -1,4 +1,6 @@
-export default {
+import type { BehaviorsMap, UtilitiesAPI } from "./types.js";
+
+const defaultBehaviors: BehaviorsMap = {
   "namespaces": {
     "tei": "http://www.tei-c.org/ns/1.0",
     "teieg": "http://www.tei-c.org/ns/Examples",
@@ -15,32 +17,40 @@ export default {
       ["[target]", ["<a href=\"$rw@target\">","</a>"]]
     ],
     // creates an img tag with the @url as the src attribute
-    "graphic": function(elt) {
-      let content = elt.ownerDocument.createElement("img");
-      content.src = this.rw(elt.getAttribute("url"));
+    "graphic": function(this: UtilitiesAPI, elt: Element) {
+      const doc = elt.ownerDocument;
+      const content = doc.createElement("img");
+      const url = elt.getAttribute("url");
+      content.src = url ? this.rw(url) : "";
       if (elt.hasAttribute("width")) {
-        content.setAttribute("width",elt.getAttribute("width"));
+        const width = elt.getAttribute("width");
+        if (width) {
+          content.setAttribute("width", width);
+        }
       }
       if (elt.hasAttribute("height")) {
-        content.setAttribute("height",elt.getAttribute("height"));
+        const height = elt.getAttribute("height");
+        if (height) {
+          content.setAttribute("height", height);
+        }
       }
       return content;
     },
     "list": [
       // will only run on a list where @type="gloss"
-      ["[type=gloss]", function(elt) {
+      ["[type=gloss]", function(this: UtilitiesAPI, elt: Element) {
         const doc = elt.ownerDocument;
-        let dl = doc.createElement("dl");
-        for (let child of Array.from(elt.children)) {
+        const dl = doc.createElement("dl");
+        for (const child of Array.from(elt.children)) {
           // nodeType 1 is Node.ELEMENT_NODE
           if (child.nodeType == 1) {
             if (child.localName == "tei-label") {
-              let dt = doc.createElement("dt");
+              const dt = doc.createElement("dt");
               dt.innerHTML = child.innerHTML;
               dl.appendChild(dt);
             }
             if (child.localName == "tei-item") {
-              let dd = doc.createElement("dd");
+              const dd = doc.createElement("dd");
               dd.innerHTML = child.innerHTML;
               dl.appendChild(dd);
             }
@@ -51,27 +61,28 @@ export default {
     ]],
     "note": [
       // Make endnotes
-      ["[place=end]", function(elt){
+      ["[place=end]", function(this: UtilitiesAPI, elt: Element){
         const doc = elt.ownerDocument;
-        if (!this.noteIndex){
-          this["noteIndex"] = 1;
-        } else {
-          this.noteIndex++;
-        }
-        let id = "_note_" + this.noteIndex;
-        let link = doc.createElement("a");
+        this.noteIndex = (this.noteIndex ?? 0) + 1;
+        const currentIndex = this.noteIndex;
+        const id = "_note_" + currentIndex;
+        const link = doc.createElement("a");
         link.setAttribute("id", "src" + id);
         link.setAttribute("href", "#" + id);
-        link.innerHTML = this.noteIndex;
-        let content = doc.createElement("sup");
+        link.innerHTML = String(currentIndex);
+        const content = doc.createElement("sup");
         content.appendChild(link);
         let notes = doc.querySelector("ol.notes");
         if (!notes) {
           notes = doc.createElement("ol");
           notes.setAttribute("class", "notes");
-          this.dom.appendChild(notes);
+          const host = this.dom;
+          if (!host) {
+            throw new Error("CETEI utilities DOM root is unavailable.");
+          }
+          host.appendChild(notes);
         }
-        let note = doc.createElement("li");
+        const note = doc.createElement("li");
         note.id = id;
         note.innerHTML = elt.innerHTML;
         notes.appendChild(note);
@@ -80,27 +91,31 @@ export default {
       ["_", ["(",")"]]
     ],
     // Hide the teiHeader by default
-    "teiHeader": function(e) {
+    "teiHeader": function(this: UtilitiesAPI, e: Element) {
       this.hideContent(e, false);
     },
     // Make the title element the HTML title
     "title": [
-      ["tei-titlestmt>tei-title", function(elt) {
+      ["tei-titlestmt>tei-title", function(this: UtilitiesAPI, elt: Element) {
         const doc = elt.ownerDocument;
-        let title = doc.createElement("title");
-        title.innerHTML = elt.innerText;
-        doc.querySelector("head").appendChild(title);
+        const title = doc.createElement("title");
+        const textSource = (elt as HTMLElement).innerText ?? "";
+        title.innerHTML = textSource;
+        const head = doc.querySelector("head");
+        if (head) {
+          head.appendChild(title);
+        }
       }]
     ],
   },
   "teieg": {
-    "egXML": function(elt) {
+    "egXML": function(this: UtilitiesAPI, elt: Element) {
       const doc = elt.ownerDocument;
-      let pre = doc.createElement("pre");
-      let code = doc.createElement("code");
+      const pre = doc.createElement("pre");
+      const code = doc.createElement("code");
       pre.appendChild(code);
       let content = this.serialize(elt, true).replace(/</g, "&lt;");
-      let ws = content.match(/^[\t ]+/);
+      const ws = content.match(/^[\t ]+/);
       if (ws) {
         content = content.replace(new RegExp("^" + ws[0], "mg"), "");
       }
@@ -109,3 +124,5 @@ export default {
     }
   }
 }
+
+export default defaultBehaviors;

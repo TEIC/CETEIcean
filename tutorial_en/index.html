@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="css/tei.css">
+  <script src="js/CETEI.js"></script>
+  <script>
+    let c = new CETEI();
+    
+    let behaviors = {
+        "tei": {
+            "head": function (e) {
+                let level = document.evaluate("count(ancestor::tei-div)", e, null, XPathResult.NUMBER_TYPE, null);
+                let result = document.createElement("h" + level.numberValue);
+                for (let n of Array.from(e.childNodes)) {
+                    result.appendChild(n.cloneNode());
+                }
+                return result;
+            },
+            "lb": ["<br>"],
+        }
+    };
+    c.addBehaviors(behaviors);
+
+    c.getHTML5('fpn-washington.xml', function (data) {
+        document.getElementsByTagName("body")[0].appendChild(data);
+    });
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
+</head>
+<body>
+  
+</body>
+</html>

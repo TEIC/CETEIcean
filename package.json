@@ -2,7 +2,7 @@
   "name": "CETEIcean",
   "version": "1.9.5",
   "description": "JavaScript library to load a TEI XML document and register it as HTML5 custom elements.",
-  "main": "src/CETEI.js",
+  "main": "dist/CETEI.js",
   "type": "module",
   "keywords": [
     "TEI",
@@ -16,25 +16,46 @@
     "type": "git",
     "url": "https://github.com/TEIC/CETEIcean.git"
   },
+  "types": "dist/types/CETEI.d.ts",
   "exports": {
-    ".": "./src/CETEI.js",
-    "./utilities.js": "./src/utilities.js"
+    ".": {
+      "types": "./dist/types/CETEI.d.ts",
+      "default": "./dist/CETEI.js"
+    },
+    "./utilities.js": {
+      "types": "./dist/types/utilities.d.ts",
+      "default": "./dist/ts/utilities.js"
+    }
   },
   "devDependencies": {
     "@babel/core": "^7.26.9",
     "@babel/preset-env": "^7.26.9",
     "@rollup/plugin-babel": "^6.0.4",
+<<<<<<< master
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@types/jsdom": "^27.0.0",
+    "@types/node": "^24.10.1",
+=======
     "@rollup/plugin-terser": "^1.0.0",
+>>>>>>> master
     "http-server": "^14.1.1",
     "jsdom": "^26.0.0",
     "onchange": "^7.1.0",
+    "playwright": "^1.57.0",
     "rollup": "^4.34.8",
-    "terser": "^5.39.0"
+    "terser": "^5.39.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.3"
   },
   "scripts": {
     "build": "npm test && rollup -c rollup.config.js",
-    "build:tutorial": "npm run build && cp dist/CETEI.js tutorial/js/CETEI.js",
+    "build:tutorial": "npm run build && cp dist/CETEI.js tutorial_en/js/CETEI.js && cp dist/CETEI.js tutorial_es/js/CETEI.js && cp dist/CETEI.js tutorial_ja/js/CETEI.js",
     "dev": "npm run build && http-server -p 8888 & onchange src -- npm run build",
-    "test": "node test/nodeTest.js"
+    "test": "tsx test/nodeTest.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "tslib": "^2.8.1"
   }
 }

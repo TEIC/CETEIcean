@@ -41,6 +41,7 @@ class CETEI {
     this.prefixDefs = [];
     this.debug = this.options.debug === true ? true : false;
     this.discardContent = this.options.discardContent === true ? true : false;
+    this.addMainRole = this.options.omitMainRole === true ? false : true;
 
     if (this.options.base) {
       this.base = this.options.base;
@@ -197,14 +198,10 @@ class CETEI {
           "replacementPattern": el.getAttribute("replacementPattern")
         };
       }
-      // Aria roles for landmark elements
-      if (el.localName == "TEI") {
+      // Aria main landmark for the TEI root (can be disabled via the omitMainRole option)
+      if (el.localName == "TEI" && this.addMainRole) {
         newElement.setAttribute("role", "main");
       }
-      if (["body", "front", "back", "div"].includes(el.localName)) {
-        newElement.setAttribute("role", "region");
-        newElement.setAttribute("aria-label", el.getAttribute("xml:id") || el.getAttribute("n") || el.localName);
-      } 
       for (let node of Array.from(el.childNodes)) {
           // Node.ELEMENT_NODE
           if (node.nodeType == 1 ) {
